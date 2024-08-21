@@ -16,15 +16,6 @@ class MYSTERIOUSSTORM_API AMSItemActor : public AActor
 
 protected:
 	FMSItemData ItemData;
-
-	enum EWeaponType {  };
-	struct FWeapon
-	{
-		int ConfigId;
-		int Count;
-		EWeaponType WeaponType;
-		// 还有当前武器buff
-	};
 	
 	FVector Location;
 
