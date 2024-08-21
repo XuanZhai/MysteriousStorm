@@ -8,6 +8,7 @@
 void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	ItemTable = ItemTableRef.IsValid() ? ItemTableRef.LoadSynchronous() : nullptr;
+	WeaponTable = WeaponTableRef.IsValid() ? WeaponTableRef.LoadSynchronous() : nullptr;
 }
 
 void UMSDataTableSubsystem::Deinitialize()

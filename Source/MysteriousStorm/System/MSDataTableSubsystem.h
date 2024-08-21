@@ -22,6 +22,12 @@ protected:
 	UPROPERTY()
 	UDataTable* ItemTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UDataTable> WeaponTableRef;
+
+	UPROPERTY()
+	UDataTable* WeaponTable;
+
 protected:
 	// Called when the subsystem is initialized
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -35,4 +41,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TryGetAssetPathByItemID(const int32 ItemID, FSoftObjectPath& OutObjectPath);
+
+	UFUNCTION(BlueprintCallable)
+	UDataTable* GetWeaponTable() const { return WeaponTable; }
 };

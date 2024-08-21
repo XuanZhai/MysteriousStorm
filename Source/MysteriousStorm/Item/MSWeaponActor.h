@@ -6,6 +6,12 @@
 #include "MSItemActor.h"
 #include "MSWeaponActor.generated.h"
 
+UENUM(BlueprintType)
+enum EWeaponType : uint8
+{
+	Sword = 0
+};
+
 /**
  * 
  */

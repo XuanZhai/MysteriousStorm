@@ -32,10 +32,43 @@ void UMSBackpackComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+#pragma region CachedPickUpList
+
+void UMSBackpackComponent::AddToCachedPickUpList(AMSItemActor* NewItem)
+{
+	if (!NewItem)
+	{
+		return;
+	}
+
+	CachedPickUpList.Add(NewItem);
+}
+
+void UMSBackpackComponent::RemoveFromCachedPickUpList(AMSItemActor* TargetItem)
+{
+	if (!TargetItem)
+	{
+		return;
+	}
+
+	CachedPickUpList.Remove(TargetItem);
+}
+
+#pragma endregion CachedPickUpList
 
 bool UMSBackpackComponent::CanPickUpThisItem(AMSItemActor* NewItem) const
 {
 	if (!NewItem)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool UMSBackpackComponent::TryPickUpThisItem(AMSItemActor* NewItem)
+{
+	if (!CanPickUpThisItem(NewItem))
 	{
 		return false;
 	}
