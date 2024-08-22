@@ -3,12 +3,31 @@
 
 #include "MSDataTableSubsystem.h"
 #include "MSItemTableRow.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
 
 void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	ItemTable = ItemTableRef.IsValid() ? ItemTableRef.LoadSynchronous() : nullptr;
-	WeaponTable = WeaponTableRef.IsValid() ? WeaponTableRef.LoadSynchronous() : nullptr;
+	TArray<FSoftObjectPath> Paths = 
+	{
+		ItemTablePath,
+		WeaponTablePath
+	};
+
+	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
+		Paths, [this]()
+		{
+
+			ItemTable = Cast<UDataTable>(ItemTablePath.ResolveObject());
+			WeaponTable = Cast<UDataTable>(WeaponTablePath.ResolveObject());
+		});
+
+}
+
+void UMSDataTableSubsystem::OnDataTableLoaded()
+{
+
 }
 
 void UMSDataTableSubsystem::Deinitialize()
@@ -16,18 +35,15 @@ void UMSDataTableSubsystem::Deinitialize()
 
 }
 
-bool UMSDataTableSubsystem::TryGetAssetPathByItemID(const int32 ItemID, FSoftObjectPath& OutObjectPath)
+bool UMSDataTableSubsystem::TryGetRowByItemID(const int32 ItemID, struct FMSItemTableRow& OutRow) const
 {
-	if (!ItemTable)
+	if (ItemTable)
 	{
-		return false;
+		if (FMSItemTableRow* Row = ItemTable->FindRow<FMSItemTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
+		{
+			OutRow = *Row;
+			return true;
+		}
 	}
-
-	if (FMSItemTableRow* Row = ItemTable->FindRow<FMSItemTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
-	{
-		OutObjectPath = Row->AssetPath;
-		return true;
-	}
-
 	return false;
 }

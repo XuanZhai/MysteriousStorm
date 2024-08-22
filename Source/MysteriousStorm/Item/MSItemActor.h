@@ -15,6 +15,7 @@ class MYSTERIOUSSTORM_API AMSItemActor : public AActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FMSItemData ItemData;
 	
 	FVector Location;

@@ -3,3 +3,7 @@
 
 #include "MSWeaponTableRow.h"
 
+FMSWeaponTableRow::FMSWeaponTableRow()
+{
+	ItemID = 0;
+}

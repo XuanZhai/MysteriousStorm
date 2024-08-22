@@ -7,6 +7,7 @@
 #include "MSDataTableSubsystem.generated.h"
 
 class UDataTable;
+struct FStreamableHandle;
 /**
  * 
  */
@@ -16,14 +17,13 @@ class MYSTERIOUSSTORM_API UMSDataTableSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UDataTable> ItemTableRef;
+	TSharedPtr<FStreamableHandle> StreamableHandle;
+
+	FSoftObjectPath ItemTablePath{ "/Game/Tables/DT_ItemData.DT_ItemData" };
+	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData_C" };
 
 	UPROPERTY()
 	UDataTable* ItemTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UDataTable> WeaponTableRef;
 
 	UPROPERTY()
 	UDataTable* WeaponTable;
@@ -32,6 +32,8 @@ protected:
 	// Called when the subsystem is initialized
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	void OnDataTableLoaded();
+
 	// Called when the subsystem is deinitialized
 	virtual void Deinitialize() override;
 
@@ -39,8 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UDataTable* GetItemTable() const { return ItemTable; }
 
-	UFUNCTION(BlueprintCallable)
-	bool TryGetAssetPathByItemID(const int32 ItemID, FSoftObjectPath& OutObjectPath);
+	bool TryGetRowByItemID(const int32 ItemID, struct FMSItemTableRow& OutRow) const;
 
 	UFUNCTION(BlueprintCallable)
 	UDataTable* GetWeaponTable() const { return WeaponTable; }

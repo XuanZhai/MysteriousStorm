@@ -15,8 +15,16 @@ struct MYSTERIOUSSTORM_API FMSItemTableRow : public FTableRowBase
 	GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 ItemID;
+    int32 ID;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString Name;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSoftObjectPath AssetPath;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FSoftObjectPath UIPath;
+
+    FMSItemTableRow();
 };

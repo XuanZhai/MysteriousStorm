@@ -3,3 +3,7 @@
 
 #include "MSItemTableRow.h"
 
+FMSItemTableRow::FMSItemTableRow()
+{
+	ID = 0;
+}
