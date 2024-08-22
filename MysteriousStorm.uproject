@@ -10,7 +10,10 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"CoreUObject",
-				"Engine"
+				"Engine",
+				"Slate",
+				"SlateCore",
+				"UMG"
 			]
 		}
 	],
