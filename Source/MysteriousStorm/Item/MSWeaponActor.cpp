@@ -3,3 +3,8 @@
 
 #include "MSWeaponActor.h"
 
+AMSWeaponActor::AMSWeaponActor()
+{
+	StaticMeshComp = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
+	
+}
