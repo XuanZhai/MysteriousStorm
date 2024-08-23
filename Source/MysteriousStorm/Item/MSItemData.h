@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "MSItemData.generated.h"
 
+class UMSDataTableSubsystem;
+
 UENUM(BlueprintType)
 enum EItemType : uint8
 {
@@ -27,11 +29,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Count;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 RowSize;
+	int32 XUISize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ColumnSize;
+	int32 YUISize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EItemType> ItemType;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	FSoftObjectPath PreviewUIPath;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	FSoftObjectPath UIPath;
 
 public:
 	FMSItemData();

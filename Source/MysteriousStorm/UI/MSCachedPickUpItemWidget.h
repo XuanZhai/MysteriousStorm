@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ListView.h"
 #include "MSCachedPickUpItemWidget.generated.h"
 
 class UTextBlock;
@@ -22,6 +23,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ItemImage;
+
+public:
+	TWeakObjectPtr<UListView> ParentListView;
 
 public:
 	void SetItemName(const FString& NewItemName);

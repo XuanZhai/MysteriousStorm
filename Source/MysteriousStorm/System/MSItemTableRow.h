@@ -21,7 +21,10 @@ struct MYSTERIOUSSTORM_API FMSItemTableRow : public FTableRowBase
     FString Name;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSoftObjectPath AssetPath;
+    FSoftObjectPath BPAssetPath;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FSoftObjectPath PreviewUIPath;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSoftObjectPath UIPath;

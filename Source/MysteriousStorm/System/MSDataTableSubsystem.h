@@ -28,6 +28,11 @@ protected:
 	UPROPERTY()
 	UDataTable* WeaponTable;
 
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTableLoaded, UMSDataTableSubsystem*, DataTableSubsystem);
+	UPROPERTY(BlueprintAssignable)
+	FOnTableLoaded OnTableLoaded;
+
 protected:
 	// Called when the subsystem is initialized
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

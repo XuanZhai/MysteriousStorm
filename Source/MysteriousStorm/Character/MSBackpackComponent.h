@@ -25,16 +25,11 @@ protected:
 	// TODO: Be used to store the weapon in the bags. May be changed later. [ZX]
 	TArray<FMSItemData> WeaponBags;
 
+	TArray<TSharedPtr<FMSItemData>> Items;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UFUNCTION(BlueprintCallable)
-	bool CanPickUpThisItem(AMSItemActor* NewItem) const;
-
-	UFUNCTION(BlueprintCallable)
-	bool TryPickUpThisItem(AMSItemActor* NewItem);
-
 
 #pragma region CachedPickUpList
 protected:
@@ -50,5 +45,24 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AMSItemActor*>& GetCachedPickUpList() { return CachedPickUpList; }
+#pragma endregion
+
+#pragma region Backpack
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 RowNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ColumnNumber;
+
+protected:
+	bool IsRoomForNewItem(const FMSItemData& NewItemData, int32 TopLeftIndex) const;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	bool CanPickUpThisItem(AMSItemActor* NewItem) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool TryPickUpThisItem(AMSItemActor* NewItem);
 #pragma endregion
 };

@@ -9,6 +9,7 @@
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSItemTableRow.h"
 
+
 void UMSBackpackWidget::RefreshCachedPickUpListView()
 {
 	if (!CachedPickUpListView)
@@ -18,8 +19,6 @@ void UMSBackpackWidget::RefreshCachedPickUpListView()
 
 	CachedPickUpListView->ClearListItems();
 
-	AMSCharacter* Character = GetOwningPlayerPawn<AMSCharacter>();
-	UMSBackpackComponent* BackpackComponent = Character ? Character->GetBackpackComponent() : nullptr;
 	UGameInstance* GameInstance = GetGameInstance();
 	UMSDataTableSubsystem* TableSubsystem = GameInstance->GetSubsystem<UMSDataTableSubsystem>();
 
@@ -35,15 +34,16 @@ void UMSBackpackWidget::RefreshCachedPickUpListView()
 			}
 
 			UMSCachedPickUpItemWidget* CachedItemWidget = CreateWidget<UMSCachedPickUpItemWidget>(this, UMSCachedPickUpItemWidget::StaticClass());
-			const FMSItemData& ItemData = CacheItem->GetItemData();
-			FMSItemTableRow Row;
-
 			if (CachedItemWidget)
 			{
+				const FMSItemData& ItemData = CacheItem->GetItemData();
+				FMSItemTableRow Row;
+
 				if (TableSubsystem->TryGetRowByItemID(ItemData.ItemID, Row))
 				{
 					CachedItemWidget->SetItemName(Row.Name);
 					CachedItemWidget->SetItemImage(Row.UIPath);
+					CachedItemWidget->ParentListView = CachedPickUpListView;
 					CachedPickUpListView->AddItem(CachedItemWidget);
 				}
 			}

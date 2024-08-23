@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ListView.h"
+#include "MSCachedPickUpItemWidget.h"
 #include "MSBackpackWidget.generated.h"
 
 
+class UMSBackpackComponent;
 /**
  * 
  */
@@ -16,14 +18,16 @@ class MYSTERIOUSSTORM_API UMSBackpackWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-protected:
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMSBackpackComponent* BackpackComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TileSize = 0.0f;
 
 #pragma region CachedPickUpList
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UUserWidget> CachedPickUpItemWidget;
 
 	UPROPERTY(meta = (BindWidget))
 	UListView* CachedPickUpListView;

@@ -2,15 +2,13 @@
 
 
 #include "MSBackpackComponent.h"
+#include "MysteriousStorm/Item//MSItemActor.h"
 
 // Sets default values for this component's properties
 UMSBackpackComponent::UMSBackpackComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
@@ -55,6 +53,25 @@ void UMSBackpackComponent::RemoveFromCachedPickUpList(AMSItemActor* TargetItem)
 }
 
 #pragma endregion CachedPickUpList
+
+bool UMSBackpackComponent::IsRoomForNewItem(const FMSItemData& NewItemData, int32 TopLeftIndex) const
+{
+	int32 TileXStart = TopLeftIndex % ColumnNumber;
+	int32 TileYStart = TopLeftIndex / ColumnNumber;
+	int32 TileXEnd = TileXStart + NewItemData.XUISize - 1;
+	int32 TileYEnd = TileYStart + NewItemData.YUISize - 1;
+
+
+	if (TileXStart < 0 || TileYStart < 0) return false;
+	if (TileXEnd >= ColumnNumber || TileYEnd >= RowNumber) return false;
+
+
+	// TODO: 
+
+
+	return true;
+
+}
 
 bool UMSBackpackComponent::CanPickUpThisItem(AMSItemActor* NewItem) const
 {

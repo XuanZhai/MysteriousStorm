@@ -7,8 +7,8 @@ FMSItemData::FMSItemData()
 {
 	ItemID = 0;
 	Count = 0;
-	RowSize = 0;
-	ColumnSize = 0;
+	XUISize = 0;
+	YUISize = 0;
 	ItemType = EItemType::MAX;
 }
 

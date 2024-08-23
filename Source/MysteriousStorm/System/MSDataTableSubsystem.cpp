@@ -15,12 +15,19 @@ void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		WeaponTablePath
 	};
 
+
+
 	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
 		Paths, [this]()
 		{
 
 			ItemTable = Cast<UDataTable>(ItemTablePath.ResolveObject());
 			WeaponTable = Cast<UDataTable>(WeaponTablePath.ResolveObject());
+
+			if (OnTableLoaded.IsBound())
+			{
+				OnTableLoaded.Broadcast(this);
+			}
 		});
 
 }

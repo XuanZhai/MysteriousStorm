@@ -8,6 +8,7 @@
 #include "MSItemActor.generated.h"
 
 struct FMSItemData;
+class UMSDataTableSubsystem;
 
 UCLASS()
 class MYSTERIOUSSTORM_API AMSItemActor : public AActor
@@ -32,6 +33,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	void InitStaticMesh();
+
+	UFUNCTION()
+	void InitItemDataFromTable(UMSDataTableSubsystem* DataTableSubsystem);
 
 public:	
 	// Called every frame
