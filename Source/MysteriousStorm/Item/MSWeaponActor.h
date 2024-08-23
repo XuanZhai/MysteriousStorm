@@ -19,5 +19,7 @@ UCLASS()
 class MYSTERIOUSSTORM_API AMSWeaponActor : public AMSItemActor
 {
 	GENERATED_BODY()
+public:
+	AMSWeaponActor();
 	
 };
