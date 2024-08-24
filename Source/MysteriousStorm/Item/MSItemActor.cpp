@@ -4,6 +4,7 @@
 #include "MSItemActor.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSItemTableRow.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "MSItemData.h"
 
 // Sets default values

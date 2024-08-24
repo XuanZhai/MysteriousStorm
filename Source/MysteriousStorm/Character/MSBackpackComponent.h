@@ -23,10 +23,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadWrite)
- 	TArray<UMSItemData*> Items;
+	TMap<UMSItemData*, int32> Items;
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<UMSItemData*> Weapons;
+	TArray<UMSItemData*> WeaponList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UMSItemData*> Tiles;
@@ -65,6 +65,13 @@ protected:
 	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex);
 
 public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackpackChanged);
+	UPROPERTY(BlueprintAssignable)
+	FOnBackpackChanged OnBackpackChanged;
+
+	UPROPERTY()
+	bool NeedRefresh;
+
 	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY) const;
 
 	UFUNCTION(BlueprintCallable)
@@ -72,5 +79,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TryPickUpThisItem(AMSItemActor* NewItem);
+
+	UFUNCTION(BlueprintCallable)
+	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
+
+	void RemoveItem(UMSItemData* NewItem);
 #pragma endregion
 };

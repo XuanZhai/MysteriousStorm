@@ -41,5 +41,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AMSItemActor> AssetBP;
 
+	UPROPERTY(BlueprintReadWrite)
+	float RotateDegree;
+
+	UPROPERTY(BlueprintReadWrite)
+	UMaterialInstanceDynamic* UIMaterial;
+
 	UMSItemData();
 };

@@ -8,4 +8,5 @@ UMSItemData::UMSItemData()
 	ID = 0;
 	XUISize = 0;
 	YUISize = 0;
+	RotateDegree = 0.0f;
 }

@@ -10,7 +10,7 @@ UMSBackpackComponent::UMSBackpackComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Tiles.SetNum(ColumnNumber*RowNumber);
+	NeedRefresh = false;
 }
 
 
@@ -29,7 +29,11 @@ void UMSBackpackComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (NeedRefresh && OnBackpackChanged.IsBound())
+	{
+		OnBackpackChanged.Broadcast();
+		NeedRefresh = false;
+	}
 }
 
 #pragma region CachedPickUpList
@@ -68,11 +72,11 @@ bool UMSBackpackComponent::IsAvailableForNewItem(const UMSItemData* NewItemData,
 	int32 TileYStart = 0;
 	IndexToTile(TopLeftIndex,TileXStart,TileYStart);
 
-	int32 TileXEnd = TileXStart + NewItemData->XUISize - 1;
-	int32 TileYEnd = TileYStart + NewItemData->YUISize - 1;
+	int32 TileXEnd = TileXStart + NewItemData->XUISize;
+	int32 TileYEnd = TileYStart + NewItemData->YUISize;
 
 	if (TileXStart < 0 || TileYStart < 0) return false;
-	if (TileXEnd >= ColumnNumber || TileYEnd >= RowNumber) return false;
+	if (TileXEnd > ColumnNumber || TileYEnd > RowNumber) return false;
 
 	for (int32 x = TileXStart; x < TileXEnd; x++)
 	{
@@ -98,8 +102,8 @@ void UMSBackpackComponent::FillTilesWithItem(UMSItemData* NewItemData, int32 Top
 	int32 TileXStart = 0;
 	int32 TileYStart = 0;
 	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
-	int32 TileXEnd = TileXStart + NewItemData->XUISize - 1;
-	int32 TileYEnd = TileYStart + NewItemData->YUISize - 1;
+	int32 TileXEnd = TileXStart + NewItemData->XUISize;
+	int32 TileYEnd = TileYStart + NewItemData->YUISize;
 
 	for (int32 x = TileXStart; x < TileXEnd; x++)
 	{
@@ -141,14 +145,25 @@ bool UMSBackpackComponent::TryPickUpThisItem(AMSItemActor* NewItem)
 			NewItem->Destroy();
 			FillTilesWithItem(ItemData,i);
 
-			Items.Add(ItemData);
+			int32 TileX = 0;
+			int32 TileY = 0;
+			IndexToTile(i, TileX, TileY);
+
+			Items.Add({ItemData, i});
+
 			if (NewItem->IsWeapon())
 			{
-				Weapons.Add(ItemData);
+				WeaponList.Add(ItemData);
 			}
 
+			NeedRefresh = true;
 			return true;
 		}
 	}
 	return false;
+}
+
+void UMSBackpackComponent::RemoveItem(UMSItemData* NewItem)
+{
+
 }
