@@ -15,11 +15,13 @@ enum EWeaponType : uint8
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class MYSTERIOUSSTORM_API AMSWeaponActor : public AMSItemActor
 {
 	GENERATED_BODY()
 public:
 	AMSWeaponActor();
+
+	virtual bool TryAttack() = delete;
 	
 };

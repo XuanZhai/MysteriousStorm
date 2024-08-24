@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "MysteriousStorm/Item/MSWeaponActor.h"
 #include "MSWeaponComponent.generated.h"
 
 
@@ -17,6 +18,9 @@ public:
 	UMSWeaponComponent();
 
 protected:
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AMSWeaponActor*> Weapons;
+	
 	// Called when the game starts
 	virtual void BeginPlay() override;
 

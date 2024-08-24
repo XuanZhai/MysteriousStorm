@@ -5,6 +5,5 @@
 
 AMSWeaponActor::AMSWeaponActor()
 {
-	StaticMeshComp = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
 	
 }
