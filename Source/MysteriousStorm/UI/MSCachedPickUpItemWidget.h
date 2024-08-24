@@ -18,17 +18,14 @@ class MYSTERIOUSSTORM_API UMSCachedPickUpItemWidget : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(meta = (BindWidget))
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* ItemName;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage* ItemImage;
 
 public:
 	TWeakObjectPtr<UListView> ParentListView;
 
-public:
-	void SetItemName(const FString& NewItemName);
-
-	void SetItemImage(const FSoftObjectPath& UIPath);
 };

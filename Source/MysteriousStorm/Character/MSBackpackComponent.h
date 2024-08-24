@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MysteriousStorm/Item/MSItemData.h"
 #include "MSBackpackComponent.generated.h"
 
 class AMSItemActor;
+class UMSItemData;
 
 UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent) )
 class MYSTERIOUSSTORM_API UMSBackpackComponent : public UActorComponent
@@ -22,10 +22,14 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	// TODO: Be used to store the weapon in the bags. May be changed later. [ZX]
-	TArray<FMSItemData> WeaponBags;
+	UPROPERTY(BlueprintReadWrite)
+ 	TArray<UMSItemData*> Items;
 
-	TArray<TSharedPtr<FMSItemData>> Items;
+	UPROPERTY(BlueprintReadWrite)
+	TArray<UMSItemData*> Weapons;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UMSItemData*> Tiles;
 
 public:	
 	// Called every frame
@@ -56,9 +60,13 @@ public:
 	int32 ColumnNumber;
 
 protected:
-	bool IsRoomForNewItem(const FMSItemData& NewItemData, int32 TopLeftIndex) const;
+	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const;
+
+	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex);
 
 public:
+	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY) const;
+
 	UFUNCTION(BlueprintCallable)
 	bool CanPickUpThisItem(AMSItemActor* NewItem) const;
 

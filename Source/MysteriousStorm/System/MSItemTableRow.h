@@ -6,6 +6,8 @@
 #include "Engine/DataTable.h"
 #include "MSItemTableRow.generated.h"
 
+class AMSItemActor;
+
 /**
  * 
  */
@@ -21,13 +23,19 @@ struct MYSTERIOUSSTORM_API FMSItemTableRow : public FTableRowBase
     FString Name;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSoftObjectPath BPAssetPath;
+    TSubclassOf<AMSItemActor> AssetBP;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSoftObjectPath PreviewUIPath;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSoftObjectPath UIPath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 XUISize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 YUISize;
 
     FMSItemTableRow();
 };

@@ -3,37 +3,33 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
 #include "MSItemData.generated.h"
 
-class UMSDataTableSubsystem;
-
-UENUM(BlueprintType)
-enum EItemType : uint8
-{
-	Item = 0,
-	Weapon = 1,
-	MAX
-};
-
+class AMSItemActor;
 /**
  * 
  */
-USTRUCT(BlueprintType)
-struct MYSTERIOUSSTORM_API FMSItemData
+UCLASS(Blueprintable)
+class MYSTERIOUSSTORM_API UMSItemData : public UObject
 {
 	GENERATED_BODY()
-
+	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ItemID;
+	int32 ID;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Count;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Name;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 XUISize;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 YUISize;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EItemType> ItemType;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	FSoftObjectPath PreviewUIPath;
@@ -41,7 +37,8 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	FSoftObjectPath UIPath;
 
-public:
-	FMSItemData();
-	~FMSItemData();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AMSItemActor> AssetBP;
+
+	UMSItemData();
 };

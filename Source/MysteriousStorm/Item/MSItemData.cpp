@@ -3,15 +3,9 @@
 
 #include "MSItemData.h"
 
-FMSItemData::FMSItemData()
+UMSItemData::UMSItemData()
 {
-	ItemID = 0;
-	Count = 0;
+	ID = 0;
 	XUISize = 0;
 	YUISize = 0;
-	ItemType = EItemType::MAX;
-}
-
-FMSItemData::~FMSItemData()
-{
 }

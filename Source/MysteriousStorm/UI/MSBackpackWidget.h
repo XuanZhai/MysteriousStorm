@@ -29,6 +29,9 @@ public:
 
 protected:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UMSCachedPickUpItemWidget> CachedItemClass;
+
 	UPROPERTY(meta = (BindWidget))
 	UListView* CachedPickUpListView;
 
