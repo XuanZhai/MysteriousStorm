@@ -3,6 +3,9 @@
 
 #include "MSIntermittentWeapon.h"
 
+#include "EngineUtils.h"
+#include "MysteriousStorm/Character/MSEnemyCharacter.h"
+
 # pragma region lifetime
 
 void AMSIntermittentWeapon::BeginPlay()
@@ -27,16 +30,11 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
-	// TODO: 根据weapontype实现不同索敌算法
-	switch (WeaponType)
+	SearchEnemy();
+
+	for(const auto Enemy :SearchEnemyCache)
 	{
-	case EWeaponType::Sword:
-	case EWeaponType::Grenade:
-	case EWeaponType::ShotGun:
-	case EWeaponType::MachineGun:
-	case EWeaponType::Dart:
-	default:
-		break;
+		Enemy->Hurt();
 	}
 	return true;
 }
@@ -44,4 +42,25 @@ bool AMSIntermittentWeapon::TryAttack()
 void AMSIntermittentWeapon::SearchEnemy()
 {
 	SearchEnemyCache.Empty();
+	// TODO: 根据weapontype实现不同索敌算法
+	TActorIterator<AMSEnemyCharacter> EnemyItr = TActorIterator<AMSEnemyCharacter>(GetWorld());
+	FVector AttackDirection = OwnerCharacter->GetActorForwardVector();
+	switch (WeaponType)
+	{
+	case EWeaponType::Sword:
+		for (; EnemyItr; ++EnemyItr)
+		{
+			if (FVector::Dist(OwnerCharacter->GetActorLocation(), EnemyItr->GetActorLocation()) < 100)
+			{
+				SearchEnemyCache.Add(*EnemyItr);
+			}
+		}
+		break;
+	case EWeaponType::Grenade:
+	case EWeaponType::ShotGun:
+	case EWeaponType::MachineGun:
+	case EWeaponType::Dart:
+	default:
+		break;
+	}
 }

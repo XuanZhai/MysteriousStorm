@@ -38,11 +38,15 @@ protected:
 	FVector Offset;
 	float RotateSpeed;
 
+	static float DistancePointToSegment(const FVector& Point, const FVector& Start, const FVector& End) ;
+	static bool OverlapSectorCircle(const FVector& SectorCenter, FVector Forward, float Angle, float Radius, const FVector& CircleCenter, FVector) ;
+
 public:
 	AMSWeaponActor();
 
 	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
 	virtual void BeginPlay() override;
+	
 	virtual bool TryAttack();
 	virtual bool TryReadConfig();
 	virtual void Tick(float DeltaSeconds) override;

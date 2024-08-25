@@ -32,3 +32,8 @@ void AMSEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
+void AMSEnemyCharacter::Hurt()
+{
+	Destroy();
+}
+

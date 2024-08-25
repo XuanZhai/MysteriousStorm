@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MSWeaponActor.h"
+#include "MysteriousStorm/Character/MSEnemyCharacter.h"
 #include "MSIntermittentWeapon.generated.h"
 
 /**
@@ -20,7 +21,7 @@ protected:
 	float CurrentTime;
 
 	UPROPERTY()
-	TArray<AActor*> SearchEnemyCache;
+	TArray<AMSEnemyCharacter*> SearchEnemyCache;
 	
 public:
 	virtual void BeginPlay() override;
