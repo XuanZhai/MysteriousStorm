@@ -8,14 +8,6 @@
 
 class UMSItemData;
 
-UENUM(BlueprintType)
-enum EItemType : uint8
-{
-	Item = 0,
-	Weapon = 1,
-	MAX
-};
-
 UCLASS()
 class MYSTERIOUSSTORM_API AMSItemActor : public AActor
 {
@@ -24,9 +16,6 @@ class MYSTERIOUSSTORM_API AMSItemActor : public AActor
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 ItemID;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TEnumAsByte<EItemType> ItemType;
 
 	FVector Location;
 
@@ -55,6 +44,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UMSItemData* GetItemData() const {return ItemData; }
-
-	bool IsWeapon() const {return ItemType == EItemType::Weapon;}
 };

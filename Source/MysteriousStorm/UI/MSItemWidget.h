@@ -41,9 +41,12 @@ protected:
 	void SetSize();
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UMSItemData*, OldItemData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UMSItemData*, TargetItemData);
 	UPROPERTY(BlueprintAssignable)
 	FOnItemRemoved OnItemRemoved;
+
+	UFUNCTION(BlueprintCallable)
+	void CallOnItemRemoved(UMSItemData* TargetItemData);
 
 	void SetTileSize(float NewSize) { TileSize = NewSize; }
 

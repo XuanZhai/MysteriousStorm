@@ -8,6 +8,14 @@
 
 class AMSItemActor;
 
+UENUM(BlueprintType)
+enum EItemType : uint8
+{
+	Item = 0,
+	Weapon = 1,
+	MAX
+};
+
 /**
  * 
  */
@@ -25,6 +33,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<EItemType> ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 XUISize;
@@ -47,5 +58,11 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	UMaterialInstanceDynamic* UIMaterial;
 
+public:
 	UMSItemData();
+
+	bool IsWeapon() const { return ItemType == EItemType::Weapon; }
+
+	UFUNCTION(BlueprintCallable)
+	void RotateUI();
 };

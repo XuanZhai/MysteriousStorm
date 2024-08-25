@@ -70,6 +70,16 @@ void UMSGridWidget::Refresh()
 	}
 }
 
+bool UMSGridWidget::IsPayloadAvailable(UMSItemData* Payload) const
+{
+	if (!Payload || !BackpackComponent)
+	{
+		return false;
+	}
+
+	return BackpackComponent->IsAvailableForNewItem(Payload, DropItemTopLeftTile);
+}
+
 void UMSGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 {
 	if (BackpackComponent)

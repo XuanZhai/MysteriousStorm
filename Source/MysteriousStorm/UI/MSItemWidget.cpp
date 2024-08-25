@@ -16,6 +16,14 @@ void UMSItemWidget::SetSize()
 	}
 }
 
+void UMSItemWidget::CallOnItemRemoved(UMSItemData* TargetItemData)
+{
+	if (OnItemRemoved.IsBound())
+	{
+		OnItemRemoved.Broadcast(TargetItemData);
+	}
+}
+
 void UMSItemWidget::Refresh()
 {
 	SetSize();

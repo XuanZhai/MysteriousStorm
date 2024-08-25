@@ -31,10 +31,16 @@ protected:
 	UMSBackpackComponent* BackpackComponent;
 
 	UPROPERTY(BlueprintReadWrite)
-	float TileSize;
+	float TileSize = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UMSItemWidget> ItemWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 DropItemTopLeftTile = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDrawDropLocation = false;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -47,6 +53,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPayloadAvailable(UMSItemData* Payload) const;
 
 	UFUNCTION()
 	void OnItemRemoved(UMSItemData* TargetItemData);

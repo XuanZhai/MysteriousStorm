@@ -60,8 +60,6 @@ public:
 	int32 ColumnNumber;
 
 protected:
-	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const;
-
 	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex);
 
 public:
@@ -72,17 +70,26 @@ public:
 	UPROPERTY()
 	bool NeedRefresh;
 
+	UFUNCTION(BlueprintCallable)
 	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool CanPickUpThisItem(AMSItemActor* NewItem) const;
+	void TileToIndex(const int32 InX, const int32 InY, int32& OutIndex) const;
+
+	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool TryPickUpThisItem(AMSItemActor* NewItem);
+	bool CanAddThisItem(UMSItemData* NewItemData) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool TryAddThisItem(UMSItemData* NewItemData);
+
+	UFUNCTION(BlueprintCallable)
+	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex);
 
 	UFUNCTION(BlueprintCallable)
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
 
-	void RemoveItem(UMSItemData* NewItem);
+	void RemoveItem(UMSItemData* TargetItem);
 #pragma endregion
 };

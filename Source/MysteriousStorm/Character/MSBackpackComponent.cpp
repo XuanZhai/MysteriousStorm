@@ -66,6 +66,11 @@ void UMSBackpackComponent::IndexToTile(const int32 InIndex, int32& OutX, int32& 
 	OutY = InIndex / ColumnNumber;
 }
 
+void UMSBackpackComponent::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex) const
+{
+	OutIndex = InX + InY * ColumnNumber;
+}
+
 bool UMSBackpackComponent::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const
 {
 	int32 TileXStart = 0;
@@ -120,9 +125,9 @@ void UMSBackpackComponent::FillTilesWithItem(UMSItemData* NewItemData, int32 Top
 	}
 }
 
-bool UMSBackpackComponent::CanPickUpThisItem(AMSItemActor* NewItem) const
+bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData) const
 {
-	if (!NewItem)
+	if (!NewItemData)
 	{
 		return false;
 	}
@@ -130,40 +135,53 @@ bool UMSBackpackComponent::CanPickUpThisItem(AMSItemActor* NewItem) const
 	return true;
 }
 
-bool UMSBackpackComponent::TryPickUpThisItem(AMSItemActor* NewItem)
+bool UMSBackpackComponent::TryAddThisItem(UMSItemData* NewItemData)
 {
-	if (!CanPickUpThisItem(NewItem))
+	if (!CanAddThisItem(NewItemData))
 	{
 		return false;
 	}
 
-	UMSItemData* ItemData = NewItem->GetItemData();
 	for (int32 i = 0; i < Tiles.Num(); i++)
 	{
-		if (IsAvailableForNewItem(ItemData, i))
+		if (IsAvailableForNewItem(NewItemData, i))
 		{
-			NewItem->Destroy();
-			FillTilesWithItem(ItemData,i);
-
-			int32 TileX = 0;
-			int32 TileY = 0;
-			IndexToTile(i, TileX, TileY);
-
-			Items.Add({ItemData, i});
-
-			if (NewItem->IsWeapon())
-			{
-				WeaponList.Add(ItemData);
-			}
-
-			NeedRefresh = true;
+			AddThisItemAt(NewItemData, i);
 			return true;
 		}
 	}
 	return false;
 }
 
-void UMSBackpackComponent::RemoveItem(UMSItemData* NewItem)
+void UMSBackpackComponent::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
+	FillTilesWithItem(NewItemData, TopLeftIndex);
 
+	int32 TileX = 0;
+	int32 TileY = 0;
+	IndexToTile(TopLeftIndex, TileX, TileY);
+
+	Items.Add({ NewItemData, TopLeftIndex });
+
+	if (NewItemData->IsWeapon())
+	{
+		WeaponList.Add(NewItemData);
+	}
+
+	NeedRefresh = true;
+}
+
+void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
+{
+	for (auto& Tile : Tiles)
+	{
+		if (Tile == TargetItem)
+		{
+			Tile = nullptr;
+		}
+	}
+
+	Items.Remove(TargetItem);
+
+	NeedRefresh = true;
 }
