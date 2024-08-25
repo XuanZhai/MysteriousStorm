@@ -18,15 +18,20 @@ public:
 	UMSWeaponComponent();
 
 protected:
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons")
 	TArray<AMSWeaponActor*> Weapons;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons")
+	TArray<TSubclassOf<AMSWeaponActor>> TestWeaponData;
 	
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	void Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponData);
+	void Internal_RemoveWeapon(AMSWeaponActor* Weapon);
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void AddWeapon(UMSItemData* NewWeapon);
+	virtual void RemoveWeapon(UMSItemData* Weapon);
 		
 };

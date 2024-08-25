@@ -3,33 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MSAttributeComponent.h"
-#include "MSWeaponComponent.h"
 #include "GameFramework/Character.h"
-#include "MSCharacter.generated.h"
-
-class UMSBackpackComponent;
+#include "MSEnemyCharacter.generated.h"
 
 UCLASS()
-class MYSTERIOUSSTORM_API AMSCharacter : public ACharacter
+class MYSTERIOUSSTORM_API AMSEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UMSBackpackComponent* BackpackComponent;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UMSWeaponComponent* WeaponComponent;
-
-	UPROPERTY()
-	UMSAttributeComponent* AttributeComponent;
-
 public:
 	// Sets default values for this character's properties
-	AMSCharacter();
+	AMSEnemyCharacter();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
+	float BodyRadius;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -40,5 +29,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UMSBackpackComponent* GetBackpackComponent() const { return BackpackComponent;  }
 };

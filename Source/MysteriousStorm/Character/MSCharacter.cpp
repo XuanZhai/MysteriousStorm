@@ -11,8 +11,8 @@ AMSCharacter::AMSCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	BackpackComponent = CreateDefaultSubobject<UMSBackpackComponent>(TEXT("BackpackComponent"));
-	
-
+	AttributeComponent = CreateDefaultSubobject<UMSAttributeComponent>(TEXT("AttributeComponent"));
+	WeaponComponent = CreateDefaultSubobject<UMSWeaponComponent>(TEXT("WeaponComponent"));
 }
 
 // Called when the game starts or when spawned

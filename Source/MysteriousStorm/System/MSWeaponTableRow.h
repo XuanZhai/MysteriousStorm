@@ -6,7 +6,7 @@
 #include "Engine/DataTable.h"
 #include "MSWeaponTableRow.generated.h"
 
-enum EWeaponType : uint8;
+// enum EWeaponType : uint8;
 /**
  * 
  */

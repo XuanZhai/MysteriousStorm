@@ -13,5 +13,6 @@ UCLASS()
 class MYSTERIOUSSTORM_API AMSContinuousWeapon : public AMSWeaponActor
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void Tick(float DeltaSeconds) override;
 };
