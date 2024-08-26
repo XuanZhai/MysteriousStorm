@@ -3,6 +3,7 @@
 
 #include "MSDataTableSubsystem.h"
 #include "MSItemTableRow.h"
+#include "MSWeaponTableRow.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
@@ -49,6 +50,19 @@ bool UMSDataTableSubsystem::TryGetRowByItemID(const int32 ItemID, struct FMSItem
 	if (ItemTable)
 	{
 		if (FMSItemTableRow* Row = ItemTable->FindRow<FMSItemTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
+		{
+			OutRow = *Row;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UMSDataTableSubsystem::TryGetWeaponConfigByItemID(const int32 ItemID, struct FMSWeaponTableRow& OutRow) const
+{
+	if (WeaponTable)
+	{
+		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
 		{
 			OutRow = *Row;
 			return true;

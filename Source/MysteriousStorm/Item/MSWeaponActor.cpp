@@ -3,9 +3,12 @@
 
 #include "MSWeaponActor.h"
 
+#include "MysteriousStorm/System/MSDataTableSubsystem.h"
+
 
 AMSWeaponActor::AMSWeaponActor()
 {
+	TryReadConfig();
 }
 
 void AMSWeaponActor::BeginPlay()
@@ -14,6 +17,7 @@ void AMSWeaponActor::BeginPlay()
 	Offset = FVector(100, 0, 0);
 	RuntimeOffset = Offset.RotateAngleAxis(FMath::FRandRange(0.0f, 100.0f), FVector(0, 0, 1));
 	RotateSpeed = 200;
+	
 }
 
 
@@ -30,7 +34,8 @@ bool AMSWeaponActor::TryAttack()
 
 bool AMSWeaponActor::TryReadConfig()
 {
-	// TODO: 读取武器配置并赋值
+	UGameInstance* GameInstance = GetGameInstance();
+	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetWeaponConfigByItemID(ItemID,WeaponConfig);
 	return true;
 }
 
@@ -70,19 +75,19 @@ float AMSWeaponActor::DistancePointToSegment(const FVector& Point, const FVector
 }
 
 bool AMSWeaponActor::OverlapSectorCircle(const FVector& SectorCenter, FVector Forward, float Angle, float Radius,
-                                         const FVector& CircleCenter, FVector)
+                                         const FVector& CircleCenter, float CircleRadius)
 {
 	float CenterDistance = FVector::Dist(SectorCenter, CircleCenter);
-	if (CenterDistance > Radius)
+	if (CenterDistance > (Radius+CircleRadius))
 	{
 		return false;
 	}
 
 	if (DistancePointToSegment(CircleCenter, SectorCenter,
-	                           SectorCenter + Forward.RotateAngleAxis(-Angle / 2, FVector::UpVector) * Radius) > Radius
+	                           SectorCenter + Forward.RotateAngleAxis(-Angle / 2, FVector::UpVector) * Radius) > CircleRadius
 		||
 		DistancePointToSegment(CircleCenter, SectorCenter,
-		                       SectorCenter + Forward.RotateAngleAxis(Angle / 2, FVector::UpVector) * Radius) > Radius)
+		                       SectorCenter + Forward.RotateAngleAxis(Angle / 2, FVector::UpVector) * Radius) > CircleRadius)
 	{
 		return false;
 	}

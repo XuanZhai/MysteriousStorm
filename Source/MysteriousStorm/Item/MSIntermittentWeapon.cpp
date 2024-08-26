@@ -32,7 +32,7 @@ bool AMSIntermittentWeapon::TryAttack()
 {
 	SearchEnemy();
 
-	for(const auto Enemy :SearchEnemyCache)
+	for (const auto Enemy : SearchEnemyCache)
 	{
 		Enemy->Hurt();
 	}
@@ -50,7 +50,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 	case EWeaponType::Sword:
 		for (; EnemyItr; ++EnemyItr)
 		{
-			if (FVector::Dist(OwnerCharacter->GetActorLocation(), EnemyItr->GetActorLocation()) < 100)
+			if (OverlapSectorCircle(GetActorLocation(), AttackDirection, WeaponConfig.SectorAngle, WeaponConfig.SectorRadius,
+			                        EnemyItr->GetActorLocation(), 30))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}

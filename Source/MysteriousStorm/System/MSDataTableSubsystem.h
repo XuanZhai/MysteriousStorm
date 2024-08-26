@@ -48,6 +48,8 @@ public:
 
 	bool TryGetRowByItemID(const int32 ItemID, struct FMSItemTableRow& OutRow) const;
 
+	bool TryGetWeaponConfigByItemID(const int32 ItemID, struct FMSWeaponTableRow& OutRow) const;
+
 	UFUNCTION(BlueprintCallable)
 	UDataTable* GetWeaponTable() const { return WeaponTable; }
 };

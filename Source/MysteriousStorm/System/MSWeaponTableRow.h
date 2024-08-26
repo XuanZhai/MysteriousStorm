@@ -6,7 +6,17 @@
 #include "Engine/DataTable.h"
 #include "MSWeaponTableRow.generated.h"
 
-// enum EWeaponType : uint8;
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	None,
+	Sword,
+	Hammer,
+	Grenade,
+	Dart,
+	MachineGun,
+	ShotGun,
+};
 /**
  * 
  */
@@ -18,8 +28,20 @@ struct MYSTERIOUSSTORM_API FMSWeaponTableRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 ItemID;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TEnumAsByte<EWeaponType> WeaponType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EWeaponType WeaponType;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString WeaponName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float IntervalTime;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SectorAngle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SectorRadius;
 
 	FMSWeaponTableRow();
 };

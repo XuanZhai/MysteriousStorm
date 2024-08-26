@@ -5,19 +5,9 @@
 #include "CoreMinimal.h"
 #include "MSItemActor.h"
 #include "GameFramework/Character.h"
+#include "MysteriousStorm/System/MSWeaponTableRow.h"
 #include "MSWeaponActor.generated.h"
 
-UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	None,
-	Sword,
-	Hammer,
-	Grenade,
-	Dart,
-	MachineGun,
-	ShotGun,
-};
 
 /**
  * 
@@ -37,9 +27,10 @@ protected:
 	FVector RuntimeOffset;
 	FVector Offset;
 	float RotateSpeed;
+	FMSWeaponTableRow WeaponConfig;
 
 	static float DistancePointToSegment(const FVector& Point, const FVector& Start, const FVector& End) ;
-	static bool OverlapSectorCircle(const FVector& SectorCenter, FVector Forward, float Angle, float Radius, const FVector& CircleCenter, FVector) ;
+	static bool OverlapSectorCircle(const FVector& SectorCenter, FVector Forward, float Angle, float Radius, const FVector& CircleCenter, float CircleRadius);
 
 public:
 	AMSWeaponActor();
@@ -48,7 +39,7 @@ public:
 	virtual void BeginPlay() override;
 	
 	virtual bool TryAttack();
-	virtual bool TryReadConfig();
+	bool TryReadConfig();
 	virtual void Tick(float DeltaSeconds) override;
 	
 };
