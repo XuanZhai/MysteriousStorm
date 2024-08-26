@@ -2,7 +2,6 @@
 
 
 #include "MSBackpackWidget.h"
-#include "MSCachedPickUpItemWidget.h"
 #include "MysteriousStorm/Item/MSItemData.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "MysteriousStorm/Character/MSCharacter.h"
@@ -13,6 +12,7 @@
 
 void UMSBackpackWidget::RefreshCachedPickUpListView()
 {
+	/*
 	if (!CachedPickUpListView)
 	{
 		return;
@@ -39,4 +39,5 @@ void UMSBackpackWidget::RefreshCachedPickUpListView()
 	}
 
 	CachedPickUpListView->RequestRefresh();
+	*/
 }

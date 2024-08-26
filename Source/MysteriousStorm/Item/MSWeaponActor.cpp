@@ -8,12 +8,15 @@
 
 AMSWeaponActor::AMSWeaponActor()
 {
-	TryReadConfig();
+	//TryReadConfig();
 }
 
 void AMSWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TryReadConfig();
+
 	Offset = FVector(100, 0, 0);
 	RuntimeOffset = Offset.RotateAngleAxis(FMath::FRandRange(0.0f, 100.0f), FVector(0, 0, 1));
 	RotateSpeed = 200;

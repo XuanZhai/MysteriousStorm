@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ListView.h"
-#include "MSCachedPickUpItemWidget.h"
 #include "MSBackpackWidget.generated.h"
 
 
@@ -28,12 +27,6 @@ public:
 #pragma region CachedPickUpList
 
 protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UMSCachedPickUpItemWidget> CachedItemClass;
-
-	UPROPERTY(meta = (BindWidget))
-	UListView* CachedPickUpListView;
 
 	UFUNCTION(BlueprintCallable)
 	void RefreshCachedPickUpListView();

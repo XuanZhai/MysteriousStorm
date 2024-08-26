@@ -18,11 +18,22 @@ void UMSGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewB
 		return;
 	}
 
+	if (bIsCachedBackpack)
+	{
+		ColumnNum = BackpackComponent->CachedColumnNumber;
+		RowNum = BackpackComponent->CachedRowNumber;
+	}
+	else
+	{
+		ColumnNum = BackpackComponent->ColumnNumber;
+		RowNum = BackpackComponent->RowNumber;
+	}
+
 	if (GridBorder)
 	{
 		if (UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(GridBorder->Slot))
 		{
-			CanvasPanelSlot->SetSize(FVector2D(TileSize*BackpackComponent->ColumnNumber, TileSize * BackpackComponent->RowNumber));
+			CanvasPanelSlot->SetSize(FVector2D(TileSize* ColumnNum, TileSize * RowNum));
 		}
 	}
 
@@ -41,13 +52,13 @@ void UMSGridWidget::Refresh()
 
 	GridPanel->ClearChildren();
 
-	const TMap<UMSItemData*, int32>& Items = BackpackComponent->GetItems();
+	const TMap<UMSItemData*, int32>& NewItems = bIsCachedBackpack ? BackpackComponent->GetCachedItems() : BackpackComponent->GetItems();
 
-	for (const auto& Item : Items)
+	for (const auto& Item : NewItems)
 	{
 		int32 TileX = 0;
 		int32 TileY = 0;
-		BackpackComponent->IndexToTile(Item.Value, TileX, TileY);
+		BackpackComponent->IndexToTile(Item.Value, TileX, TileY, ColumnNum);
 
 		UUserWidget* NewWidget = CreateWidget(this, ItemWidgetClass);
 
@@ -70,20 +81,22 @@ void UMSGridWidget::Refresh()
 	}
 }
 
-bool UMSGridWidget::IsPayloadAvailable(UMSItemData* Payload) const
-{
-	if (!Payload || !BackpackComponent)
-	{
-		return false;
-	}
 
-	return BackpackComponent->IsAvailableForNewItem(Payload, DropItemTopLeftTile);
+bool UMSGridWidget::IsPayloadAvailable_Implementation(UMSItemData* Payload) const
+{
+	return true;
+	//if (!Payload || !BackpackComponent)
+	//{
+	//	return false;
+	//}
+
+	//return BackpackComponent->IsAvailableForNewItem_Implementation(Payload, DropItemTopLeftTile, );
 }
 
-void UMSGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
+void UMSGridWidget::OnItemRemoved_Implementation(UMSItemData* TargetItemData)
 {
-	if (BackpackComponent)
-	{
-		BackpackComponent->RemoveItem(TargetItemData);
-	}
+	//if (BackpackComponent)
+	//{
+	//	BackpackComponent->RemoveItem(TargetItemData);
+	//}
 }

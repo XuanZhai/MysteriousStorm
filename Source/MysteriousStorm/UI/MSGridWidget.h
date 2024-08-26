@@ -42,6 +42,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bDrawDropLocation = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ColumnNum = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 RowNum = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsCachedBackpack = false;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Refresh();
@@ -54,9 +63,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool IsPayloadAvailable(UMSItemData* Payload) const;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnItemRemoved(UMSItemData* TargetItemData);
 };

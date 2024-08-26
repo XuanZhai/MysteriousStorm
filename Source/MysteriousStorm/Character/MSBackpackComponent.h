@@ -37,8 +37,21 @@ public:
 
 #pragma region CachedPickUpList
 protected:
+	UPROPERTY(BlueprintReadWrite)
+	TMap<UMSItemData*, int32> CachedItems;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray <UMSItemData*> CachedTiles;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<AMSItemActor*> CachedPickUpList;
+	TMap<UMSItemData*, AMSItemActor*> CachedPickUpList;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CachedRowNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CachedColumnNumber;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -48,7 +61,15 @@ public:
 	void RemoveFromCachedPickUpList(AMSItemActor* TargetItem);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AMSItemActor*>& GetCachedPickUpList() { return CachedPickUpList; }
+	const TMap<UMSItemData*, AMSItemActor*>& GetCachedPickUpList() const { return CachedPickUpList; }
+
+	void ClearCachedPickUpList();
+
+	UFUNCTION(BlueprintCallable)
+	bool TryFillCachedTiles();
+
+	UFUNCTION(BlueprintCallable)
+	const TMap<UMSItemData*, int32>& GetCachedItems() const { return CachedItems; }
 #pragma endregion
 
 #pragma region Backpack
@@ -60,7 +81,7 @@ public:
 	int32 ColumnNumber;
 
 protected:
-	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex);
+	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum);
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackpackChanged);
@@ -71,25 +92,27 @@ public:
 	bool NeedRefresh;
 
 	UFUNCTION(BlueprintCallable)
-	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY) const;
+	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const;
 
 	UFUNCTION(BlueprintCallable)
-	void TileToIndex(const int32 InX, const int32 InY, int32& OutIndex) const;
-
-	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const;
+	void TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool CanAddThisItem(UMSItemData* NewItemData) const;
+	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool TryAddThisItem(UMSItemData* NewItemData);
+	bool CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const;
 
 	UFUNCTION(BlueprintCallable)
-	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex);
+	bool TryAddThisItem(UMSItemData* NewItemData, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
+
+	UFUNCTION(BlueprintCallable)
+	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
 
 	UFUNCTION(BlueprintCallable)
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
 
-	void RemoveItem(UMSItemData* TargetItem);
+	UFUNCTION(BlueprintCallable)
+	void RemoveItem(UMSItemData* TargetItem, bool bIsBackpack);
 #pragma endregion
 };

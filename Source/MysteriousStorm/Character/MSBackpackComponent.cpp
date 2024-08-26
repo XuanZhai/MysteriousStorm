@@ -21,6 +21,7 @@ void UMSBackpackComponent::BeginPlay()
 
 	// ...
 	Tiles.SetNum(ColumnNumber * RowNumber);
+	CachedTiles.SetNum(CachedColumnNumber * CachedRowNumber);
 }
 
 
@@ -40,60 +41,78 @@ void UMSBackpackComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UMSBackpackComponent::AddToCachedPickUpList(AMSItemActor* NewItem)
 {
-	if (!NewItem)
+	if (!NewItem || !NewItem->GetItemData())
 	{
 		return;
 	}
-
-	CachedPickUpList.Add(NewItem);
+	CachedPickUpList.Add({ NewItem->GetItemData(), NewItem});
 }
 
 void UMSBackpackComponent::RemoveFromCachedPickUpList(AMSItemActor* TargetItem)
 {
-	if (!TargetItem)
+	if (!TargetItem || !TargetItem->GetItemData())
 	{
 		return;
 	}
+	CachedPickUpList.Remove(TargetItem->GetItemData());
+}
 
-	CachedPickUpList.Remove(TargetItem);
+void UMSBackpackComponent::ClearCachedPickUpList()
+{
+	for (auto& Tile : CachedTiles)
+	{
+		Tile = nullptr;
+	}
+}
+
+bool UMSBackpackComponent::TryFillCachedTiles()
+{
+	ClearCachedPickUpList();
+
+	for (auto& CachedItem : CachedPickUpList)
+	{
+		TryAddThisItem(CachedItem.Key, CachedTiles, CachedColumnNumber, CachedRowNumber);
+	}
+	return true;
 }
 
 #pragma endregion CachedPickUpList
 
-void UMSBackpackComponent::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY) const
+void UMSBackpackComponent::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const
 {
-	OutX = InIndex % ColumnNumber;
-	OutY = InIndex / ColumnNumber;
+	OutX = InIndex % ColumnNum;
+	OutY = InIndex / ColumnNum;
 }
 
-void UMSBackpackComponent::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex) const
+void UMSBackpackComponent::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const
 {
-	OutIndex = InX + InY * ColumnNumber;
+	OutIndex = InX + InY * ColumnNum;
 }
 
-bool UMSBackpackComponent::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const
+bool UMSBackpackComponent::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const
 {
 	int32 TileXStart = 0;
 	int32 TileYStart = 0;
-	IndexToTile(TopLeftIndex,TileXStart,TileYStart);
+	IndexToTile(TopLeftIndex,TileXStart,TileYStart, ColNum);
 
 	int32 TileXEnd = TileXStart + NewItemData->XUISize;
 	int32 TileYEnd = TileYStart + NewItemData->YUISize;
 
 	if (TileXStart < 0 || TileYStart < 0) return false;
-	if (TileXEnd > ColumnNumber || TileYEnd > RowNumber) return false;
+	if (TileXEnd > ColNum || TileYEnd > RowNum) return false;
 
 	for (int32 x = TileXStart; x < TileXEnd; x++)
 	{
 		for (int32 y = TileYStart; y < TileYEnd; y++)
 		{
-			int32 CurrentIndex = x + y * ColumnNumber;
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex, ColNum);
 
-			if (!Tiles.IsValidIndex(CurrentIndex))
+			if (!InTiles.IsValidIndex(CurrentIndex))
 			{
 				return false;
 			}
-			else if (Tiles[CurrentIndex] != nullptr)
+			else if (InTiles[CurrentIndex] != nullptr)
 			{
 				return false;
 			}
@@ -102,11 +121,11 @@ bool UMSBackpackComponent::IsAvailableForNewItem(const UMSItemData* NewItemData,
 	return true;
 }
 
-void UMSBackpackComponent::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex)
+void UMSBackpackComponent::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum)
 {
 	int32 TileXStart = 0;
 	int32 TileYStart = 0;
-	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart, ColNum);
 	int32 TileXEnd = TileXStart + NewItemData->XUISize;
 	int32 TileYEnd = TileYStart + NewItemData->YUISize;
 
@@ -114,18 +133,18 @@ void UMSBackpackComponent::FillTilesWithItem(UMSItemData* NewItemData, int32 Top
 	{
 		for (int32 y = TileYStart; y < TileYEnd; y++)
 		{
-			int32 CurrentIndex = x + y * ColumnNumber;
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex, ColNum);
 
-			if (!Tiles.IsValidIndex(CurrentIndex))
+			if (InTiles.IsValidIndex(CurrentIndex))
 			{
-				UE_LOG(LogTemp,Error, TEXT("Add Fill Tiles Out of bound for %d"), TopLeftIndex);
+				InTiles[CurrentIndex] = NewItemData;
 			}
-			Tiles[CurrentIndex] = NewItemData;
 		}
 	}
 }
 
-bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData) const
+bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const
 {
 	if (!NewItemData)
 	{
@@ -135,53 +154,72 @@ bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData) const
 	return true;
 }
 
-bool UMSBackpackComponent::TryAddThisItem(UMSItemData* NewItemData)
+bool UMSBackpackComponent::TryAddThisItem(UMSItemData* NewItemData, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
 {
-	if (!CanAddThisItem(NewItemData))
+	if (!CanAddThisItem(NewItemData,true))
 	{
 		return false;
 	}
 
-	for (int32 i = 0; i < Tiles.Num(); i++)
+	for (int32 i = 0; i < InTiles.Num(); i++)
 	{
-		if (IsAvailableForNewItem(NewItemData, i))
+		if (IsAvailableForNewItem(NewItemData, i, InTiles,ColNum, RowNum))
 		{
-			AddThisItemAt(NewItemData, i);
+			AddThisItemAt(NewItemData, i, InTiles, ColNum, RowNum);
 			return true;
 		}
 	}
 	return false;
 }
 
-void UMSBackpackComponent::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex)
+void UMSBackpackComponent::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
 {
-	FillTilesWithItem(NewItemData, TopLeftIndex);
+	FillTilesWithItem(NewItemData, TopLeftIndex,InTiles,ColNum);
 
 	int32 TileX = 0;
 	int32 TileY = 0;
-	IndexToTile(TopLeftIndex, TileX, TileY);
+	IndexToTile(TopLeftIndex, TileX, TileY,ColNum);
 
-	Items.Add({ NewItemData, TopLeftIndex });
-
-	if (NewItemData->IsWeapon())
+	if (InTiles == Tiles)
 	{
-		WeaponList.Add(NewItemData);
+		Items.Add({ NewItemData, TopLeftIndex });
+		if (NewItemData->IsWeapon())
+		{
+			WeaponList.Add(NewItemData);
+		}
+	}
+	else
+	{
+		CachedItems.Add({ NewItemData, TopLeftIndex });
 	}
 
 	NeedRefresh = true;
 }
 
-void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
+void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bIsBackpack)
 {
-	for (auto& Tile : Tiles)
+	if (bIsBackpack) 
 	{
-		if (Tile == TargetItem)
+		for (auto& Tile : Tiles)
 		{
-			Tile = nullptr;
+			if (Tile == TargetItem)
+			{
+				Tile = nullptr;
+			}
 		}
+		Items.Remove(TargetItem);
 	}
-
-	Items.Remove(TargetItem);
+	else
+	{
+		for (auto& Tile : CachedTiles)
+		{
+			if (Tile == TargetItem)
+			{
+				Tile = nullptr;
+			}
+		}
+		CachedItems.Remove(TargetItem);
+	}
 
 	NeedRefresh = true;
 }
