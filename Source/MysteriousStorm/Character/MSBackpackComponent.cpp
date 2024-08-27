@@ -78,6 +78,17 @@ bool UMSBackpackComponent::TryFillCachedTiles()
 	return true;
 }
 
+void UMSBackpackComponent::OpenBackpack()
+{
+	TryFillCachedTiles();
+	NeedRefresh = true;
+}
+
+void UMSBackpackComponent::CloseBackpack()
+{
+
+}
+
 #pragma endregion CachedPickUpList
 
 void UMSBackpackComponent::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const

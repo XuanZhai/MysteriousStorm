@@ -92,6 +92,12 @@ public:
 	bool NeedRefresh;
 
 	UFUNCTION(BlueprintCallable)
+	void OpenBackpack();
+
+	UFUNCTION(BlueprintCallable)
+	void CloseBackpack();
+
+	UFUNCTION(BlueprintCallable)
 	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const;
 
 	UFUNCTION(BlueprintCallable)
