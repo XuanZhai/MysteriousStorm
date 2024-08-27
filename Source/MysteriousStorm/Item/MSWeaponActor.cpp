@@ -20,7 +20,6 @@ void AMSWeaponActor::BeginPlay()
 	Offset = FVector(100, 0, 0);
 	RuntimeOffset = Offset.RotateAngleAxis(FMath::FRandRange(0.0f, 100.0f), FVector(0, 0, 1));
 	RotateSpeed = 200;
-	
 }
 
 
@@ -38,7 +37,7 @@ bool AMSWeaponActor::TryAttack()
 bool AMSWeaponActor::TryReadConfig()
 {
 	UGameInstance* GameInstance = GetGameInstance();
-	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetWeaponConfigByItemID(ItemID,WeaponConfig);
+	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetWeaponConfigByItemID(ItemID, WeaponConfig);
 	return true;
 }
 
@@ -53,9 +52,13 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 
 
 #pragma region collsion
+#pragma optimize("", off)
 // 默认所有的检测都是2D的，因此只需考虑yaw
-float AMSWeaponActor::DistancePointToSegment(const FVector& Point, const FVector& Start, const FVector& End)
+float AMSWeaponActor::DistancePointToSegment(FVector Point, FVector Start, FVector End)
 {
+	End.Z = 0;
+	Point.Z = 0;
+	Start.Z = 0;
 	// 计算point到线段的距离
 	FVector Segment = End - Start;
 	FVector PointToStart = Point - Start;
@@ -77,13 +80,22 @@ float AMSWeaponActor::DistancePointToSegment(const FVector& Point, const FVector
 	return Distance;
 }
 
-bool AMSWeaponActor::OverlapSectorCircle(const FVector& SectorCenter, FVector Forward, float Angle, float Radius,
-                                         const FVector& CircleCenter, float CircleRadius)
+bool AMSWeaponActor::OverlapSectorCircle(FVector SectorCenter, FVector Forward, float Angle, float Radius, FVector CircleCenter, float CircleRadius)
 {
+	SectorCenter.Z = 0;
+	Forward.Z = 0;
+	Forward.Normalize();
+	CircleCenter.Z = 0;
 	float CenterDistance = FVector::Dist(SectorCenter, CircleCenter);
-	if (CenterDistance > (Radius+CircleRadius))
+	if (CenterDistance > (Radius + CircleRadius))
 	{
 		return false;
+	}
+	auto Offset = CircleCenter - SectorCenter;
+	Offset.Normalize();
+	if (Forward.Dot(Offset) > FMath::Cos(Angle / 2))
+	{
+		return true;
 	}
 
 	if (DistancePointToSegment(CircleCenter, SectorCenter,
@@ -97,4 +109,12 @@ bool AMSWeaponActor::OverlapSectorCircle(const FVector& SectorCenter, FVector Fo
 
 	return true;
 }
+
+bool AMSWeaponActor::OverlapCircleCircle(FVector CircleCenter1, float CircleRadius1, FVector CircleCenter2, float CircleRadius2)
+{
+	CircleCenter1.Z = 0;
+	CircleCenter2.Z = 0;
+	return FVector::Dist(CircleCenter1, CircleCenter2) <= CircleRadius1 + CircleRadius2;
+}
+#pragma optimize("", on)
 # pragma endregion

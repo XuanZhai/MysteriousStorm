@@ -20,8 +20,8 @@ protected:
 	TSharedPtr<FStreamableHandle> StreamableHandle;
 
 	FSoftObjectPath ItemTablePath{ "/Game/Tables/DT_ItemData.DT_ItemData" };
-	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData_C" };
-
+	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData" };
+	
 	UPROPERTY()
 	UDataTable* ItemTable;
 

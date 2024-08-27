@@ -29,8 +29,9 @@ protected:
 	float RotateSpeed;
 	FMSWeaponTableRow WeaponConfig;
 
-	static float DistancePointToSegment(const FVector& Point, const FVector& Start, const FVector& End) ;
-	static bool OverlapSectorCircle(const FVector& SectorCenter, FVector Forward, float Angle, float Radius, const FVector& CircleCenter, float CircleRadius);
+	static float DistancePointToSegment(FVector Point, FVector Start, FVector End) ;
+	static bool OverlapSectorCircle(FVector SectorCenter, FVector Forward, float Angle, float Radius, FVector CircleCenter, float CircleRadius);
+	static bool OverlapCircleCircle(FVector CircleCenter1, float CircleRadius1, FVector CircleCenter2, float CircleRadius2);
 
 public:
 	AMSWeaponActor();
