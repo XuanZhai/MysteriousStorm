@@ -104,10 +104,10 @@ public:
 	bool CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool TryAddThisItem(UMSItemData* NewItemData, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
+	bool TryAddThisItem(UMSItemData* NewItemData, UPARAM(ref) TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
 
 	UFUNCTION(BlueprintCallable)
-	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
+	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, UPARAM(ref) TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
 
 	UFUNCTION(BlueprintCallable)
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }

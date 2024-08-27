@@ -63,6 +63,8 @@ void UMSBackpackComponent::ClearCachedPickUpList()
 	{
 		Tile = nullptr;
 	}
+
+	CachedItems.Empty();
 }
 
 bool UMSBackpackComponent::TryFillCachedTiles()

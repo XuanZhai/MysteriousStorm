@@ -53,6 +53,7 @@ void UMSGridWidget::Refresh()
 	GridPanel->ClearChildren();
 
 	const TMap<UMSItemData*, int32>& NewItems = bIsCachedBackpack ? BackpackComponent->GetCachedItems() : BackpackComponent->GetItems();
+	UE_LOG(LogTemp, Display, TEXT("Size is %d"), NewItems.Num());
 
 	for (const auto& Item : NewItems)
 	{
