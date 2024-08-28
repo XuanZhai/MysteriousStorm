@@ -11,4 +11,7 @@ FMSWeaponTableRow::FMSWeaponTableRow()
 	SectorAngle = 0;
 	SectorRadius = 0;
 	WeaponType = EWeaponType::None;
+	Damage = 0;
+	DropDetectionRange = 0;
+	DamageRange = 0;
 }

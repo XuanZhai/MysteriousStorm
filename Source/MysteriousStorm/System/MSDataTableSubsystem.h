@@ -21,12 +21,16 @@ protected:
 
 	FSoftObjectPath ItemTablePath{ "/Game/Tables/DT_ItemData.DT_ItemData" };
 	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData" };
+	FSoftObjectPath EnemyTablePath{ "/Game/Tables/DT_EnemyData.DT_EnemyData" };
 	
 	UPROPERTY()
 	UDataTable* ItemTable;
 
 	UPROPERTY()
 	UDataTable* WeaponTable;
+
+	UPROPERTY()
+	UDataTable* EnemyTable;
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTableLoaded, UMSDataTableSubsystem*, DataTableSubsystem);
@@ -49,6 +53,8 @@ public:
 	bool TryGetRowByItemID(const int32 ItemID, struct FMSItemTableRow& OutRow) const;
 
 	bool TryGetWeaponConfigByItemID(const int32 ItemID, struct FMSWeaponTableRow& OutRow) const;
+
+	bool TryGetEnemyConfigByID(const int32 EnemyID, struct FMSEnemyTableRow& OutRow) const;
 
 	UFUNCTION(BlueprintCallable)
 	UDataTable* GetWeaponTable() const { return WeaponTable; }

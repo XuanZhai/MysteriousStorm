@@ -4,6 +4,7 @@
 #include "MSDataTableSubsystem.h"
 #include "MSItemTableRow.h"
 #include "MSWeaponTableRow.h"
+#include "MSEnemyTableRow.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
@@ -13,12 +14,14 @@ void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	TArray<FSoftObjectPath> Paths = 
 	{
 		ItemTablePath,
-		WeaponTablePath
+		WeaponTablePath,
+		EnemyTablePath
 	};
 
 	// TODO: Change it to Async
 	ItemTable = Cast<UDataTable>(ItemTablePath.TryLoad());
 	WeaponTable = Cast<UDataTable>(WeaponTablePath.TryLoad());
+	EnemyTable = Cast<UDataTable>(EnemyTablePath.TryLoad());
 
 //	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
 // 		Paths, [this]()
@@ -63,6 +66,19 @@ bool UMSDataTableSubsystem::TryGetWeaponConfigByItemID(const int32 ItemID, struc
 	if (WeaponTable)
 	{
 		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
+		{
+			OutRow = *Row;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UMSDataTableSubsystem::TryGetEnemyConfigByID(const int32 EnemyID, struct FMSEnemyTableRow& OutRow) const
+{
+	if (EnemyTable)
+	{
+		if (FMSEnemyTableRow* Row = EnemyTable->FindRow<FMSEnemyTableRow>(FName(FString::FromInt(EnemyID)), TEXT("Context")))
 		{
 			OutRow = *Row;
 			return true;
