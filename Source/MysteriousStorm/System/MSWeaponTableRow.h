@@ -30,6 +30,15 @@ struct MYSTERIOUSSTORM_API FMSWeaponTableRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EWeaponType WeaponType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DropDetectionRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageRange;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString WeaponName;

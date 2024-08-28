@@ -15,8 +15,20 @@ class MYSTERIOUSSTORM_API UMSAttributeComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UMSAttributeComponent();
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Attribute")
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Attribute")
+	float InvincibleTime;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Attribute")
+	float MoveSpeed;
+	
 
 protected:
+
+	float currentHealth;
+	
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
