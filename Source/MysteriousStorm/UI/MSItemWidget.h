@@ -4,12 +4,39 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "MSGridWidget.h"
 #include "MSItemWidget.generated.h"
 
 class USizeBox;
 class UBorder;
 class UImage;
 class UMSItemData;
+
+UCLASS(BlueprintType)
+class MYSTERIOUSSTORM_API UMSDragPayload : public UObject
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadOnly)
+	UMSItemData* ItemData;
+
+	EGridType DragSource;
+
+	UMSDragPayload()
+	{
+		ItemData = nullptr;
+		DragSource = EGridType::CachedGrid;
+	}
+
+	UMSDragPayload(UMSItemData* NewData, EGridType NewSource)
+	{
+		ItemData = NewData;
+		DragSource = NewSource;
+	}
+};
+
 /**
  * 
  */
@@ -31,8 +58,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float TileSize = 0.0f;
 
+	//UPROPERTY(BlueprintReadOnly)
+	//UMSItemData* ItemData;
+
 	UPROPERTY(BlueprintReadOnly)
-	UMSItemData* ItemData;
+	UMSDragPayload* ItemPayload;
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector2D Size = FVector2D();
@@ -50,8 +80,10 @@ public:
 
 	void SetTileSize(float NewSize) { TileSize = NewSize; }
 
-	void SetItemData(UMSItemData* NewItemData) { ItemData = NewItemData; }
+	void SetItemData(UMSItemData* NewItemData, EGridType NewItemSource);
 
 	UFUNCTION(BlueprintCallable)
 	void Refresh();
+
+	UMSDragPayload* GetDragPayload() const {return ItemPayload; }
 };

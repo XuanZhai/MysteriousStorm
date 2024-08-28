@@ -2,102 +2,70 @@
 
 
 #include "MSGridWidget.h"
-#include "MSItemWidget.h"
-#include "Components/CanvasPanel.h"
-#include "Components/CanvasPanelSlot.h"
-#include "Components/Border.h"
-#include "MysteriousStorm/Character/MSBackpackComponent.h"
+#include "MysteriousStorm/Item/MSItemData.h"
 
-void UMSGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent)
+void UMSGridWidget::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const
 {
-	TileSize = NewTileSize;
-	BackpackComponent = NewBackpackComponent;
-
-	if (!BackpackComponent)
-	{
-		return;
-	}
-
-	if (bIsCachedBackpack)
-	{
-		ColumnNum = BackpackComponent->CachedColumnNumber;
-		RowNum = BackpackComponent->CachedRowNumber;
-	}
-	else
-	{
-		ColumnNum = BackpackComponent->ColumnNumber;
-		RowNum = BackpackComponent->RowNumber;
-	}
-
-	if (GridBorder)
-	{
-		if (UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(GridBorder->Slot))
-		{
-			CanvasPanelSlot->SetSize(FVector2D(TileSize* ColumnNum, TileSize * RowNum));
-		}
-	}
-
-	CreateLineSegment();
-	Refresh();
-
-	BackpackComponent->OnBackpackChanged.AddDynamic(this, &UMSGridWidget::Refresh);
+	OutX = InIndex % ColumnNum;
+	OutY = InIndex / ColumnNum;
 }
 
-void UMSGridWidget::Refresh()
+void UMSGridWidget::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const
 {
-	if (!GridPanel || !BackpackComponent)
-	{
-		return;
-	}
-
-	GridPanel->ClearChildren();
-
-	const TMap<UMSItemData*, int32>& NewItems = bIsCachedBackpack ? BackpackComponent->GetCachedItems() : BackpackComponent->GetItems();
-	UE_LOG(LogTemp, Display, TEXT("Size is %d"), NewItems.Num());
-
-	for (const auto& Item : NewItems)
-	{
-		int32 TileX = 0;
-		int32 TileY = 0;
-		BackpackComponent->IndexToTile(Item.Value, TileX, TileY, ColumnNum);
-
-		UUserWidget* NewWidget = CreateWidget(this, ItemWidgetClass);
-
-		if (UMSItemWidget* NewItemWidget = NewWidget ? Cast<UMSItemWidget>(NewWidget) : nullptr)
-		{
-			NewItemWidget->SetTileSize(TileSize);
-			NewItemWidget->SetItemData(Item.Key);
-			NewItemWidget->OnItemRemoved.AddUniqueDynamic(this, &UMSGridWidget::OnItemRemoved);
-		}
-
-		auto PanelSlot = GridPanel->AddChild(NewWidget);
-		if (UCanvasPanelSlot* CanvasPanelSlot = PanelSlot ? Cast<UCanvasPanelSlot>(PanelSlot) : nullptr)
-		{
-			CanvasPanelSlot->SetAutoSize(true);
-			CanvasPanelSlot->SetPosition(FVector2D(TileX*TileSize,TileY*TileSize));
-		}
-		 
-
-
-	}
+	OutIndex = InX + InY * ColumnNum;
 }
 
-
-bool UMSGridWidget::IsPayloadAvailable_Implementation(UMSItemData* Payload) const
+bool UMSGridWidget::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const
 {
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart, ColNum);
+
+	int32 TileXEnd = TileXStart + NewItemData->XUISize;
+	int32 TileYEnd = TileYStart + NewItemData->YUISize;
+
+	if (TileXStart < 0 || TileYStart < 0) return false;
+	if (TileXEnd > ColNum || TileYEnd > RowNum) return false;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex, ColNum);
+
+			if (!InTiles.IsValidIndex(CurrentIndex))
+			{
+				return false;
+			}
+			else if (InTiles[CurrentIndex] != nullptr)
+			{
+				return false;
+			}
+		}
+	}
 	return true;
-	//if (!Payload || !BackpackComponent)
-	//{
-	//	return false;
-	//}
-
-	//return BackpackComponent->IsAvailableForNewItem_Implementation(Payload, DropItemTopLeftTile, );
 }
 
-void UMSGridWidget::OnItemRemoved_Implementation(UMSItemData* TargetItemData)
+void UMSGridWidget::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum) const
 {
-	//if (BackpackComponent)
-	//{
-	//	BackpackComponent->RemoveItem(TargetItemData);
-	//}
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart, ColNum);
+	int32 TileXEnd = TileXStart + NewItemData->XUISize;
+	int32 TileYEnd = TileYStart + NewItemData->YUISize;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex, ColNum);
+
+			if (InTiles.IsValidIndex(CurrentIndex))
+			{
+				InTiles[CurrentIndex] = NewItemData;
+			}
+		}
+	}
 }

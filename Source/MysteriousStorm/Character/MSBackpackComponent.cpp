@@ -20,8 +20,8 @@ void UMSBackpackComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	Tiles.SetNum(ColumnNumber * RowNumber);
-	CachedTiles.SetNum(CachedColumnNumber * CachedRowNumber);
+	//Tiles.SetNum(ColumnNumber * RowNumber);
+	//CachedTiles.SetNum(CachedColumnNumber * CachedRowNumber);
 }
 
 
@@ -57,104 +57,26 @@ void UMSBackpackComponent::RemoveFromCachedPickUpList(AMSItemActor* TargetItem)
 	CachedPickUpList.Remove(TargetItem->GetItemData());
 }
 
-void UMSBackpackComponent::ClearCachedPickUpList()
+void UMSBackpackComponent::AddCachedItem(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
-	for (auto& Tile : CachedTiles)
-	{
-		Tile = nullptr;
-	}
-
-	CachedItems.Empty();
+	CachedItems.Add({ NewItemData,TopLeftIndex });
+	NeedRefresh = true;
 }
 
-bool UMSBackpackComponent::TryFillCachedTiles()
-{
-	ClearCachedPickUpList();
-
-	for (auto& CachedItem : CachedPickUpList)
-	{
-		TryAddThisItem(CachedItem.Key, CachedTiles, CachedColumnNumber, CachedRowNumber);
-	}
-	return true;
-}
+#pragma endregion CachedPickUpList
 
 void UMSBackpackComponent::OpenBackpack()
 {
-	TryFillCachedTiles();
+	if (OnBackpackOpened.IsBound())
+	{
+		OnBackpackOpened.Broadcast();
+	}
 	NeedRefresh = true;
 }
 
 void UMSBackpackComponent::CloseBackpack()
 {
 
-}
-
-#pragma endregion CachedPickUpList
-
-void UMSBackpackComponent::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const
-{
-	OutX = InIndex % ColumnNum;
-	OutY = InIndex / ColumnNum;
-}
-
-void UMSBackpackComponent::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const
-{
-	OutIndex = InX + InY * ColumnNum;
-}
-
-bool UMSBackpackComponent::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const
-{
-	int32 TileXStart = 0;
-	int32 TileYStart = 0;
-	IndexToTile(TopLeftIndex,TileXStart,TileYStart, ColNum);
-
-	int32 TileXEnd = TileXStart + NewItemData->XUISize;
-	int32 TileYEnd = TileYStart + NewItemData->YUISize;
-
-	if (TileXStart < 0 || TileYStart < 0) return false;
-	if (TileXEnd > ColNum || TileYEnd > RowNum) return false;
-
-	for (int32 x = TileXStart; x < TileXEnd; x++)
-	{
-		for (int32 y = TileYStart; y < TileYEnd; y++)
-		{
-			int32 CurrentIndex = 0;
-			TileToIndex(x, y, CurrentIndex, ColNum);
-
-			if (!InTiles.IsValidIndex(CurrentIndex))
-			{
-				return false;
-			}
-			else if (InTiles[CurrentIndex] != nullptr)
-			{
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-void UMSBackpackComponent::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum)
-{
-	int32 TileXStart = 0;
-	int32 TileYStart = 0;
-	IndexToTile(TopLeftIndex, TileXStart, TileYStart, ColNum);
-	int32 TileXEnd = TileXStart + NewItemData->XUISize;
-	int32 TileYEnd = TileYStart + NewItemData->YUISize;
-
-	for (int32 x = TileXStart; x < TileXEnd; x++)
-	{
-		for (int32 y = TileYStart; y < TileYEnd; y++)
-		{
-			int32 CurrentIndex = 0;
-			TileToIndex(x, y, CurrentIndex, ColNum);
-
-			if (InTiles.IsValidIndex(CurrentIndex))
-			{
-				InTiles[CurrentIndex] = NewItemData;
-			}
-		}
-	}
 }
 
 bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const
@@ -167,72 +89,78 @@ bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBack
 	return true;
 }
 
-bool UMSBackpackComponent::TryAddThisItem(UMSItemData* NewItemData, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
+void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
-	if (!CanAddThisItem(NewItemData,true))
-	{
-		return false;
-	}
-
-	for (int32 i = 0; i < InTiles.Num(); i++)
-	{
-		if (IsAvailableForNewItem(NewItemData, i, InTiles,ColNum, RowNum))
-		{
-			AddThisItemAt(NewItemData, i, InTiles, ColNum, RowNum);
-			return true;
-		}
-	}
-	return false;
-}
-
-void UMSBackpackComponent::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
-{
-	FillTilesWithItem(NewItemData, TopLeftIndex,InTiles,ColNum);
-
-	int32 TileX = 0;
-	int32 TileY = 0;
-	IndexToTile(TopLeftIndex, TileX, TileY,ColNum);
-
-	if (InTiles == Tiles)
-	{
-		Items.Add({ NewItemData, TopLeftIndex });
-		if (NewItemData->IsWeapon())
-		{
-			WeaponList.Add(NewItemData);
-		}
-	}
-	else
-	{
-		CachedItems.Add({ NewItemData, TopLeftIndex });
-	}
-
+	Items.Add({NewItemData,TopLeftIndex});
 	NeedRefresh = true;
 }
+
+// bool UMSBackpackComponent::TryAddThisItem(UMSItemData* NewItemData, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
+// {
+// 	if (!CanAddThisItem(NewItemData,true))
+// 	{
+// 		return false;
+// 	}
+// 
+// 	for (int32 i = 0; i < InTiles.Num(); i++)
+// 	{
+// 		if (IsAvailableForNewItem(NewItemData, i, InTiles,ColNum, RowNum))
+// 		{
+// 			AddThisItemAt(NewItemData, i, InTiles, ColNum, RowNum);
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
+
+// void UMSBackpackComponent::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
+// {
+// 	FillTilesWithItem(NewItemData, TopLeftIndex,InTiles,ColNum);
+// 
+// 	int32 TileX = 0;
+// 	int32 TileY = 0;
+// 	IndexToTile(TopLeftIndex, TileX, TileY,ColNum);
+// 
+// 	if (InTiles == Tiles)
+// 	{
+// 		Items.Add({ NewItemData, TopLeftIndex });
+// 		if (NewItemData->IsWeapon())
+// 		{
+// 			WeaponList.Add(NewItemData);
+// 		}
+// 	}
+// 	else
+// 	{
+// 		CachedItems.Add({ NewItemData, TopLeftIndex });
+// 	}
+// 
+// 	NeedRefresh = true;
+//}
 
 void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bIsBackpack)
 {
-	if (bIsBackpack) 
-	{
-		for (auto& Tile : Tiles)
-		{
-			if (Tile == TargetItem)
-			{
-				Tile = nullptr;
-			}
-		}
-		Items.Remove(TargetItem);
-	}
-	else
-	{
-		for (auto& Tile : CachedTiles)
-		{
-			if (Tile == TargetItem)
-			{
-				Tile = nullptr;
-			}
-		}
-		CachedItems.Remove(TargetItem);
-	}
-
-	NeedRefresh = true;
+// 	if (bIsBackpack) 
+// 	{
+// 		for (auto& Tile : Tiles)
+// 		{
+// 			if (Tile == TargetItem)
+// 			{
+// 				Tile = nullptr;
+// 			}
+// 		}
+// 		Items.Remove(TargetItem);
+// 	}
+// 	else
+// 	{
+// 		for (auto& Tile : CachedTiles)
+// 		{
+// 			if (Tile == TargetItem)
+// 			{
+// 				Tile = nullptr;
+// 			}
+// 		}
+// 		CachedItems.Remove(TargetItem);
+// 	}
+// 
+// 	NeedRefresh = true;
 }

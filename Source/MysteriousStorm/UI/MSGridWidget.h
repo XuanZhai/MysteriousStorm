@@ -6,11 +6,15 @@
 #include "Blueprint/UserWidget.h"
 #include "MSGridWidget.generated.h"
 
-class UCanvasPanel;
-class UBorder;
-class UMSItemWidget;
 class UMSItemData;
-class UMSBackpackComponent;
+
+UENUM(BlueprintType)
+enum EGridType : uint8
+{
+	CachedGrid = 0 UMETA(DisplayName = "CachedGrid"),
+	BackpackGrid = 1 UMETA(DisplayName = "BackpackGrid"),
+};
+
 /**
  * 
  */
@@ -21,51 +25,14 @@ class MYSTERIOUSSTORM_API UMSGridWidget : public UUserWidget
 	
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	UBorder* GridBorder;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	UCanvasPanel* GridPanel;
-
-	UPROPERTY(BlueprintReadWrite)
-	UMSBackpackComponent* BackpackComponent;
-
-	UPROPERTY(BlueprintReadWrite)
-	float TileSize = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UMSItemWidget> ItemWidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 DropItemTopLeftTile = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bDrawDropLocation = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ColumnNum = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 RowNum = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsCachedBackpack = false;
-
-public:
 	UFUNCTION(BlueprintCallable)
-	void Refresh();
-
-protected:
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void CreateLineSegment();
+	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const;
 
 	UFUNCTION(BlueprintCallable)
-	void Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent);
+	void TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool IsPayloadAvailable(UMSItemData* Payload) const;
+	UFUNCTION(BlueprintCallable)
+	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnItemRemoved(UMSItemData* TargetItemData);
+	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum) const;
 };

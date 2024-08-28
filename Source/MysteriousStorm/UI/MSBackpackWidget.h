@@ -9,6 +9,7 @@
 
 
 class UMSBackpackComponent;
+class UMSItemData;
 /**
  * 
  */
@@ -24,12 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TileSize = 0.0f;
 
-#pragma region CachedPickUpList
 
-protected:
-
-	UFUNCTION(BlueprintCallable)
-	void RefreshCachedPickUpListView();
 #pragma endregion
 
 };

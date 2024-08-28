@@ -9,11 +9,22 @@
 
 void UMSItemWidget::SetSize()
 {
-	if (ItemData)
+	if (ItemPayload && ItemPayload->ItemData)
 	{
-		Size.X = ItemData->XUISize * TileSize;
-		Size.Y = ItemData->YUISize * TileSize;
+		Size.X = ItemPayload->ItemData->XUISize * TileSize;
+		Size.Y = ItemPayload->ItemData->YUISize * TileSize;
 	}
+}
+
+void UMSItemWidget::SetItemData(UMSItemData* NewItemData, EGridType NewItemSource)
+{
+	if (!ItemPayload)
+	{
+		ItemPayload = NewObject<UMSDragPayload>();
+	}
+
+	ItemPayload->ItemData = NewItemData;
+	ItemPayload->DragSource = NewItemSource;
 }
 
 void UMSItemWidget::CallOnItemRemoved(UMSItemData* TargetItemData)

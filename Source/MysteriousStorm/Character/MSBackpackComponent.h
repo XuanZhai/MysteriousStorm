@@ -28,20 +28,19 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UMSItemData*> WeaponList;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UMSItemData*> Tiles;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// 	TArray<UMSItemData*> Tiles;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 #pragma region CachedPickUpList
+public:
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	TMap<UMSItemData*, int32> CachedItems;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray <UMSItemData*> CachedTiles;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<UMSItemData*, AMSItemActor*> CachedPickUpList;
@@ -60,16 +59,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveFromCachedPickUpList(AMSItemActor* TargetItem);
 
-	UFUNCTION(BlueprintCallable)
-	const TMap<UMSItemData*, AMSItemActor*>& GetCachedPickUpList() const { return CachedPickUpList; }
+	const TMap<UMSItemData*, int32>& GetCachedItem() const {return CachedItems;}
 
-	void ClearCachedPickUpList();
+	const TMap<UMSItemData*, AMSItemActor*>& GetCachedList() const {return CachedPickUpList; }
 
-	UFUNCTION(BlueprintCallable)
-	bool TryFillCachedTiles();
+	void ClearCachedItem() { CachedItems.Empty(); }
 
 	UFUNCTION(BlueprintCallable)
-	const TMap<UMSItemData*, int32>& GetCachedItems() const { return CachedItems; }
+	void AddCachedItem(UMSItemData* NewItemData, int32 TopLeftIndex);
 #pragma endregion
 
 #pragma region Backpack
@@ -80,13 +77,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 ColumnNumber;
 
-protected:
-	void FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum);
-
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackpackChanged);
 	UPROPERTY(BlueprintAssignable)
 	FOnBackpackChanged OnBackpackChanged;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackpackOpened);
+	UPROPERTY(BlueprintAssignable)
+	FOnBackpackOpened OnBackpackOpened;
 
 	UPROPERTY()
 	bool NeedRefresh;
@@ -98,22 +96,10 @@ public:
 	void CloseBackpack();
 
 	UFUNCTION(BlueprintCallable)
-	void IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const;
-
-	UFUNCTION(BlueprintCallable)
-	void TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const;
-
-	UFUNCTION(BlueprintCallable)
-	bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const;
-
-	UFUNCTION(BlueprintCallable)
 	bool CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const;
 
 	UFUNCTION(BlueprintCallable)
-	bool TryAddThisItem(UMSItemData* NewItemData, UPARAM(ref) TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
-
-	UFUNCTION(BlueprintCallable)
-	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, UPARAM(ref) TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum);
+	void AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex);
 
 	UFUNCTION(BlueprintCallable)
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
