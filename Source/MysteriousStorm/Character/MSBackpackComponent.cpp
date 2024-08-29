@@ -107,7 +107,7 @@ void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLe
 	Items.Add({NewItemData,TopLeftIndex});
 	if (NewItemData->IsWeapon())
 	{
-		WeaponList.Add(NewItemData);
+		Weapons.Add(NewItemData);
 	}
 
 	CachedItems.Remove(NewItemData);
@@ -126,7 +126,7 @@ void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
 	Items.Remove(TargetItem);
 	if (TargetItem->IsWeapon())
 	{
-		WeaponList.Remove(TargetItem);
+		Weapons.Remove(TargetItem);
 	}
 
 	if (OnItemRemovedFromBackpack.IsBound())

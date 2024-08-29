@@ -26,7 +26,7 @@ protected:
 	TMap<UMSItemData*, int32> Items;
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<UMSItemData*> WeaponList;
+	TArray<UMSItemData*> Weapons;
 
 public:	
 	// Called every frame
@@ -111,5 +111,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveItem(UMSItemData* TargetItem);
+
 #pragma endregion
 };
