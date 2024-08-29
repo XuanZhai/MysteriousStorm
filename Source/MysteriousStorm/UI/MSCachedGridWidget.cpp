@@ -6,8 +6,8 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Border.h"
-#include "Blueprint/DragDropOperation.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MysteriousStorm/Item/MSItemActor.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
 #include "MysteriousStorm/UI/MSBackpackWidget.h"
 
@@ -85,9 +85,12 @@ bool UMSCachedGridWidget::IsItemAvailableToPut(UMSItemData* TargetItem) const
 
 void UMSCachedGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 {
-	if (BackpackComponent && TargetItemData)
+	for (auto& CachedTile : CachedTiles)
 	{
-		BackpackComponent->RemoveItem(TargetItemData,true);
+		if (CachedTile == TargetItemData)
+		{
+			CachedTile = nullptr;
+		}
 	}
 }
 
@@ -97,31 +100,34 @@ void UMSCachedGridWidget::MousePositionInTile(FVector2D MousePosition, bool& bIs
 	bIsBottom = ((int)MousePosition.Y % (int)TileSize) > ((int)TileSize / 2);
 }
 
-UMSItemData* UMSCachedGridWidget::GetItemDataFromDragDropOperation(UDragDropOperation* InOperation) const
-{
-	if (InOperation)
-	{
-		UMSDragPayload* DragPayload = IsValid(InOperation->Payload) ? Cast<UMSDragPayload>(InOperation->Payload) : nullptr;
-
-		if (IsValid(DragPayload))
-		{
-			return IsValid(DragPayload->ItemData) ? Cast<UMSItemData>(DragPayload->ItemData) : nullptr;
-		}
-	}
-	return nullptr;
-}
-
 bool UMSCachedGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	UMSItemData* Payload = GetItemDataFromDragDropOperation(InOperation);
+	UMSItemData* NewItemData = GetItemDataFromDragDropOperation(InOperation);
+	EGridType DragSource = GetDragSourceFromDragDropOperation(InOperation);
 
-	if (IsItemAvailableToPut(Payload))
+	bool bFindPlaceToDrop = false;
+
+	if (IsItemAvailableToPut(NewItemData))
 	{
-		AddThisItemAt(Payload,DropItemTopLeftTile);
+		AddThisItemAt(NewItemData,DropItemTopLeftTile);
+		bFindPlaceToDrop = true;
 	}
 	else
 	{
-		TryAddThisItem(Payload);
+		bFindPlaceToDrop = TryAddThisItem(NewItemData);
+	}
+
+	if (bFindPlaceToDrop)
+	{
+		if (DragSource == BackpackGrid)
+		{
+			BackpackComponent->RemoveItem(NewItemData);
+		}
+	}
+
+	if (OnMouseDropped.IsBound())
+	{
+		OnMouseDropped.Broadcast();
 	}
 
 	return true;
@@ -219,4 +225,14 @@ bool UMSCachedGridWidget::TryAddThisItem(UMSItemData* NewItemData)
 		}
 	}
 	return false;
+}
+
+void UMSCachedGridWidget::AddItemBack(UMSItemData* NewItemData)
+{
+	auto CachedItems = BackpackComponent->GetCachedItem();
+
+	if (CachedItems.Contains(NewItemData))
+	{
+		AddThisItemAt(NewItemData,CachedItems[NewItemData]);
+	}
 }

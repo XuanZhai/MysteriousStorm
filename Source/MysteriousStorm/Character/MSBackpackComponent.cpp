@@ -4,6 +4,7 @@
 #include "MSBackpackComponent.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MysteriousStorm/System/MSGameState.h"
 
 // Sets default values for this component's properties
 UMSBackpackComponent::UMSBackpackComponent()
@@ -67,6 +68,13 @@ void UMSBackpackComponent::AddCachedItem(UMSItemData* NewItemData, int32 TopLeft
 
 void UMSBackpackComponent::OpenBackpack()
 {
+	AGameModeBase* GameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AGameModeBase>() : nullptr;
+	if (AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+	{
+		AMSItemActor* OutActor = nullptr;
+		GS->SetGamePaused(true);
+	}
+
 	if (OnBackpackOpened.IsBound())
 	{
 		OnBackpackOpened.Broadcast();
@@ -76,7 +84,12 @@ void UMSBackpackComponent::OpenBackpack()
 
 void UMSBackpackComponent::CloseBackpack()
 {
-
+	AGameModeBase* GameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AGameModeBase>() : nullptr;
+	if (AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+	{
+		AMSItemActor* OutActor = nullptr;
+		GS->SetGamePaused(false);
+	}
 }
 
 bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const
@@ -92,75 +105,41 @@ bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBack
 void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
 	Items.Add({NewItemData,TopLeftIndex});
+	if (NewItemData->IsWeapon())
+	{
+		WeaponList.Add(NewItemData);
+	}
+
+	CachedItems.Remove(NewItemData);
+	
+	if (CachedPickUpList.Contains(NewItemData) && IsValid(CachedPickUpList[NewItemData]))
+	{
+		CachedPickUpList[NewItemData]->Destroy();
+		CachedPickUpList.Remove(NewItemData);
+	}
+
 	NeedRefresh = true;
 }
 
-// bool UMSBackpackComponent::TryAddThisItem(UMSItemData* NewItemData, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
-// {
-// 	if (!CanAddThisItem(NewItemData,true))
-// 	{
-// 		return false;
-// 	}
-// 
-// 	for (int32 i = 0; i < InTiles.Num(); i++)
-// 	{
-// 		if (IsAvailableForNewItem(NewItemData, i, InTiles,ColNum, RowNum))
-// 		{
-// 			AddThisItemAt(NewItemData, i, InTiles, ColNum, RowNum);
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
-
-// void UMSBackpackComponent::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum)
-// {
-// 	FillTilesWithItem(NewItemData, TopLeftIndex,InTiles,ColNum);
-// 
-// 	int32 TileX = 0;
-// 	int32 TileY = 0;
-// 	IndexToTile(TopLeftIndex, TileX, TileY,ColNum);
-// 
-// 	if (InTiles == Tiles)
-// 	{
-// 		Items.Add({ NewItemData, TopLeftIndex });
-// 		if (NewItemData->IsWeapon())
-// 		{
-// 			WeaponList.Add(NewItemData);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		CachedItems.Add({ NewItemData, TopLeftIndex });
-// 	}
-// 
-// 	NeedRefresh = true;
-//}
-
-void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bIsBackpack)
+void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
 {
-// 	if (bIsBackpack) 
-// 	{
-// 		for (auto& Tile : Tiles)
-// 		{
-// 			if (Tile == TargetItem)
-// 			{
-// 				Tile = nullptr;
-// 			}
-// 		}
-// 		Items.Remove(TargetItem);
-// 	}
-// 	else
-// 	{
-// 		for (auto& Tile : CachedTiles)
-// 		{
-// 			if (Tile == TargetItem)
-// 			{
-// 				Tile = nullptr;
-// 			}
-// 		}
-// 		CachedItems.Remove(TargetItem);
-// 	}
-// 
-// 	NeedRefresh = true;
+	Items.Remove(TargetItem);
+	if (TargetItem->IsWeapon())
+	{
+		WeaponList.Remove(TargetItem);
+	}
+
+	if (OnItemRemovedFromBackpack.IsBound())
+	{
+		OnItemRemovedFromBackpack.Broadcast(TargetItem);
+	}
+
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+	if(AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+	{
+		AMSItemActor* OutActor = nullptr;
+		GS->TrySpawnItemActorFromData(TargetItem, GetOwner(), OutActor, true);
+	}
+
+	NeedRefresh = true;
 }

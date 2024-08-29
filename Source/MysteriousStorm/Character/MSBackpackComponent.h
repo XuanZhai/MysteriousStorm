@@ -28,9 +28,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UMSItemData*> WeaponList;
 
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-// 	TArray<UMSItemData*> Tiles;
-
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -86,6 +83,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnBackpackOpened OnBackpackOpened;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAddedToBackpack, UMSItemData*, NewItemData);
+	UPROPERTY(BlueprintAssignable)
+	FOnItemAddedToBackpack OnItemAddedToBackpack;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedFromBackpack, UMSItemData*, OldItemData);
+	UPROPERTY(BlueprintAssignable)
+	FOnItemRemovedFromBackpack OnItemRemovedFromBackpack;
+
 	UPROPERTY()
 	bool NeedRefresh;
 
@@ -105,6 +110,6 @@ public:
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveItem(UMSItemData* TargetItem, bool bIsBackpack);
+	void RemoveItem(UMSItemData* TargetItem);
 #pragma endregion
 };
