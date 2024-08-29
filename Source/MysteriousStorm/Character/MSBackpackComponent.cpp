@@ -143,3 +143,16 @@ void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
 
 	NeedRefresh = true;
 }
+
+bool UMSBackpackComponent::DoesItemExist(const int32 ItemID) const
+{
+	for (const auto& Item : Items)
+	{
+		if (IsValid(Item.Key) && Item.Key->ID == ItemID)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}

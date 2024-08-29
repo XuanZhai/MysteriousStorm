@@ -29,9 +29,6 @@ struct MYSTERIOUSSTORM_API FMSItemTableRow : public FTableRowBase
     TSubclassOf<AMSItemActor> AssetBP;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSoftObjectPath PreviewUIPath;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSoftObjectPath UIPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

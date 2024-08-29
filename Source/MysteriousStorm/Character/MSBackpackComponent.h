@@ -26,7 +26,7 @@ protected:
 	TMap<UMSItemData*, int32> Items;
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<UMSItemData*> Weapons;
+	TSet<UMSItemData*> Weapons;
 
 public:	
 	// Called every frame
@@ -111,6 +111,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveItem(UMSItemData* TargetItem);
+
+	bool DoesItemExist(const UMSItemData* TargetItem) const {return Items.Contains(TargetItem);}
+
+	bool DoesItemExist(const int32 ItemID) const;
 
 #pragma endregion
 };

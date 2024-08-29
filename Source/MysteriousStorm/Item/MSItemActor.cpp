@@ -38,7 +38,6 @@ void AMSItemActor::InitItemData()
 		ItemData->Name = Row.Name;
 		ItemData->ItemType = Row.ItemType;
 		ItemData->UIPath = Row.UIPath;
-		ItemData->PreviewUIPath = Row.PreviewUIPath;
 		ItemData->XUISize = Row.XUISize;
 		ItemData->YUISize = Row.YUISize;
 		ItemData->AssetBP = Row.AssetBP;
