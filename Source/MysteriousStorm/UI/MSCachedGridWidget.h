@@ -38,12 +38,6 @@ protected:
 	TSubclassOf<UMSItemWidget> ItemWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 DropItemTopLeftTile = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bDrawDropLocation = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray <UMSItemData*> CachedTiles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -71,6 +65,8 @@ public:
 
 	bool TryAddThisItem(UMSItemData* NewItemData);
 
+	void AddItemBack(UMSItemData* NewItemData);
+
 #pragma region
 
 #pragma region UI
@@ -86,9 +82,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void MousePositionInTile(FVector2D MousePosition, bool& bIsRight, bool& bIsBottom) const;
-
-	UFUNCTION(BlueprintCallable)
-	UMSItemData* GetItemDataFromDragDropOperation(UDragDropOperation* InOperation) const;
 
 	virtual bool NativeOnDrop( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation );
 

@@ -41,7 +41,7 @@ void UMSItemWidget::Refresh()
 
 	if (BGSizeBox)
 	{
-		BGSizeBox->SetHeightOverride(Size.Y);
+		BGSizeBox->SetHeightOverride(Size.Y); 
 		BGSizeBox->SetWidthOverride(Size.X);
 	}
 

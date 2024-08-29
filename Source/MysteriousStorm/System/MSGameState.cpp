@@ -5,6 +5,16 @@
 #include "MysteriousStorm/Item/MSItemData.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 
+void AMSGameState::SetGamePaused(bool NewState)
+{
+	bIsGamePause = NewState;
+
+	if (OnGamePauseUpdated.IsBound())
+	{
+		OnGamePauseUpdated.Broadcast(bIsGamePause);
+	}
+}
+
 bool AMSGameState::TrySpawnItemActorFromData(UMSItemData* InItemData, AActor* SpawnAroundTarget, AMSItemActor*& OutItemActor, bool bGroundClamp)
 {
 	UWorld* World = GetWorld();

@@ -3,11 +3,13 @@
 
 #include "MSGridWidget.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MSItemWidget.h"
+#include "Blueprint/DragDropOperation.h"
 
 void UMSGridWidget::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const
 {
 	OutX = InIndex % ColumnNum;
-	OutY = InIndex / ColumnNum;
+	OutY = InIndex / ColumnNum; 
 }
 
 void UMSGridWidget::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const
@@ -68,4 +70,32 @@ void UMSGridWidget::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftInd
 			}
 		}
 	}
+}
+
+UMSItemData* UMSGridWidget::GetItemDataFromDragDropOperation(UDragDropOperation* InOperation) const
+{
+	if (InOperation)
+	{
+		UMSDragPayload* DragPayload = IsValid(InOperation->Payload) ? Cast<UMSDragPayload>(InOperation->Payload) : nullptr;
+
+		if (IsValid(DragPayload))
+		{
+			return IsValid(DragPayload->ItemData) ? Cast<UMSItemData>(DragPayload->ItemData) : nullptr;
+		}
+	}
+	return nullptr;
+}
+
+EGridType UMSGridWidget::GetDragSourceFromDragDropOperation(UDragDropOperation* InOperation) const
+{
+	if (InOperation)
+	{
+		UMSDragPayload* DragPayload = IsValid(InOperation->Payload) ? Cast<UMSDragPayload>(InOperation->Payload) : nullptr;
+
+		if (IsValid(DragPayload))
+		{
+			return DragPayload->DragSource;
+		}
+	}
+	return EGridType::DEFAULT;
 }

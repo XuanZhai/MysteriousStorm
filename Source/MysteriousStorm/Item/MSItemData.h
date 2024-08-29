@@ -44,9 +44,6 @@ public:
 	int32 YUISize;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
-	FSoftObjectPath PreviewUIPath;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	FSoftObjectPath UIPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

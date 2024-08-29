@@ -14,7 +14,7 @@
 void UMSBackpackGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent)
 {
 	TileSize = NewTileSize;
-	BackpackComponent = NewBackpackComponent;
+	BackpackComponent = NewBackpackComponent; 
 
 	if (!BackpackComponent)
 	{
@@ -84,9 +84,12 @@ bool UMSBackpackGridWidget::IsItemAvailableToPut(UMSItemData* TargetItem) const
 
 void UMSBackpackGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 {
-	if (BackpackComponent && TargetItemData)
+	for (auto& Tile : Tiles)
 	{
-		BackpackComponent->RemoveItem(TargetItemData, true);
+		if (Tile == TargetItemData)
+		{
+			Tile = nullptr;
+		}
 	}
 }
 
@@ -96,26 +99,34 @@ void UMSBackpackGridWidget::MousePositionInTile(FVector2D MousePosition, bool& b
 	bIsBottom = ((int)MousePosition.Y % (int)TileSize) > ((int)TileSize / 2);
 }
 
-UMSItemData* UMSBackpackGridWidget::GetItemDataFromDragDropOperation(UDragDropOperation* InOperation) const
-{
-	if (InOperation)
-	{
-		return IsValid(InOperation->Payload) ? Cast<UMSItemData>(InOperation->Payload) : nullptr;
-	}
-	return nullptr;
-}
-
 bool UMSBackpackGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	UMSItemData* Payload = GetItemDataFromDragDropOperation(InOperation);
+	UMSItemData* NewItemData = GetItemDataFromDragDropOperation(InOperation);
+	EGridType DragSource = GetDragSourceFromDragDropOperation(InOperation);
 
-	if (IsItemAvailableToPut(Payload))
+	bool bFindPlaceToDrop = false;
+
+	if (IsItemAvailableToPut(NewItemData))
 	{
-		AddThisItemAt(Payload, DropItemTopLeftTile);
+		AddThisItemAt(NewItemData, DropItemTopLeftTile);
+		bFindPlaceToDrop = true;
 	}
 	else
 	{
-		TryAddThisItem(Payload);
+		bFindPlaceToDrop = TryAddThisItem(NewItemData);
+	}
+
+// 	if (bFindPlaceToDrop)
+// 	{
+// 		if (DragSource == CachedGrid)
+// 		{
+// 			BackpackComponent->AddBackpackItem(NewItemData);
+// 		}
+// 	}
+
+	if (OnMouseDropped.IsBound())
+	{
+		OnMouseDropped.Broadcast();
 	}
 
 	return true;
@@ -166,8 +177,6 @@ void UMSBackpackGridWidget::AddThisItemAt(UMSItemData* NewItemData, int32 TopLef
 	IndexToTile(TopLeftIndex, TileX, TileY, ColumnNum);
 
 	BackpackComponent->AddBackpackItem(NewItemData, TopLeftIndex);
-
-	////////////////////////////////////////////////////////////////////NeedRefresh = true;
 }
 
 bool UMSBackpackGridWidget::TryAddThisItem(UMSItemData* NewItemData)
@@ -186,4 +195,14 @@ bool UMSBackpackGridWidget::TryAddThisItem(UMSItemData* NewItemData)
 		}
 	}
 	return false;
+}
+
+void UMSBackpackGridWidget::AddItemBack(UMSItemData* NewItemData)
+{
+	auto Items = BackpackComponent->GetItems();
+
+	if (Items.Contains(NewItemData))
+	{
+		AddThisItemAt(NewItemData, Items[NewItemData]);
+	}
 }
