@@ -7,7 +7,7 @@
 void UMSGridWidget::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const
 {
 	OutX = InIndex % ColumnNum;
-	OutY = InIndex / ColumnNum;
+	OutY = InIndex / ColumnNum; 
 }
 
 void UMSGridWidget::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const

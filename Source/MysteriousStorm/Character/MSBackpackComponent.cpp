@@ -71,7 +71,7 @@ void UMSBackpackComponent::OpenBackpack()
 	{
 		OnBackpackOpened.Broadcast();
 	}
-	NeedRefresh = true;
+	NeedRefresh = true; 
 }
 
 void UMSBackpackComponent::CloseBackpack()

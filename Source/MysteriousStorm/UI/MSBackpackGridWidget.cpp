@@ -14,7 +14,7 @@
 void UMSBackpackGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent)
 {
 	TileSize = NewTileSize;
-	BackpackComponent = NewBackpackComponent;
+	BackpackComponent = NewBackpackComponent; 
 
 	if (!BackpackComponent)
 	{

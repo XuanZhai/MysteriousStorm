@@ -178,7 +178,7 @@ void UMSCachedGridWidget::UpdateCachedTiles()
 	auto OldCachedItems = BackpackComponent->GetCachedItem();
 
 	ClearCachedTiles();
-
+	 
 	for (const auto& CachedItem : BackpackComponent->GetCachedList())
 	{
 		if (OldCachedItems.Contains(CachedItem.Key) && IsAvailableForNewItem(CachedItem.Key, OldCachedItems[CachedItem.Key],CachedTiles,ColumnNum,RowNum))
