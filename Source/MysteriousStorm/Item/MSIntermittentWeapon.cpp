@@ -22,18 +22,34 @@ void AMSIntermittentWeapon::BeginPlay()
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 {
 	// TODO: 根据cd更新UI
+	Super::Tick(DeltaSeconds);
+	if(bIsTimeStopped)return;
+	
 	if (!bIsAttacking)
 	{
-		Super::Tick(DeltaSeconds);
-		CurrentTime += DeltaSeconds;
-		if (CurrentTime >= IntervalTime)
+		if(bIsStatic)
 		{
-			CurrentTime -= IntervalTime;
-			TryAttack();
+			StaticMeshComp->SetVisibility(true);
+		}else
+		{
+			
+			StaticMeshComp->SetVisibility(false);
+			CurrentTime += DeltaSeconds;
+			if (CurrentTime >= IntervalTime)
+			{
+				CurrentTime -= IntervalTime;
+				TryAttack();
+			}
 		}
 	}
 	else
 	{
+		if(bIsStatic)
+		{
+			StaticMeshComp->SetVisibility(false);
+			return;
+		}
+		StaticMeshComp->SetVisibility(true);
 		auto Scale = StaticMeshComp->GetComponentScale();
 		switch (WeaponType)
 		{

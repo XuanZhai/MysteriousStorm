@@ -26,7 +26,8 @@ protected:
 
 	FVector RuntimeOffset;
 	FVector Offset;
-	float RotateSpeed;
+	bool bIsTimeStopped;
+	
 	FMSWeaponTableRow WeaponConfig;
 
 	static float DistancePointToSegment(FVector Point, FVector Start, FVector End) ;
@@ -36,7 +37,9 @@ protected:
 
 public:
 	AMSWeaponActor();
+	bool bIsStatic;
 
+	void SetTimeStop(bool bIsTimeStop);
 	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
 	virtual void BeginPlay() override;
 	

@@ -9,6 +9,7 @@
 AMSWeaponActor::AMSWeaponActor()
 {
 	//TryReadConfig();
+	bIsStatic = true;
 }
 
 void AMSWeaponActor::BeginPlay()
@@ -17,11 +18,16 @@ void AMSWeaponActor::BeginPlay()
 
 	TryReadConfig();
 
-	Offset = FVector(100, 0, 0);
-	RuntimeOffset = Offset.RotateAngleAxis(FMath::FRandRange(0.0f, 100.0f), FVector(0, 0, 1));
-	RotateSpeed = 200;
+	Offset = FVector(-100, 0, 0);
+	RuntimeOffset = Offset;
+	bIsTimeStopped = false;
 }
 
+
+void AMSWeaponActor::SetTimeStop(bool bIsTimeStop)
+{
+	bIsTimeStopped = bIsTimeStop;
+}
 
 void AMSWeaponActor::SetOwnerCharacter(ACharacter* NewOwnerCharacter)
 {
@@ -45,9 +51,11 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	// 基于上一帧的runtimeoffset,将这一帧的旋转施加到actor上
-
-	RuntimeOffset = RuntimeOffset.RotateAngleAxis(RotateSpeed * DeltaSeconds, FVector(0, 0, 1));
-	SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);
+	if (bIsStatic && !bIsTimeStopped)
+	{
+		RuntimeOffset = Offset.RotateAngleAxis(OwnerCharacter->GetActorRotation().Yaw, FVector(0, 0, 1));
+		SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);
+	}
 }
 
 
@@ -115,6 +123,12 @@ bool AMSWeaponActor::OverlapCircleCircle(FVector CircleCenter1, float CircleRadi
 	CircleCenter1.Z = 0;
 	CircleCenter2.Z = 0;
 	return FVector::Dist(CircleCenter1, CircleCenter2) <= CircleRadius1 + CircleRadius2;
+}
+
+// TODO：rectangle vs circle
+bool AMSWeaponActor::OverlapRectangleCircle(FVector RectangleCenter, FVector Forward, FVector Right, float HalfWidth, float HalfHeight, FVector CircleCenter, float CircleRadius)
+{
+	return true;
 }
 #pragma optimize("", on)
 # pragma endregion
