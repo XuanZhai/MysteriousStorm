@@ -14,17 +14,56 @@ void AMSIntermittentWeapon::BeginPlay()
 	CurrentTime = 0;
 	IntervalTime = WeaponConfig.IntervalTime;
 	WeaponType = WeaponConfig.WeaponType;
+	bIsAttacking = false;
+	AttackProcess = 0;
+	CachedAttackDirection = FVector::ZeroVector;
 }
 
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 {
 	// TODO: 根据cd更新UI
-	Super::Tick(DeltaSeconds);
-	CurrentTime += DeltaSeconds;
-	if (CurrentTime >= IntervalTime)
+	if (!bIsAttacking)
 	{
-		CurrentTime -= IntervalTime;
-		TryAttack();
+		Super::Tick(DeltaSeconds);
+		CurrentTime += DeltaSeconds;
+		if (CurrentTime >= IntervalTime)
+		{
+			CurrentTime -= IntervalTime;
+			TryAttack();
+		}
+	}
+	else
+	{
+		auto Scale = StaticMeshComp->GetComponentScale();
+		switch (WeaponType)
+		{
+		case EWeaponType::Sword:
+			// 按照目前的攻击进度设置位置，后续攻击时间考虑给策划配置
+			AttackProcess += DeltaSeconds / AttackTime;
+			
+			Scale.Z = WeaponConfig.SectorRadius / 200;
+			StaticMeshComp->SetWorldScale3D(Scale);
+			if (AttackProcess >= 1)
+			{
+				bIsAttacking = false;
+				AttackProcess = 0;
+				Scale.Z = 0.2f;
+				StaticMeshComp->SetWorldScale3D(Scale);
+			}
+			else
+			{
+				auto OwnerLocation = OwnerCharacter->GetActorLocation();
+				auto OffsetDirection = CachedAttackDirection.RotateAngleAxis(WeaponConfig.SectorAngle * (AttackProcess - 0.5), FVector::UpVector);
+
+				SetActorLocation(OwnerLocation + OffsetDirection * WeaponConfig.SectorRadius / 2);
+				FRotator NewRotation = FRotator(90, CachedAttackRotation.Yaw + WeaponConfig.SectorAngle * (AttackProcess - 0.5), 0);
+				SetActorRotation(NewRotation);
+			}
+			break;
+		default:
+			bIsAttacking = false;
+			break;
+		}
 	}
 }
 
@@ -35,8 +74,9 @@ bool AMSIntermittentWeapon::TryAttack()
 {
 	SearchEnemy();
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("暴风巨剑索敌攻击"));
-
-
+	bIsAttacking = true;
+	CachedAttackDirection = OwnerCharacter->GetActorForwardVector();
+	CachedAttackRotation = OwnerCharacter->GetActorRotation();
 	for (const auto Enemy : SearchEnemyCache)
 	{
 		Enemy->Hurt();
@@ -77,12 +117,12 @@ void AMSIntermittentWeapon::SearchEnemy()
 		}
 		break;
 	case EWeaponType::Grenade:
-		// 基于范围内随机生成的圆形区域检测
-		
+	// 基于范围内随机生成的圆形区域检测
+
 	case EWeaponType::ShotGun:
-		// 基于多个扇形检测
+	// 基于多个扇形检测
 	case EWeaponType::MachineGun:
-		// 基于扇形检测
+	// 基于扇形检测
 	case EWeaponType::Dart:
 		// 基于举行检测
 	default:
