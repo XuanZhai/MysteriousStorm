@@ -7,7 +7,7 @@
 #include "MSItemTableRow.generated.h"
 
 class AMSItemActor;
-
+enum EItemType : uint8;
 /**
  * 
  */
@@ -22,11 +22,11 @@ struct MYSTERIOUSSTORM_API FMSItemTableRow : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Name;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<AMSItemActor> AssetBP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemType> ItemType;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSoftObjectPath PreviewUIPath;
+    TSubclassOf<AMSItemActor> AssetBP;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSoftObjectPath UIPath;

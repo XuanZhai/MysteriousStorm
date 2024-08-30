@@ -22,8 +22,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SpawnActorForwardOffset = 300.0f;
 
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsGamePause;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TrySpawnItemActorFromData(UMSItemData* InItemData, AActor* SpawnAroundTarget, AMSItemActor*& OutItemActor, bool bGroundClamp = false);
+
+	void SetGamePaused(bool NewState);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGamePauseUpdated, bool, NewState);
+	UPROPERTY(BlueprintAssignable)
+	FOnGamePauseUpdated OnGamePauseUpdated;
 };

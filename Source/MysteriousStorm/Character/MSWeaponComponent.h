@@ -20,6 +20,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons")
 	TArray<AMSWeaponActor*> Weapons;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons")
+	TArray<AMSWeaponActor*> StaticWeapons;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons")
 	TArray<TSubclassOf<AMSWeaponActor>> TestWeaponData;
@@ -27,7 +30,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	void Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponData);
-	void Internal_RemoveWeapon(AMSWeaponActor* Weapon);
+	void Internal_RemoveWeapon(UMSItemData* Weapon);
 
 public:	
 

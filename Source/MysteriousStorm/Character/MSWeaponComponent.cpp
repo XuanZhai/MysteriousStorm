@@ -2,16 +2,18 @@
 
 
 #include "MSWeaponComponent.h"
+
+#include "Core/Tests/Containers/TestUtils.h"
 #include "GameFramework/Character.h"
 #include "MysteriousStorm/Item/MSItemData.h"
 
+#pragma region lifetime
 // Sets default values for this component's properties
 UMSWeaponComponent::UMSWeaponComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	
 }
 
 
@@ -25,16 +27,48 @@ void UMSWeaponComponent::BeginPlay()
 	}
 }
 
+#pragma endregion
+
+#pragma region internal
+
 void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponData)
 {
-	AMSWeaponActor* TestWeapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponData);
-	TestWeapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
-	Weapons.Add(TestWeapon);
+	AMSWeaponActor* Weapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponData);
+	Weapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
+	Weapon->bIsStatic = false;
+	Weapons.Add(Weapon);
+
+	AMSWeaponActor* StaticWeapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponData);
+	StaticWeapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
+	StaticWeapon->bIsStatic = true;
+	StaticWeapons.Add(StaticWeapon);
 }
 
-void UMSWeaponComponent::Internal_RemoveWeapon(AMSWeaponActor* Weapon)
+void UMSWeaponComponent::Internal_RemoveWeapon(UMSItemData* Weapon)
 {
+	for (const auto WeaponActor : Weapons)
+	{
+		if (WeaponActor->GetItemData() == Weapon)
+		{
+			Weapons.Remove(WeaponActor);
+			WeaponActor->Destroy();
+			break;
+		}
+	}
+	for (const auto WeaponActor : StaticWeapons)
+	{
+		if (WeaponActor->GetItemData() == Weapon)
+		{
+			Weapons.Remove(WeaponActor);
+			WeaponActor->Destroy();
+			break;
+		}
+	}
 }
+
+#pragma endregion
+
+#pragma region publicInterface
 
 
 void UMSWeaponComponent::AddWeapon(UMSItemData* NewWeapon)
@@ -45,6 +79,6 @@ void UMSWeaponComponent::AddWeapon(UMSItemData* NewWeapon)
 
 void UMSWeaponComponent::RemoveWeapon(UMSItemData* Weapon)
 {
-	
+	Internal_RemoveWeapon(Weapon);
 }
-
+# pragma endregion
