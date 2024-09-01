@@ -40,6 +40,10 @@ bool AMSWeaponActor::TryAttack()
 	return true;
 }
 
+void AMSWeaponActor::ApplyDamage()
+{
+}
+
 bool AMSWeaponActor::TryReadConfig()
 {
 	UGameInstance* GameInstance = GetGameInstance();
@@ -88,7 +92,8 @@ float AMSWeaponActor::DistancePointToSegment(FVector Point, FVector Start, FVect
 	return Distance;
 }
 
-bool AMSWeaponActor::OverlapSectorCircle(FVector SectorCenter, FVector Forward, float Angle, float Radius, FVector CircleCenter, float CircleRadius)
+bool AMSWeaponActor::OverlapSectorCircle(FVector SectorCenter, FVector Forward, float Angle, float Radius,
+                                         FVector CircleCenter, float CircleRadius)
 {
 	SectorCenter.Z = 0;
 	Forward.Z = 0;
@@ -107,10 +112,12 @@ bool AMSWeaponActor::OverlapSectorCircle(FVector SectorCenter, FVector Forward, 
 	}
 
 	if (DistancePointToSegment(CircleCenter, SectorCenter,
-	                           SectorCenter + Forward.RotateAngleAxis(-Angle / 2, FVector::UpVector) * Radius) > CircleRadius
+	                           SectorCenter + Forward.RotateAngleAxis(-Angle / 2, FVector::UpVector) * Radius) >
+		CircleRadius
 		||
 		DistancePointToSegment(CircleCenter, SectorCenter,
-		                       SectorCenter + Forward.RotateAngleAxis(Angle / 2, FVector::UpVector) * Radius) > CircleRadius)
+		                       SectorCenter + Forward.RotateAngleAxis(Angle / 2, FVector::UpVector) * Radius) >
+		CircleRadius)
 	{
 		return false;
 	}
@@ -118,7 +125,8 @@ bool AMSWeaponActor::OverlapSectorCircle(FVector SectorCenter, FVector Forward, 
 	return true;
 }
 
-bool AMSWeaponActor::OverlapCircleCircle(FVector CircleCenter1, float CircleRadius1, FVector CircleCenter2, float CircleRadius2)
+bool AMSWeaponActor::OverlapCircleCircle(FVector CircleCenter1, float CircleRadius1, FVector CircleCenter2,
+                                         float CircleRadius2)
 {
 	CircleCenter1.Z = 0;
 	CircleCenter2.Z = 0;
@@ -126,8 +134,22 @@ bool AMSWeaponActor::OverlapCircleCircle(FVector CircleCenter1, float CircleRadi
 }
 
 // TODO：rectangle vs circle
-bool AMSWeaponActor::OverlapRectangleCircle(FVector RectangleCenter, FVector Forward, FVector Right, float HalfWidth, float HalfHeight, FVector CircleCenter, float CircleRadius)
+bool AMSWeaponActor::OverlapRectangleCircle(FVector RectangleCenter, FVector Forward, FVector Right, FVector2f Extent,
+                                            FVector CircleCenter, float CircleRadius)
 {
+	// 将圆心投影到矩形的坐标系下再计算距离
+	RectangleCenter.Z = 0;
+	CircleCenter.Z = 0;
+	FVector Offset = CircleCenter - RectangleCenter;
+
+	Forward.Normalize();
+	Right.Normalize();
+	FVector ProjectedOffset = FVector::DotProduct(Offset, Forward) * Forward + FVector::DotProduct(Offset, Right) *
+		Right;
+	if (ProjectedOffset.X > (Extent.X + CircleRadius) || ProjectedOffset.Y > (Extent.Y + CircleRadius))
+	{
+		return false;
+	}
 	return true;
 }
 #pragma optimize("", on)

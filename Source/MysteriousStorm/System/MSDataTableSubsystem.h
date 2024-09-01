@@ -54,6 +54,8 @@ public:
 
 	bool TryGetWeaponConfigByItemID(const int32 ItemID, struct FMSWeaponTableRow& OutRow) const;
 
+	bool TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level, struct FMSWeaponTableRow& OutRow) const;
+
 	bool TryGetEnemyConfigByID(const int32 EnemyID, struct FMSEnemyTableRow& OutRow) const;
 
 	UFUNCTION(BlueprintCallable)

@@ -21,23 +21,32 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="WeaponParameter")
 	float IntervalTime;
 
-	const float AttackTime = 0.25;
+	// 这两项需要再放到配置表中
+	const float AnticipationTime = 2.0f;
+	const float AttackTime = 2.0f;
 	
 #pragma endregion 
 
-	float CurrentTime;
+	float WeaponIntervalTimer;
+	float AttackProcessTimer;
+	float AnticipationTimer;
+	
 	bool bIsAttacking;
-	float AttackProcess;
+	FVector CachedAttackPosition;
 	FVector CachedAttackDirection;
+	FVector CachedOwnerPosition;
 	FRotator CachedAttackRotation;
 
 	UPROPERTY()
 	TArray<AMSEnemyCharacter*> SearchEnemyCache;
+
+	void TickAttackProcess(float DeltaSeconds);
 	
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual bool TryAttack() override;
+	virtual void ApplyDamage()override;
 
 	void SearchEnemy();
 	

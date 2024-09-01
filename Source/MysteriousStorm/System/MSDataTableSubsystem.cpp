@@ -11,7 +11,7 @@
 
 void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	TArray<FSoftObjectPath> Paths = 
+	TArray<FSoftObjectPath> Paths =
 	{
 		ItemTablePath,
 		WeaponTablePath,
@@ -23,36 +23,34 @@ void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	WeaponTable = Cast<UDataTable>(WeaponTablePath.TryLoad());
 	EnemyTable = Cast<UDataTable>(EnemyTablePath.TryLoad());
 
-//	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
-// 		Paths, [this]()
-// 		{
-// 
-// 			ItemTable = Cast<UDataTable>(ItemTablePath.ResolveObject());
-// 			WeaponTable = Cast<UDataTable>(WeaponTablePath.ResolveObject());
-// 
-// 			if (OnTableLoaded.IsBound())
-// 			{
-// 				OnTableLoaded.Broadcast(this);
-// 			}
-// 		});
-
+	//	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
+	// 		Paths, [this]()
+	// 		{
+	// 
+	// 			ItemTable = Cast<UDataTable>(ItemTablePath.ResolveObject());
+	// 			WeaponTable = Cast<UDataTable>(WeaponTablePath.ResolveObject());
+	// 
+	// 			if (OnTableLoaded.IsBound())
+	// 			{
+	// 				OnTableLoaded.Broadcast(this);
+	// 			}
+	// 		});
 }
 
 void UMSDataTableSubsystem::OnDataTableLoaded()
 {
-
 }
 
 void UMSDataTableSubsystem::Deinitialize()
 {
-
 }
 
 bool UMSDataTableSubsystem::TryGetRowByItemID(const int32 ItemID, struct FMSItemTableRow& OutRow) const
 {
 	if (ItemTable)
 	{
-		if (FMSItemTableRow* Row = ItemTable->FindRow<FMSItemTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
+		if (FMSItemTableRow* Row = ItemTable->FindRow<
+			FMSItemTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
 		{
 			OutRow = *Row;
 			return true;
@@ -65,7 +63,18 @@ bool UMSDataTableSubsystem::TryGetWeaponConfigByItemID(const int32 ItemID, struc
 {
 	if (WeaponTable)
 	{
-		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
+		return TryGetWeaponConfigByItemIDWithLevel(ItemID, 1, OutRow);
+	}
+	return false;
+}
+
+bool UMSDataTableSubsystem::TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level,
+                                                                struct FMSWeaponTableRow& OutRow) const
+{
+	FString Name = FString::FromInt(ItemID) + "_" + FString::FromInt(level);
+	if (WeaponTable)
+	{
+		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(Name), TEXT("Context")))
 		{
 			OutRow = *Row;
 			return true;
@@ -78,7 +87,8 @@ bool UMSDataTableSubsystem::TryGetEnemyConfigByID(const int32 EnemyID, struct FM
 {
 	if (EnemyTable)
 	{
-		if (FMSEnemyTableRow* Row = EnemyTable->FindRow<FMSEnemyTableRow>(FName(FString::FromInt(EnemyID)), TEXT("Context")))
+		if (FMSEnemyTableRow* Row = EnemyTable->FindRow<FMSEnemyTableRow>(
+			FName(FString::FromInt(EnemyID)), TEXT("Context")))
 		{
 			OutRow = *Row;
 			return true;

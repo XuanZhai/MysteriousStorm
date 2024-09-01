@@ -33,7 +33,7 @@ protected:
 	static float DistancePointToSegment(FVector Point, FVector Start, FVector End) ;
 	static bool OverlapSectorCircle(FVector SectorCenter, FVector Forward, float Angle, float Radius, FVector CircleCenter, float CircleRadius);
 	static bool OverlapCircleCircle(FVector CircleCenter1, float CircleRadius1, FVector CircleCenter2, float CircleRadius2);
-	static bool OverlapRectangleCircle(FVector RectangleCenter, FVector Forward, FVector Right, float HalfWidth, float HalfHeight, FVector CircleCenter, float CircleRadius);
+	static bool OverlapRectangleCircle(FVector RectangleCenter, FVector Forward, FVector Right, FVector2f Extent, FVector CircleCenter, float CircleRadius);
 
 public:
 	AMSWeaponActor();
@@ -44,6 +44,7 @@ public:
 	virtual void BeginPlay() override;
 	
 	virtual bool TryAttack();
+	virtual void ApplyDamage();
 	bool TryReadConfig();
 	virtual void Tick(float DeltaSeconds) override;
 	

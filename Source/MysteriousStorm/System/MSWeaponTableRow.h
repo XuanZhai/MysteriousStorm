@@ -29,6 +29,9 @@ struct MYSTERIOUSSTORM_API FMSWeaponTableRow : public FTableRowBase
 	int32 ItemID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EWeaponType WeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
