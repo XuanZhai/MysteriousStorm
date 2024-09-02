@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MSItemActor.h"
+#include "MysteriousStorm/Item/MSItemActor.h"
 #include "GameFramework/Character.h"
 #include "MysteriousStorm/System/MSWeaponTableRow.h"
 #include "MSWeaponActor.generated.h"

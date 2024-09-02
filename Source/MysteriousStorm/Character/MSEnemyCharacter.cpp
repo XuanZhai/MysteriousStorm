@@ -3,6 +3,8 @@
 
 #include "MSEnemyCharacter.h"
 
+#include "MysteriousStorm/System/MSDataTableSubsystem.h"
+
 // Sets default values
 AMSEnemyCharacter::AMSEnemyCharacter()
 {
@@ -15,14 +17,13 @@ AMSEnemyCharacter::AMSEnemyCharacter()
 void AMSEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	TryReadConfig();
 }
 
 // Called every frame
 void AMSEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -35,5 +36,12 @@ void AMSEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 void AMSEnemyCharacter::Hurt()
 {
 	Destroy();
+}
+
+bool AMSEnemyCharacter::TryReadConfig()
+{
+	UGameInstance* GameInstance = GetGameInstance();
+	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetEnemyConfigByID(EnemyID, EnemyConfig);
+	return true;
 }
 

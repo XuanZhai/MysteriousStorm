@@ -15,6 +15,9 @@ void AMSIntermittentWeapon::BeginPlay()
 
 	IntervalTime = WeaponConfig.IntervalTime;
 	WeaponType = WeaponConfig.WeaponType;
+	AnticipationTime = WeaponConfig.AnticipationTime;
+	AttackTime = WeaponConfig.AttackTime;
+	
 	bIsAttacking = false;
 	CachedAttackDirection = FVector::ZeroVector;
 	CachedAttackPosition = FVector::ZeroVector;
@@ -40,14 +43,14 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 		else
 		{
 			StaticMeshComp->SetVisibility(false);
-			WeaponIntervalTimer += DeltaSeconds;
-			if (WeaponIntervalTimer >= IntervalTime)
-			{
-				WeaponIntervalTimer -= IntervalTime;
-				AnticipationTimer = 0;
-				AttackProcessTimer = 0;
-				TryAttack();
-			}
+		}
+		WeaponIntervalTimer += DeltaSeconds;
+		if (WeaponIntervalTimer >= IntervalTime)
+		{
+			WeaponIntervalTimer -= IntervalTime;
+			AnticipationTimer = 0;
+			AttackProcessTimer = 0;
+			TryAttack();
 		}
 	}
 	else
@@ -61,6 +64,14 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 	if (bIsStatic)
 	{
 		StaticMeshComp->SetVisibility(false);
+		if (AttackProcessTimer >= AttackTime)
+		{
+			AttackProcessTimer = 0;
+			bIsAttacking = false;
+		}else
+		{
+			AttackProcessTimer += DeltaSeconds;
+		}
 		return;
 	}
 	StaticMeshComp->SetVisibility(true);
@@ -74,7 +85,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		Scale.Z = WeaponConfig.SectorRadius / 200;
 		StaticMeshComp->SetWorldScale3D(Scale);
 
-	// 攻击流程计时
+		// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
 			bIsAttacking = false;
@@ -110,7 +121,21 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			SetActorLocation(FVector(HorizontalPosition.X, HorizontalPosition.Y, Height + CachedOwnerPosition.Z));
 		}
 		break;
-
+	case EWeaponType::MachineGun:
+		AttackProcessTimer += DeltaSeconds;
+		if (AttackProcessTimer >= AttackTime)
+		{
+			bIsAttacking = false;
+			AttackProcessTimer = 0;
+		}
+		else
+		{
+			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
+		}
+	case EWeaponType::Dart:
+	case EWeaponType::ShotGun:
+	
 	default:
 		break;
 	}
@@ -127,7 +152,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 # pragma endregion
 
 # pragma region event
-#pragma optimize("", off)
+# pragma optimize("", off)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
@@ -135,6 +160,7 @@ bool AMSIntermittentWeapon::TryAttack()
 	bIsAttacking = true;
 	CachedAttackDirection = OwnerCharacter->GetActorForwardVector();
 	CachedAttackRotation = OwnerCharacter->GetActorRotation();
+	CachedOwnerPosition = OwnerCharacter->GetActorLocation();
 	if (WeaponType == EWeaponType::Grenade)
 	{
 		// 生成随机手雷落点
@@ -143,7 +169,6 @@ bool AMSIntermittentWeapon::TryAttack()
 		CachedAttackPosition = OwnerCharacter->GetActorLocation() +
 			FVector(RandomRadius * FMath::Cos(RandomAngle), RandomRadius * FMath::Sin(RandomAngle),
 			        0);
-		CachedOwnerPosition = OwnerCharacter->GetActorLocation();
 	}
 	return true;
 }
@@ -168,6 +193,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 
 	switch (WeaponType)
 	{
+	case EWeaponType::MachineGun:
 	case EWeaponType::Sword:
 		// 基于扇形检测
 		DrawDebugLine(GetWorld(), AttackStart,
@@ -204,16 +230,15 @@ void AMSIntermittentWeapon::SearchEnemy()
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
-
-
+	
 	case EWeaponType::ShotGun:
 	// 基于多个扇形检测
-	case EWeaponType::MachineGun:
-	// 基于扇形检测
+	
 	case EWeaponType::Dart:
-		// 基于举行检测
+		// 基于矩形检测
 	default:
 		break;
 	}
 }
+# pragma optimize("", on)
 # pragma endregion

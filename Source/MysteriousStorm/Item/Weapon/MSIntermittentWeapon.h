@@ -20,10 +20,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="WeaponParameter")
 	float IntervalTime;
-
-	// 这两项需要再放到配置表中
-	const float AnticipationTime = 2.0f;
-	const float AttackTime = 2.0f;
+	
+	float AnticipationTime = 0;
+	float AttackTime = 0;
 	
 #pragma endregion 
 

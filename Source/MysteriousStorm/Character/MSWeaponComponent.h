@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MysteriousStorm/Item/MSWeaponActor.h"
+#include "MysteriousStorm/Item/Weapon//MSWeaponActor.h"
 #include "MSWeaponComponent.generated.h"
 
 

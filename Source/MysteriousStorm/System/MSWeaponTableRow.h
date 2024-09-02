@@ -55,5 +55,11 @@ struct MYSTERIOUSSTORM_API FMSWeaponTableRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SectorRadius;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AnticipationTime;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AttackTime;
+
 	FMSWeaponTableRow();
 };
