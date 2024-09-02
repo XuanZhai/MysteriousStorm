@@ -3,57 +3,35 @@
 
 #include "MSGridWidget.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MysteriousStorm/Character/MSBackpackComponent.h"
 #include "MSItemWidget.h"
 #include "Blueprint/DragDropOperation.h"
 
-void UMSGridWidget::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY, const int32 ColumnNum) const
+void UMSGridWidget::IndexToTile(const int32 InIndex, int32& OutX, int32& OutY) const
 {
 	OutX = InIndex % ColumnNum;
 	OutY = InIndex / ColumnNum; 
 }
 
-void UMSGridWidget::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex, const int32 ColumnNum) const
+void UMSGridWidget::TileToIndex(const int32 InX, const int32 InY, int32& OutIndex) const
 {
 	OutIndex = InX + InY * ColumnNum;
 }
 
-bool UMSGridWidget::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex, const TArray<UMSItemData*>& InTiles, int32 ColNum, int32 RowNum) const
+bool UMSGridWidget::IsItemAvailableToPut(UMSItemData* TargetItem) const
 {
-	int32 TileXStart = 0;
-	int32 TileYStart = 0;
-	IndexToTile(TopLeftIndex, TileXStart, TileYStart, ColNum);
-
-	int32 TileXEnd = TileXStart + NewItemData->XUISize;
-	int32 TileYEnd = TileYStart + NewItemData->YUISize;
-
-	if (TileXStart < 0 || TileYStart < 0) return false;
-	if (TileXEnd > ColNum || TileYEnd > RowNum) return false;
-
-	for (int32 x = TileXStart; x < TileXEnd; x++)
+	if (BackpackComponent && TargetItem)
 	{
-		for (int32 y = TileYStart; y < TileYEnd; y++)
-		{
-			int32 CurrentIndex = 0;
-			TileToIndex(x, y, CurrentIndex, ColNum);
-
-			if (!InTiles.IsValidIndex(CurrentIndex))
-			{
-				return false;
-			}
-			else if (InTiles[CurrentIndex] != nullptr)
-			{
-				return false;
-			}
-		}
+		return IsAvailableForNewItem(TargetItem, DropItemTopLeftTile);
 	}
-	return true;
+	return false;
 }
 
-void UMSGridWidget::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex, TArray<UMSItemData*>& InTiles, const int32 ColNum) const
+void UMSGridWidget::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
 	int32 TileXStart = 0;
 	int32 TileYStart = 0;
-	IndexToTile(TopLeftIndex, TileXStart, TileYStart, ColNum);
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
 	int32 TileXEnd = TileXStart + NewItemData->XUISize;
 	int32 TileYEnd = TileYStart + NewItemData->YUISize;
 
@@ -62,14 +40,39 @@ void UMSGridWidget::FillTilesWithItem(UMSItemData* NewItemData, int32 TopLeftInd
 		for (int32 y = TileYStart; y < TileYEnd; y++)
 		{
 			int32 CurrentIndex = 0;
-			TileToIndex(x, y, CurrentIndex, ColNum);
+			TileToIndex(x, y, CurrentIndex);
 
-			if (InTiles.IsValidIndex(CurrentIndex))
+			if (Tiles.IsValidIndex(CurrentIndex))
 			{
-				InTiles[CurrentIndex] = NewItemData;
+				if (NewItemData->IsBag())
+				{
+					Tiles[CurrentIndex].SetBag(NewItemData);
+				}
+				else 
+				{
+					Tiles[CurrentIndex].SetItem(NewItemData);
+				}
 			}
 		}
 	}
+}
+
+bool UMSGridWidget::TryAddThisItem(UMSItemData* NewItemData)
+{
+	if (!BackpackComponent->CanAddThisItem(NewItemData, true))
+	{
+		return false;
+	}
+
+	for (int32 i = 0; i < Tiles.Num(); i++)
+	{
+		if (IsAvailableForNewItem(NewItemData, i))
+		{
+			AddThisItemAt(NewItemData, i);
+			return true;
+		}
+	}
+	return false;
 }
 
 UMSItemData* UMSGridWidget::GetItemDataFromDragDropOperation(UDragDropOperation* InOperation) const

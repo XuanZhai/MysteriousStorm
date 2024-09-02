@@ -13,6 +13,7 @@ enum EItemType : uint8
 {
 	Item = 0,
 	Weapon = 1,
+	Bag = 2,
 	MAX
 };
 
@@ -59,6 +60,8 @@ public:
 	UMSItemData();
 
 	bool IsWeapon() const { return ItemType == EItemType::Weapon; }
+
+	bool IsBag() const { return ItemType == EItemType::Bag; }
 
 	UFUNCTION(BlueprintCallable)
 	void RotateUI();

@@ -23,7 +23,7 @@ void UMSCachedGridWidget::Initialization(float NewTileSize, UMSBackpackComponent
 
 	ColumnNum = BackpackComponent->CachedColumnNumber;
 	RowNum = BackpackComponent->CachedRowNumber;
-	CachedTiles.SetNum(ColumnNum * RowNum);
+	Tiles.SetNum(ColumnNum * RowNum);
 
 	if (GridBorder)
 	{
@@ -54,7 +54,7 @@ void UMSCachedGridWidget::Refresh()
 	{
 		int32 TileX = 0;
 		int32 TileY = 0;
-		IndexToTile(Item.Value, TileX, TileY, ColumnNum);
+		IndexToTile(Item.Value, TileX, TileY);
 
 		UUserWidget* NewWidget = CreateWidget(this, ItemWidgetClass);
 
@@ -74,22 +74,17 @@ void UMSCachedGridWidget::Refresh()
 	}
 }
 
-bool UMSCachedGridWidget::IsItemAvailableToPut(UMSItemData* TargetItem) const
-{
-	if (BackpackComponent && TargetItem)
-	{
-		return IsAvailableForNewItem(TargetItem,DropItemTopLeftTile, CachedTiles, ColumnNum,RowNum);
-	}
-	return false;
-}
-
 void UMSCachedGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 {
-	for (auto& CachedTile : CachedTiles)
+	for (auto& Tile : Tiles)
 	{
-		if (CachedTile == TargetItemData)
+		if (Tile.Item == TargetItemData)
 		{
-			CachedTile = nullptr;
+			Tile.ClearItemData();
+		}
+		else if (Tile.Bag == TargetItemData)
+		{
+			Tile.ClearAllData();
 		}
 	}
 }
@@ -162,18 +157,18 @@ bool UMSCachedGridWidget::NativeOnDragOver(const FGeometry& InGeometry, const FD
 	YMousePosToTile -= (YPos/2);
 
 	XMousePosToTile = FMath::Clamp(XMousePosToTile, 0, ColumnNum);
-	XMousePosToTile = FMath::Clamp(XMousePosToTile, 0, RowNum);
+	YMousePosToTile = FMath::Clamp(YMousePosToTile, 0, RowNum);
 
-	TileToIndex(XMousePosToTile,YMousePosToTile,DropItemTopLeftTile,ColumnNum);
+	TileToIndex(XMousePosToTile,YMousePosToTile,DropItemTopLeftTile);
 
 	return true;
 }
 
 void UMSCachedGridWidget::ClearCachedTiles()
 {
-	for (auto& Tile : CachedTiles)
+	for (auto& Tile : Tiles)
 	{
-		Tile = nullptr;
+		Tile.ClearAllData();
 	}
 
 	 BackpackComponent->ClearCachedItem();
@@ -187,7 +182,7 @@ void UMSCachedGridWidget::UpdateCachedTiles()
 	 
 	for (const auto& CachedItem : BackpackComponent->GetCachedList())
 	{
-		if (OldCachedItems.Contains(CachedItem.Key) && IsAvailableForNewItem(CachedItem.Key, OldCachedItems[CachedItem.Key],CachedTiles,ColumnNum,RowNum))
+		if (OldCachedItems.Contains(CachedItem.Key) && IsAvailableForNewItem(CachedItem.Key, OldCachedItems[CachedItem.Key]))
 		{
 			AddThisItemAt(CachedItem.Key, OldCachedItems[CachedItem.Key]);
 		}
@@ -198,33 +193,48 @@ void UMSCachedGridWidget::UpdateCachedTiles()
 	}
 }
 
+bool UMSCachedGridWidget::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const
+{
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
+
+	int32 TileXEnd = TileXStart + NewItemData->XUISize;
+	int32 TileYEnd = TileYStart + NewItemData->YUISize;
+
+	if (TileXStart < 0 || TileYStart < 0) return false; 
+	if (TileXEnd > ColumnNum || TileYEnd > RowNum) return false;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex);
+
+			if (!Tiles.IsValidIndex(CurrentIndex))
+			{
+				return false;
+			}
+
+			else if (Tiles[CurrentIndex].Item != nullptr || Tiles[CurrentIndex].Bag != nullptr)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void UMSCachedGridWidget::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
-	FillTilesWithItem(NewItemData, TopLeftIndex, CachedTiles, ColumnNum);
+	FillTilesWithItem(NewItemData, TopLeftIndex);
 
 	int32 TileX = 0;
 	int32 TileY = 0;
-	IndexToTile(TopLeftIndex, TileX, TileY, ColumnNum);
+	IndexToTile(TopLeftIndex, TileX, TileY);
 
 	BackpackComponent->AddCachedItem(NewItemData,TopLeftIndex);
-}
-
-bool UMSCachedGridWidget::TryAddThisItem(UMSItemData* NewItemData)
-{
-	if (!BackpackComponent->CanAddThisItem(NewItemData, true))
-	{
-		return false;
-	}
-
-	for (int32 i = 0; i < CachedTiles.Num(); i++)
-	{
-		if (IsAvailableForNewItem(NewItemData, i, CachedTiles, ColumnNum, RowNum))
-		{
-			AddThisItemAt(NewItemData, i);
-			return true;
-		}
-	}
-	return false;
 }
 
 void UMSCachedGridWidget::AddItemBack(UMSItemData* NewItemData)
@@ -235,4 +245,9 @@ void UMSCachedGridWidget::AddItemBack(UMSItemData* NewItemData)
 	{
 		AddThisItemAt(NewItemData,CachedItems[NewItemData]);
 	}
+}
+
+void UMSCachedGridWidget::AddChildItem(UMSItemData* NewItemData)
+{
+	TryAddThisItem(NewItemData);
 }

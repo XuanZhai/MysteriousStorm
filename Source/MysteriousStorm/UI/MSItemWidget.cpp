@@ -27,11 +27,11 @@ void UMSItemWidget::SetItemData(UMSItemData* NewItemData, EGridType NewItemSourc
 	ItemPayload->DragSource = NewItemSource;
 }
 
-void UMSItemWidget::CallOnItemRemoved(UMSItemData* TargetItemData)
+void UMSItemWidget::CallOnItemRemoved()
 {
 	if (OnItemRemoved.IsBound())
 	{
-		OnItemRemoved.Broadcast(TargetItemData);
+		OnItemRemoved.Broadcast(ItemPayload->ItemData);
 	}
 }
 

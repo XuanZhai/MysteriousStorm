@@ -28,25 +28,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UCanvasPanel* GridPanel;
 
-	UPROPERTY(BlueprintReadWrite)
-	UMSBackpackComponent* BackpackComponent;
-
-	UPROPERTY(BlueprintReadWrite)
-	float TileSize = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UMSItemWidget> ItemWidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray <UMSItemData*> Tiles;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ColumnNum = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 RowNum = 0;
-
-
 public:
 	UFUNCTION(BlueprintCallable)
 	void Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent);
@@ -56,11 +37,11 @@ public:
 
 #pragma region Backpack
 
+	virtual bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const override;
+
+	virtual void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex) override;
+
 	UFUNCTION(BlueprintCallable)
-	void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex);
-
-	bool TryAddThisItem(UMSItemData* NewItemData);
-
 	void AddItemBack(UMSItemData* NewItemData);
 
 #pragma endregion
@@ -69,9 +50,6 @@ public:
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void CreateLineSegment();
-
-	UFUNCTION(BlueprintCallable)
-	bool IsItemAvailableToPut(UMSItemData* TargetItem) const;
 
 	UFUNCTION(BlueprintCallable)
 	void OnItemRemoved(UMSItemData* TargetItemData);

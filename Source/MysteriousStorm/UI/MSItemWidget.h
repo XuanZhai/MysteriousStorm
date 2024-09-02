@@ -58,9 +58,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float TileSize = 0.0f;
 
-	//UPROPERTY(BlueprintReadOnly)
-	//UMSItemData* ItemData;
-
 	UPROPERTY(BlueprintReadOnly)
 	UMSDragPayload* ItemPayload;
 
@@ -76,7 +73,7 @@ public:
 	FOnItemRemoved OnItemRemoved;
 
 	UFUNCTION(BlueprintCallable)
-	void CallOnItemRemoved(UMSItemData* TargetItemData);
+	void CallOnItemRemoved();
 
 	void SetTileSize(float NewSize) { TileSize = NewSize; }
 

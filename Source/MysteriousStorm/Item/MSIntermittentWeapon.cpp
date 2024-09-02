@@ -127,7 +127,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 # pragma endregion
 
 # pragma region event
-#pragma optimize("", off)
+//#pragma optimize("", off)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
