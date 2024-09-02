@@ -109,6 +109,10 @@ void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLe
 	{
 		Weapons.Add(NewItemData);
 	}
+	else if (NewItemData->IsBag())
+	{
+		Bags.Add(NewItemData);
+	}
 
 	CachedItems.Remove(NewItemData);
 	
@@ -121,12 +125,21 @@ void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLe
 	NeedRefresh = true;
 }
 
-void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
+void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bSpawnNewItem)
 {
+	if (!TargetItem || !Items.Contains(TargetItem))
+	{
+		return;
+	}
+
 	Items.Remove(TargetItem);
 	if (TargetItem->IsWeapon())
 	{
 		Weapons.Remove(TargetItem);
+	}
+	else if (TargetItem->IsBag())
+	{
+		Bags.Remove(TargetItem);
 	}
 
 	if (OnItemRemovedFromBackpack.IsBound())
@@ -134,11 +147,14 @@ void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem)
 		OnItemRemovedFromBackpack.Broadcast(TargetItem);
 	}
 
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
-	if(AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+	if(bSpawnNewItem)
 	{
-		AMSItemActor* OutActor = nullptr;
-		GS->TrySpawnItemActorFromData(TargetItem, GetOwner(), OutActor, true);
+		AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+		if(AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+		{
+			AMSItemActor* OutActor = nullptr;
+			GS->TrySpawnItemActorFromData(TargetItem, GetOwner(), OutActor, true);
+		}
 	}
 
 	NeedRefresh = true;

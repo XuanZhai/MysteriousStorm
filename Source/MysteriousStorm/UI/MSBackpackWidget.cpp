@@ -14,6 +14,10 @@ void UMSBackpackWidget::InitializeGrid()
 	WB_CachedGridWidget->Initialization(TileSize,BackpackComponent);
 	WB_GridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
 	WB_CachedGridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
+
+	WB_CachedGridWidget->NeedDropBack.AddUniqueDynamic(WB_GridWidget, &UMSBackpackGridWidget::AddItemBack);
+	WB_GridWidget->NeedDropBack.AddUniqueDynamic(WB_CachedGridWidget, &UMSCachedGridWidget::AddItemBack);
+	WB_GridWidget->PutChildToGround.AddUniqueDynamic(WB_CachedGridWidget, &UMSCachedGridWidget::AddChildItem);
 }
 
 bool UMSBackpackWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

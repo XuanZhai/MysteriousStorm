@@ -53,7 +53,7 @@ void UMSBackpackGridWidget::Refresh()
 	{
 		int32 TileX = 0;
 		int32 TileY = 0;
-		IndexToTile(Item.Value, TileX, TileY, ColumnNum);
+		IndexToTile(Item.Value, TileX, TileY);
 
 		UUserWidget* NewWidget = CreateWidget(this, ItemWidgetClass);
 
@@ -73,22 +73,26 @@ void UMSBackpackGridWidget::Refresh()
 	}
 }
 
-bool UMSBackpackGridWidget::IsItemAvailableToPut(UMSItemData* TargetItem) const
-{
-	if (BackpackComponent && TargetItem)
-	{
-		return IsAvailableForNewItem(TargetItem, DropItemTopLeftTile, Tiles, ColumnNum, RowNum);
-	}
-	return false;
-}
-
 void UMSBackpackGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 {
 	for (auto& Tile : Tiles)
 	{
-		if (Tile == TargetItemData)
+		if (Tile.Item == TargetItemData)
 		{
-			Tile = nullptr;
+			Tile.ClearItemData();
+		}
+		else if (Tile.Bag == TargetItemData)
+		{
+			if (Tile.bHasItem)
+			{
+				if (PutChildToGround.IsBound())
+				{
+					PutChildToGround.Broadcast(Tile.Item);
+				}
+				BackpackComponent->RemoveItem(Tile.Item);
+			} 
+			BackpackComponent->RemoveItem(Tile.Bag,false);
+			Tile.ClearAllData();
 		}
 	}
 }
@@ -113,16 +117,18 @@ bool UMSBackpackGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	}
 	else
 	{
-		bFindPlaceToDrop = TryAddThisItem(NewItemData);
+		if (DragSource == EGridType::CachedGrid)
+		{
+			if (NeedDropBack.IsBound())
+			{
+				NeedDropBack.Broadcast(NewItemData);
+			}
+		}
+		else
+		{
+			bFindPlaceToDrop = TryAddThisItem(NewItemData);
+		}
 	}
-
-// 	if (bFindPlaceToDrop)
-// 	{
-// 		if (DragSource == CachedGrid)
-// 		{
-// 			BackpackComponent->AddBackpackItem(NewItemData);
-// 		}
-// 	}
 
 	if (OnMouseDropped.IsBound())
 	{
@@ -161,40 +167,59 @@ bool UMSBackpackGridWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 	YMousePosToTile -= (YPos / 2);
 
 	XMousePosToTile = FMath::Clamp(XMousePosToTile, 0, ColumnNum);
-	XMousePosToTile = FMath::Clamp(XMousePosToTile, 0, RowNum);
+	YMousePosToTile = FMath::Clamp(YMousePosToTile, 0, RowNum);
 
-	TileToIndex(XMousePosToTile, YMousePosToTile, DropItemTopLeftTile, ColumnNum);
+	TileToIndex(XMousePosToTile, YMousePosToTile, DropItemTopLeftTile);
 
+	return true;
+}
+
+bool UMSBackpackGridWidget::IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const
+{
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
+
+	int32 TileXEnd = TileXStart + NewItemData->XUISize;
+	int32 TileYEnd = TileYStart + NewItemData->YUISize;
+
+	if (TileXStart < 0 || TileYStart < 0) return false;
+	if (TileXEnd > ColumnNum || TileYEnd > RowNum) return false;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex);
+
+			if (!Tiles.IsValidIndex(CurrentIndex))
+			{
+				return false;
+			}
+
+			if (NewItemData->IsBag() && Tiles[CurrentIndex].HasBag())
+			{
+				return false;
+			}
+			else if (!NewItemData->IsBag() && (!Tiles[CurrentIndex].HasBag() || Tiles[CurrentIndex].HasItem()))
+			{
+				return false;
+			}
+		}
+	}
 	return true;
 }
 
 void UMSBackpackGridWidget::AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex)
 {
-	FillTilesWithItem(NewItemData, TopLeftIndex, Tiles, ColumnNum);
+	FillTilesWithItem(NewItemData, TopLeftIndex);
 
 	int32 TileX = 0;
 	int32 TileY = 0;
-	IndexToTile(TopLeftIndex, TileX, TileY, ColumnNum);
+	IndexToTile(TopLeftIndex, TileX, TileY);
 
 	BackpackComponent->AddBackpackItem(NewItemData, TopLeftIndex);
-}
-
-bool UMSBackpackGridWidget::TryAddThisItem(UMSItemData* NewItemData)
-{
-	if (!BackpackComponent->CanAddThisItem(NewItemData, true))
-	{
-		return false;
-	}
-
-	for (int32 i = 0; i < Tiles.Num(); i++)
-	{
-		if (IsAvailableForNewItem(NewItemData, i, Tiles, ColumnNum, RowNum))
-		{
-			AddThisItemAt(NewItemData, i);
-			return true;
-		}
-	}
-	return false;
 }
 
 void UMSBackpackGridWidget::AddItemBack(UMSItemData* NewItemData)

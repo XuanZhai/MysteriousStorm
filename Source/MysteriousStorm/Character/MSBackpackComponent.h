@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TSet<UMSItemData*> Weapons;
 
+	UPROPERTY(BlueprintReadWrite)
+	TSet<UMSItemData*> Bags;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -110,7 +113,7 @@ public:
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveItem(UMSItemData* TargetItem);
+	void RemoveItem(UMSItemData* TargetItem, bool bSpawnNewItem = true);
 
 	bool DoesItemExist(const UMSItemData* TargetItem) const {return Items.Contains(TargetItem);}
 

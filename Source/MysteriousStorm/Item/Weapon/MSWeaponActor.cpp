@@ -64,7 +64,7 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 
 
 #pragma region collsion
-#pragma optimize("", off)
+//#pragma optimize("", off)
 // 默认所有的检测都是2D的，因此只需考虑yaw
 float AMSWeaponActor::DistancePointToSegment(FVector Point, FVector Start, FVector End)
 {
@@ -152,5 +152,5 @@ bool AMSWeaponActor::OverlapRectangleCircle(FVector RectangleCenter, FVector For
 	}
 	return true;
 }
-#pragma optimize("", on)
+//#pragma optimize("", on)
 # pragma endregion
