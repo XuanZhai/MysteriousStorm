@@ -79,12 +79,8 @@ UMSItemData* UMSGridWidget::GetItemDataFromDragDropOperation(UDragDropOperation*
 {
 	if (InOperation)
 	{
-		UMSDragPayload* DragPayload = IsValid(InOperation->Payload) ? Cast<UMSDragPayload>(InOperation->Payload) : nullptr;
-
-		if (IsValid(DragPayload))
-		{
-			return IsValid(DragPayload->ItemData) ? Cast<UMSItemData>(DragPayload->ItemData) : nullptr;
-		}
+		UMSItemWidget* ItemWidget = IsValid(InOperation->Payload) ? Cast<UMSItemWidget>(InOperation->Payload) : nullptr;
+		return IsValid(ItemWidget) ? ItemWidget->GetItemData() : nullptr;
 	}
 	return nullptr;
 }
@@ -93,7 +89,8 @@ EGridType UMSGridWidget::GetDragSourceFromDragDropOperation(UDragDropOperation* 
 {
 	if (InOperation)
 	{
-		UMSDragPayload* DragPayload = IsValid(InOperation->Payload) ? Cast<UMSDragPayload>(InOperation->Payload) : nullptr;
+		UMSItemWidget* ItemWidget = IsValid(InOperation->Payload) ? Cast<UMSItemWidget>(InOperation->Payload) : nullptr;
+		UMSDragPayload* DragPayload = IsValid(ItemWidget) ? ItemWidget->GetDragPayload() : nullptr;
 
 		if (IsValid(DragPayload))
 		{
@@ -101,4 +98,19 @@ EGridType UMSGridWidget::GetDragSourceFromDragDropOperation(UDragDropOperation* 
 		}
 	}
 	return EGridType::DEFAULT;
+}
+
+
+UMSItemWidget* UMSGridWidget::GetItemWidgetFromDragDropOperation(UDragDropOperation* InOperation) const
+{
+	if (InOperation)
+	{
+		UMSItemWidget* ItemWidget = IsValid(InOperation->Payload) ? Cast<UMSItemWidget>(InOperation->Payload) : nullptr;
+
+		if (IsValid(ItemWidget))
+		{
+			return ItemWidget;
+		}
+	}
+	return nullptr;
 }

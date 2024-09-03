@@ -48,13 +48,10 @@ public:
 	FSoftObjectPath UIPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AMSItemActor> AssetBP;
+	TSubclassOf<AMSItemActor> AssetBP; 
 
 	UPROPERTY(BlueprintReadWrite)
 	float RotateDegree;
-
-	UPROPERTY(BlueprintReadWrite)
-	UMaterialInstanceDynamic* UIMaterial;
 
 public:
 	UMSItemData();
@@ -62,7 +59,4 @@ public:
 	bool IsWeapon() const { return ItemType == EItemType::Weapon; }
 
 	bool IsBag() const { return ItemType == EItemType::Bag; }
-
-	UFUNCTION(BlueprintCallable)
-	void RotateUI();
 };

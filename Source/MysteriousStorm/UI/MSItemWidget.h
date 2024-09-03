@@ -7,6 +7,7 @@
 #include "MSGridWidget.h"
 #include "MSItemWidget.generated.h"
 
+class UCanvasPanel;
 class USizeBox;
 class UBorder;
 class UImage;
@@ -46,6 +47,10 @@ class MYSTERIOUSSTORM_API UMSItemWidget : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UCanvasPanel* CanvasPanel;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	USizeBox* BGSizeBox;
 
@@ -64,6 +69,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	FVector2D Size = FVector2D();
 
+	UPROPERTY(BlueprintReadWrite)
+	UMaterialInstanceDynamic* UIMaterial;
+
 protected:
 	void SetSize();
 
@@ -79,8 +87,13 @@ public:
 
 	void SetItemData(UMSItemData* NewItemData, EGridType NewItemSource);
 
+	UMSItemData* GetItemData() const { return ItemPayload ? ItemPayload->ItemData : nullptr;  }
+
 	UFUNCTION(BlueprintCallable)
 	void Refresh();
 
 	UMSDragPayload* GetDragPayload() const {return ItemPayload; }
+
+	UFUNCTION(BlueprintCallable)
+	void RotateUI();
 };
