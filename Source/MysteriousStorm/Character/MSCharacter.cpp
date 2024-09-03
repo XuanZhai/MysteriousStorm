@@ -13,6 +13,8 @@ AMSCharacter::AMSCharacter()
 	BackpackComponent = CreateDefaultSubobject<UMSBackpackComponent>(TEXT("BackpackComponent"));
 	AttributeComponent = CreateDefaultSubobject<UMSAttributeComponent>(TEXT("AttributeComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMSWeaponComponent>(TEXT("WeaponComponent"));
+
+	StormState = 0;
 }
 
 // Called when the game starts or when spawned
@@ -35,4 +37,19 @@ void AMSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+
+#pragma region Storm
+
+void AMSCharacter::AddStorm(uint8 StormID)
+{
+	StormState |= StormID;
+}
+
+void AMSCharacter::RemoveStorm(uint8 StormID)
+{
+	StormState &= (~StormID);
+}
+
+#pragma endregion Storm
 

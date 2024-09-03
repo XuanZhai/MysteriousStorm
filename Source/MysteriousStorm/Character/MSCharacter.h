@@ -10,6 +10,14 @@
 
 class UMSBackpackComponent;
 
+UENUM(BlueprintType)
+enum EMSEffect : uint32
+{
+	None = 0,
+	Steam = 1,
+};
+
+
 UCLASS()
 class MYSTERIOUSSTORM_API AMSCharacter : public ACharacter
 {
@@ -41,4 +49,17 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UMSBackpackComponent* GetBackpackComponent() const { return BackpackComponent;  }
+
+
+#pragma region Storm
+
+protected:
+	uint8 StormState;
+
+public:
+	void AddStorm(uint8 StormID);
+
+	void RemoveStorm(uint8 StormID);
+
+#pragma endregion
 };
