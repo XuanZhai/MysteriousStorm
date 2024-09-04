@@ -26,18 +26,6 @@ void UMSItemWidget::SetItemData(UMSItemData* NewItemData, EGridType NewItemSourc
 
 	ItemPayload->ItemData = NewItemData;
 	ItemPayload->DragSource = NewItemSource;
-
-	if (!NewItemData->IsBag())
-	{
-		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(BGSizeBox->Slot))
-		{
-			CanvasSlot->SetZOrder(1);
-		}
-		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(ItemImage->Slot))
-		{
-			CanvasSlot->SetZOrder(1);
-		}
-	}
 }
 
 void UMSItemWidget::CallOnItemRemoved()

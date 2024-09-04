@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddItemBack(UMSItemData* NewItemData);
 
+	void RetrieveContainedBackpacks(UMSItemData* TargetItemData, int32 TopLeftIndex, TSet<UMSItemData*>& OutBackpacks);
+
+	void RetrieveItemsFromBackpack(UMSItemData* TargetBagData, int32 TopLeftIndex, TSet<UMSItemData*>& OutItems);
 #pragma endregion
 
 #pragma region UI

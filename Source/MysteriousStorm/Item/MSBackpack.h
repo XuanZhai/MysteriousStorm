@@ -26,6 +26,8 @@ protected:
 	TSet<UMSItemData*> Items;
 
 public:
+	void SetBagData(UMSItemData* NewBag) {BackpackData = NewBag; }
+
 	void AddNewItem(UMSItemData* NewItem);
 
 	void RemoveItem(UMSItemData* TargetItem);
@@ -33,4 +35,6 @@ public:
 	bool DoesItemExist(UMSItemData* TargetItem) const {return TargetItem && Items.Contains(TargetItem);}
 
 	void ApplyEffect(EMSEffect Effect, float Duration = 0) {}
+
+	UMSItemData* GetBagData() const {return BackpackData; }
 };

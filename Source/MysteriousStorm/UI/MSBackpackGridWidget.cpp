@@ -67,6 +67,7 @@ void UMSBackpackGridWidget::Refresh()
 		auto PanelSlot = GridPanel->AddChild(NewWidget);
 		if (UCanvasPanelSlot* CanvasPanelSlot = PanelSlot ? Cast<UCanvasPanelSlot>(PanelSlot) : nullptr)
 		{
+			CanvasPanelSlot->SetZOrder(Item.Key->IsBag() ? 0 : 1);
 			CanvasPanelSlot->SetAutoSize(true);
 			CanvasPanelSlot->SetPosition(FVector2D(TileX * TileSize, TileY * TileSize));
 		}
@@ -75,26 +76,62 @@ void UMSBackpackGridWidget::Refresh()
 
 void UMSBackpackGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 {
-	for (auto& Tile : Tiles)
+	if (TargetItemData->IsBag())
 	{
-		if (Tile.Item == TargetItemData)
+		TSet<UMSItemData*> TargetItems;
+		RetrieveItemsFromBackpack(TargetItemData,BackpackComponent->GetItems()[TargetItemData],TargetItems);
+
+		for (auto& Tile : Tiles)
 		{
-			Tile.ClearItemData();
-		}
-		else if (Tile.Bag == TargetItemData)
-		{
-			if (Tile.bHasItem)
+			if (TargetItems.Contains(Tile.Item))
 			{
 				if (PutChildToGround.IsBound())
 				{
 					PutChildToGround.Broadcast(Tile.Item);
 				}
 				BackpackComponent->RemoveItem(Tile.Item);
-			} 
-			BackpackComponent->RemoveItem(Tile.Bag,false);
-			Tile.ClearAllData();
+				Tile.ClearItemData();
+			}
+			if (Tile.Bag == TargetItemData)
+			{
+				BackpackComponent->RemoveItem(Tile.Bag, false);
+				Tile.ClearAllData();
+			}
+		}
+
+	}
+	else 
+	{
+		for (auto& Tile : Tiles)
+		{
+			if (Tile.Item == TargetItemData)
+			{
+				Tile.ClearItemData();
+			}
 		}
 	}
+// 
+// 
+// 	for (auto& Tile : Tiles)
+// 	{
+// 		if (TargetItems.Contains(Tile.Item))
+// 		{
+// 			Tile.ClearItemData();
+// 		}
+// 		else if (Tile.Bag == TargetItemData)
+// 		{
+// 			if (Tile.bHasItem)
+// 			{
+// 				if (PutChildToGround.IsBound())
+// 				{
+// 					PutChildToGround.Broadcast(Tile.Item);
+// 				}
+// 				BackpackComponent->RemoveItem(Tile.Item);
+// 			} 
+// 			BackpackComponent->RemoveItem(Tile.Bag,false);
+// 			Tile.ClearAllData();
+// 		}
+// 	}
 }
 
 void UMSBackpackGridWidget::MousePositionInTile(FVector2D MousePosition, bool& bIsRight, bool& bIsBottom)  const
@@ -219,7 +256,10 @@ void UMSBackpackGridWidget::AddThisItemAt(UMSItemData* NewItemData, int32 TopLef
 	int32 TileY = 0;
 	IndexToTile(TopLeftIndex, TileX, TileY);
 
-	BackpackComponent->AddBackpackItem(NewItemData, TopLeftIndex);
+	TSet<UMSItemData*> OccupiedBackpacks;
+	RetrieveContainedBackpacks(NewItemData,TopLeftIndex,OccupiedBackpacks);
+
+	BackpackComponent->AddBackpackItem(NewItemData, TopLeftIndex, OccupiedBackpacks);
 }
 
 void UMSBackpackGridWidget::AddItemBack(UMSItemData* NewItemData)
@@ -229,5 +269,51 @@ void UMSBackpackGridWidget::AddItemBack(UMSItemData* NewItemData)
 	if (Items.Contains(NewItemData))
 	{
 		AddThisItemAt(NewItemData, Items[NewItemData]);
+	}
+}
+
+void UMSBackpackGridWidget::RetrieveContainedBackpacks(UMSItemData* TargetItemData, int32 TopLeftIndex, TSet<UMSItemData*>& OutBackpacks)
+{
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
+	int32 TileXEnd = TileXStart + TargetItemData->XUISize;
+	int32 TileYEnd = TileYStart + TargetItemData->YUISize;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex);
+
+			if (Tiles.IsValidIndex(CurrentIndex) && Tiles[CurrentIndex].Bag)
+			{
+				OutBackpacks.Add(Tiles[CurrentIndex].Bag);
+			}
+		}
+	}
+}
+
+void UMSBackpackGridWidget::RetrieveItemsFromBackpack(UMSItemData* TargetBagData, int32 TopLeftIndex, TSet<UMSItemData*>& OutItems)
+{
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
+	int32 TileXEnd = TileXStart + TargetBagData->XUISize;
+	int32 TileYEnd = TileYStart + TargetBagData->YUISize;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex);
+
+			if (Tiles.IsValidIndex(CurrentIndex) && Tiles[CurrentIndex].Item)
+			{
+				OutItems.Add(Tiles[CurrentIndex].Item);
+			}
+		}
 	}
 }

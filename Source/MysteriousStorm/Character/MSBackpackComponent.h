@@ -8,6 +8,7 @@
 
 class AMSItemActor;
 class UMSItemData;
+class UMSBackpack;
 
 UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent) )
 class MYSTERIOUSSTORM_API UMSBackpackComponent : public UActorComponent
@@ -29,7 +30,7 @@ protected:
 	TSet<UMSItemData*> Weapons;
 
 	UPROPERTY(BlueprintReadWrite)
-	TSet<UMSItemData*> Bags;
+	TSet<UMSBackpack*> Bags;
 
 public:	
 	// Called every frame
@@ -107,7 +108,7 @@ public:
 	bool CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const;
 
 	UFUNCTION(BlueprintCallable)
-	void AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex);
+	void AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex, const TSet<UMSItemData*>& BackpackData);
 
 	UFUNCTION(BlueprintCallable)
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
@@ -118,6 +119,8 @@ public:
 	bool DoesItemExist(const UMSItemData* TargetItem) const {return Items.Contains(TargetItem);}
 
 	bool DoesItemExist(const int32 ItemID) const;
+
+	UMSBackpack* GetBackpackFromItemData(const UMSItemData* TargetItem) const;
 
 #pragma endregion
 };
