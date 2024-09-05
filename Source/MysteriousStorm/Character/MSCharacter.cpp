@@ -2,6 +2,7 @@
 
 
 #include "MSCharacter.h"
+#include "MysteriousStorm/Storm/MSStormBase.h"
 #include "MSBackpackComponent.h"
 
 // Sets default values
@@ -13,8 +14,6 @@ AMSCharacter::AMSCharacter()
 	BackpackComponent = CreateDefaultSubobject<UMSBackpackComponent>(TEXT("BackpackComponent"));
 	AttributeComponent = CreateDefaultSubobject<UMSAttributeComponent>(TEXT("AttributeComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMSWeaponComponent>(TEXT("WeaponComponent"));
-
-	StormState = 0;
 }
 
 // Called when the game starts or when spawned
@@ -41,14 +40,24 @@ void AMSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 #pragma region Storm
 
-void AMSCharacter::AddStorm(uint8 StormID)
+void AMSCharacter::AddStorm(AMSStormBase* Storm)
 {
-	StormState |= StormID;
+	if (!BackpackComponent || !Storm)
+	{
+		return;
+	}
+
+	BackpackComponent->AddStormEffect(Storm->GetEffectType(), Storm->GetCurrentEnergyLevel());
 }
 
-void AMSCharacter::RemoveStorm(uint8 StormID)
+void AMSCharacter::RemoveStorm(AMSStormBase* Storm)
 {
-	StormState &= (~StormID);
+	if (!BackpackComponent || !Storm)
+	{
+		return;
+	}
+
+	BackpackComponent->RemoveStormEffect(Storm->GetEffectType());
 }
 
 #pragma endregion Storm

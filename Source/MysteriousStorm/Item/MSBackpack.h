@@ -6,12 +6,11 @@
 #include "UObject/NoExportTypes.h"
 #include "MSItemData.h"
 #include "MSBackpack.generated.h"
-
-enum EMSEffect : uint32;
-
 /**
  * 
  */
+enum EMSEffect : uint8;
+
 UCLASS()
 class MYSTERIOUSSTORM_API UMSBackpack : public UObject
 {
@@ -25,6 +24,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TSet<UMSItemData*> Items;
 
+	UPROPERTY(BlueprintReadWrite)
+	TSet<TEnumAsByte<EMSEffect>> Effects;
+
 public:
 	void SetBagData(UMSItemData* NewBag) {BackpackData = NewBag; }
 
@@ -34,7 +36,11 @@ public:
 
 	bool DoesItemExist(UMSItemData* TargetItem) const {return TargetItem && Items.Contains(TargetItem);}
 
-	void ApplyEffect(EMSEffect Effect, float Duration = 0) {}
+	void AddEffect(EMSEffect NewEffect);
+
+	void RemoveEffect(EMSEffect TargetEffect);
+
+	bool DoesEffectExist(EMSEffect TargetEffect) const { return Effects.Contains(TargetEffect); }
 
 	UMSItemData* GetBagData() const {return BackpackData; }
 };

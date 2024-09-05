@@ -9,6 +9,17 @@
 class AMSItemActor;
 class UMSItemData;
 class UMSBackpack;
+enum EMSEffect : uint8;
+
+USTRUCT()
+struct FMSStormEffectInfo
+{
+	GENERATED_BODY()
+
+	EMSEffect Effect;
+	int32 Level;
+	TArray<UMSBackpack*> AffectedBags;
+};
 
 UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent) )
 class MYSTERIOUSSTORM_API UMSBackpackComponent : public UActorComponent
@@ -31,6 +42,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	TSet<UMSBackpack*> Bags;
+
+	UPROPERTY()
+	TMap<TEnumAsByte<EMSEffect>, FMSStormEffectInfo> AppliedEffects;
 
 public:	
 	// Called every frame
@@ -122,5 +136,12 @@ public:
 
 	UMSBackpack* GetBackpackFromItemData(const UMSItemData* TargetItem) const;
 
+#pragma endregion
+
+#pragma region Effects
+	
+	void AddStormEffect(EMSEffect NewEffect, int32 NewLevel);
+
+	void RemoveStormEffect(EMSEffect TargetEffect);
 #pragma endregion
 };

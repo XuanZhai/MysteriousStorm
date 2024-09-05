@@ -3,3 +3,10 @@
 
 #include "MSSteamStorm.h"
 
+AMSSteamStorm::AMSSteamStorm()
+{
+	StormType = EMSStormType::SteamStorm;
+
+	SteamSelfDamageFactor = 1.0f;
+	SteamHitDamageFactor = 1.0f;
+}

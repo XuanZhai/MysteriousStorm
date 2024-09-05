@@ -219,3 +219,70 @@ UMSBackpack* UMSBackpackComponent::GetBackpackFromItemData(const UMSItemData* Ta
 	}
 	return nullptr;
 }
+
+#pragma region Effects
+
+void UMSBackpackComponent::AddStormEffect(EMSEffect NewEffect, int32 NewLevel)
+{
+	if (AppliedEffects.Contains(NewEffect))
+	{
+		auto& EffectInfo = AppliedEffects[NewEffect];
+		if (EffectInfo.Level < NewLevel)
+		{
+			for (const auto& Bag : Bags)
+			{
+				if (!Bag->DoesEffectExist(NewEffect))
+				{
+					EffectInfo.AffectedBags.Add(Bag);
+					Bag->AddEffect(NewEffect);
+					break;
+				}
+			}
+		}
+		else if (EffectInfo.Level > NewLevel && !EffectInfo.AffectedBags.IsEmpty())
+		{
+			EffectInfo.AffectedBags[0]->RemoveEffect(NewEffect);
+			EffectInfo.AffectedBags.RemoveAt(0);
+		}
+
+		EffectInfo.Level = NewLevel;
+		return;
+	}
+	else
+	{
+		FMSStormEffectInfo NewInfo;
+		NewInfo.Effect = NewEffect;
+		NewInfo.Level = NewLevel;
+
+		for (int32 i = 0; i < NewEffect; i++)
+		{
+			for (const auto& Bag : Bags)
+			{
+				if (!Bag->DoesEffectExist(NewEffect))
+				{
+					NewInfo.AffectedBags.Add(Bag);
+					Bag->AddEffect(NewEffect);
+					break;
+				}
+			}
+		}
+		AppliedEffects.Add(NewEffect,NewInfo);
+	}
+}
+
+void UMSBackpackComponent::RemoveStormEffect(EMSEffect TargetEffect)
+{
+	if (!AppliedEffects.Contains(TargetEffect))
+	{
+		return;
+	}
+
+	auto& EffectInfo = AppliedEffects[TargetEffect];
+	for (const auto& AffectedBag : EffectInfo.AffectedBags)
+	{
+		AffectedBag->RemoveEffect(TargetEffect);
+	}
+	EffectInfo.AffectedBags.Empty();
+}
+
+#pragma endregion Effects

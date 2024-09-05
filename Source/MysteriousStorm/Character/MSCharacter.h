@@ -9,12 +9,13 @@
 #include "MSCharacter.generated.h"
 
 class UMSBackpackComponent;
+class AMSStormBase;
+enum EMSStormType : uint8;
 
 UENUM(BlueprintType)
-enum EMSEffect : uint32
+enum EMSEffect : uint8
 {
-	None = 0,
-	Steam = 1,
+	SteamStormEffect = 0 UMETA(DisplayName = "SteamStorm")
 };
 
 
@@ -50,16 +51,14 @@ public:
 
 	UMSBackpackComponent* GetBackpackComponent() const { return BackpackComponent;  }
 
+protected:
+	//TSet<EMSEffect> StormState;
 
 #pragma region Storm
-
-protected:
-	uint8 StormState;
-
 public:
-	void AddStorm(uint8 StormID);
+	void AddStorm(AMSStormBase* Storm);
 
-	void RemoveStorm(uint8 StormID);
+	void RemoveStorm(AMSStormBase* Storm);
 
 #pragma endregion
 };

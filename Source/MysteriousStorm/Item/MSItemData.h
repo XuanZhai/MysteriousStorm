@@ -7,6 +7,7 @@
 #include "MSItemData.generated.h"
 
 class AMSItemActor;
+enum EMSEffect : uint8;
 
 UENUM(BlueprintType)
 enum EItemType : uint8
@@ -59,4 +60,8 @@ public:
 	bool IsWeapon() const { return ItemType == EItemType::Weapon; }
 
 	bool IsBag() const { return ItemType == EItemType::Bag; }
+
+	virtual void AddEffect(EMSEffect NewEffect) { UE_LOG(LogTemp, Warning, TEXT("%s add effect"), *Name); };
+
+	virtual void RemoveEffect(EMSEffect TargetEffect) { UE_LOG(LogTemp, Warning, TEXT("%s remove effect"), *Name); };
 };

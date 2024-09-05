@@ -8,6 +8,22 @@
 #include "MSStormBase.generated.h"
 
 class AMSCharacter;
+enum EMSEffect : uint8;
+
+UENUM(BlueprintType)
+enum EMSStormType : uint8
+{
+	Default = 0,
+	SteamStorm = 1 UMETA(DisplayName = "SteamStorm"),
+};
+
+UENUM(BlueprintType)
+enum EMSStormMoveType : uint8
+{
+	Static = 0 UMETA(DisplayName = "StaticPosition"),
+	ToBase = 1 UMETA(DisplayName = "MoveTowardBase"),
+	Random = 2 UMETA(DisplayName = "RandomMovement"),
+};
 
 UCLASS()
 class MYSTERIOUSSTORM_API AMSStormBase : public AActor
@@ -24,16 +40,47 @@ protected:
 	float TriggerRadius;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	uint8 ID;
+	TEnumAsByte <EMSStormType> StormType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TEnumAsByte <EMSEffect> EffectType;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool bIsCharacterInStorm;
 
 	AMSCharacter* MainCharacter;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Move")
+	TEnumAsByte<EMSStormMoveType> MoveType;
+	FVector MoveDirection;
+	float MoveSpeed;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 CurrentEnergyLevel;
+	UPROPERTY(BlueprintReadOnly)
+	float CurrentEnergyTime;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Energy")
+	float EnergyIncreaseFactor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Energy")
+	float EnergyDecreaseFactor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Energy")
+	TArray<float> EnergyRequiredTime;
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnergyLevelChanged, int32, NewLevel);
+	UPROPERTY(BlueprintAssignable)
+	FOnEnergyLevelChanged OnEnergyLevelChanged;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void UpdatePosition(float DeltaTime);
+
+	void UpdateEnergy(float DeltaTime);
 
 public:	
 
@@ -43,11 +90,21 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep,
 		const FHitResult& SweepResult);
 
 	UFUNCTION()
-	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	virtual void AddEffectToCharacter();
+
+	UFUNCTION()
+	virtual void RemoveEffectToCharacter();
+
+	int32 GetCurrentEnergyLevel() const { return CurrentEnergyLevel; }
+
+	TEnumAsByte<EMSEffect> GetEffectType() const { return EffectType; }
 };
