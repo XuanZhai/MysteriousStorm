@@ -4,6 +4,7 @@
 #include "MSBackpackComponent.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MysteriousStorm/Item/MSBackpack.h"
 #include "MysteriousStorm/System/MSGameState.h"
 
 // Sets default values for this component's properties
@@ -102,16 +103,30 @@ bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBack
 	return true;
 }
 
-void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex)
+void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex, const TSet<UMSItemData*>& BackpackData)
 {
 	Items.Add({NewItemData,TopLeftIndex});
-	if (NewItemData->IsWeapon())
+
+	if (NewItemData->IsBag())
 	{
-		Weapons.Add(NewItemData);
+		UMSBackpack* bag = NewObject<UMSBackpack>();
+		bag->SetBagData(NewItemData);
+		Bags.Add(bag);
 	}
-	else if (NewItemData->IsBag())
+	else
 	{
-		Bags.Add(NewItemData);
+		if (NewItemData->IsWeapon())
+		{
+			Weapons.Add(NewItemData);
+		}
+
+		for (const auto& BagData : BackpackData)
+		{
+			if (UMSBackpack* Backpack = GetBackpackFromItemData(BagData))
+			{
+				Backpack->AddNewItem(NewItemData);
+			}
+		}
 	}
 
 	CachedItems.Remove(NewItemData);
@@ -133,13 +148,33 @@ void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bSpawnNewIte
 	}
 
 	Items.Remove(TargetItem);
-	if (TargetItem->IsWeapon())
+
+	if (TargetItem->IsBag())
 	{
-		Weapons.Remove(TargetItem);
+		TSet<UMSBackpack*> TempBag;
+		for (const auto& Bag : Bags)
+		{
+			if (Bag->GetBagData() != TargetItem)
+			{
+				TempBag.Add(Bag);
+			}
+		}
+		Bags = TempBag;
 	}
-	else if (TargetItem->IsBag())
+	else 
 	{
-		Bags.Remove(TargetItem);
+		if (TargetItem->IsWeapon())
+		{
+			Weapons.Remove(TargetItem);
+		}
+
+		for (const auto& Bag : Bags)
+		{
+			if (Bag->GetBagData() == TargetItem)
+			{
+				Bag->RemoveItem(TargetItem);
+			}
+		}
 	}
 
 	if (OnItemRemovedFromBackpack.IsBound())
@@ -172,3 +207,82 @@ bool UMSBackpackComponent::DoesItemExist(const int32 ItemID) const
 
 	return false;
 }
+
+UMSBackpack* UMSBackpackComponent::GetBackpackFromItemData(const UMSItemData* TargetItem) const
+{
+	for (const auto& Bag : Bags)
+	{
+		if (Bag->GetBagData() == TargetItem)
+		{
+			return Bag;
+		}
+	}
+	return nullptr;
+}
+
+#pragma region Effects
+
+void UMSBackpackComponent::AddStormEffect(EMSEffect NewEffect, int32 NewLevel)
+{
+	if (AppliedEffects.Contains(NewEffect))
+	{
+		auto& EffectInfo = AppliedEffects[NewEffect];
+		if (EffectInfo.Level < NewLevel)
+		{
+			for (const auto& Bag : Bags)
+			{
+				if (!Bag->DoesEffectExist(NewEffect))
+				{
+					EffectInfo.AffectedBags.Add(Bag);
+					Bag->AddEffect(NewEffect);
+					break;
+				}
+			}
+		}
+		else if (EffectInfo.Level > NewLevel && !EffectInfo.AffectedBags.IsEmpty())
+		{
+			EffectInfo.AffectedBags[0]->RemoveEffect(NewEffect);
+			EffectInfo.AffectedBags.RemoveAt(0);
+		}
+
+		EffectInfo.Level = NewLevel;
+		return;
+	}
+	else
+	{
+		FMSStormEffectInfo NewInfo;
+		NewInfo.Effect = NewEffect;
+		NewInfo.Level = NewLevel;
+
+		for (int32 i = 0; i < NewEffect; i++)
+		{
+			for (const auto& Bag : Bags)
+			{
+				if (!Bag->DoesEffectExist(NewEffect))
+				{
+					NewInfo.AffectedBags.Add(Bag);
+					Bag->AddEffect(NewEffect);
+					break;
+				}
+			}
+		}
+		AppliedEffects.Add(NewEffect,NewInfo);
+	}
+}
+
+void UMSBackpackComponent::RemoveStormEffect(EMSEffect TargetEffect)
+{
+	if (!AppliedEffects.Contains(TargetEffect))
+	{
+		return;
+	}
+
+	auto& EffectInfo = AppliedEffects[TargetEffect];
+	for (const auto& AffectedBag : EffectInfo.AffectedBags)
+	{
+		AffectedBag->RemoveEffect(TargetEffect);
+	}
+	EffectInfo.AffectedBags.Empty();
+}
+
+#pragma endregion Effects

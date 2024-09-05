@@ -7,6 +7,7 @@
 #include "MSDataTableSubsystem.generated.h"
 
 class UDataTable;
+class UMSStormConfig;
 struct FStreamableHandle;
 /**
  * 

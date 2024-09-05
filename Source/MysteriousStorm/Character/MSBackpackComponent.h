@@ -8,6 +8,18 @@
 
 class AMSItemActor;
 class UMSItemData;
+class UMSBackpack;
+enum EMSEffect : uint8;
+
+USTRUCT()
+struct FMSStormEffectInfo
+{
+	GENERATED_BODY()
+
+	EMSEffect Effect;
+	int32 Level;
+	TArray<UMSBackpack*> AffectedBags;
+};
 
 UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent) )
 class MYSTERIOUSSTORM_API UMSBackpackComponent : public UActorComponent
@@ -29,7 +41,10 @@ protected:
 	TSet<UMSItemData*> Weapons;
 
 	UPROPERTY(BlueprintReadWrite)
-	TSet<UMSItemData*> Bags;
+	TSet<UMSBackpack*> Bags;
+
+	UPROPERTY()
+	TMap<TEnumAsByte<EMSEffect>, FMSStormEffectInfo> AppliedEffects;
 
 public:	
 	// Called every frame
@@ -107,7 +122,7 @@ public:
 	bool CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const;
 
 	UFUNCTION(BlueprintCallable)
-	void AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex);
+	void AddBackpackItem(UMSItemData* NewItemData, int32 TopLeftIndex, const TSet<UMSItemData*>& BackpackData);
 
 	UFUNCTION(BlueprintCallable)
 	const TMap<UMSItemData*, int32>& GetItems() const { return Items; }
@@ -119,5 +134,14 @@ public:
 
 	bool DoesItemExist(const int32 ItemID) const;
 
+	UMSBackpack* GetBackpackFromItemData(const UMSItemData* TargetItem) const;
+
+#pragma endregion
+
+#pragma region Effects
+	
+	void AddStormEffect(EMSEffect NewEffect, int32 NewLevel);
+
+	void RemoveStormEffect(EMSEffect TargetEffect);
 #pragma endregion
 };

@@ -123,6 +123,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	EGridType GetDragSourceFromDragDropOperation(UDragDropOperation* InOperation) const;
 
+	UFUNCTION(BlueprintCallable)
+	UMSItemWidget* GetItemWidgetFromDragDropOperation(UDragDropOperation* InOperation) const;
+
 public:
 	UFUNCTION()
 	bool TryAddThisItem(UMSItemData* NewItemData);

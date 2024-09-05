@@ -9,6 +9,15 @@
 #include "MSCharacter.generated.h"
 
 class UMSBackpackComponent;
+class AMSStormBase;
+enum EMSStormType : uint8;
+
+UENUM(BlueprintType)
+enum EMSEffect : uint8
+{
+	SteamStormEffect = 0 UMETA(DisplayName = "SteamStorm")
+};
+
 
 UCLASS()
 class MYSTERIOUSSTORM_API AMSCharacter : public ACharacter
@@ -41,4 +50,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UMSBackpackComponent* GetBackpackComponent() const { return BackpackComponent;  }
+
+protected:
+	//TSet<EMSEffect> StormState;
+
+#pragma region Storm
+public:
+	void AddStorm(AMSStormBase* Storm);
+
+	void RemoveStorm(AMSStormBase* Storm);
+
+#pragma endregion
 };

@@ -7,6 +7,7 @@
 #include "MSItemData.generated.h"
 
 class AMSItemActor;
+enum EMSEffect : uint8;
 
 UENUM(BlueprintType)
 enum EItemType : uint8
@@ -48,13 +49,10 @@ public:
 	FSoftObjectPath UIPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AMSItemActor> AssetBP;
+	TSubclassOf<AMSItemActor> AssetBP; 
 
 	UPROPERTY(BlueprintReadWrite)
 	float RotateDegree;
-
-	UPROPERTY(BlueprintReadWrite)
-	UMaterialInstanceDynamic* UIMaterial;
 
 public:
 	UMSItemData();
@@ -63,6 +61,7 @@ public:
 
 	bool IsBag() const { return ItemType == EItemType::Bag; }
 
-	UFUNCTION(BlueprintCallable)
-	void RotateUI();
+	virtual void AddEffect(EMSEffect NewEffect) { UE_LOG(LogTemp, Warning, TEXT("%s add effect"), *Name); };
+
+	virtual void RemoveEffect(EMSEffect TargetEffect) { UE_LOG(LogTemp, Warning, TEXT("%s remove effect"), *Name); };
 };

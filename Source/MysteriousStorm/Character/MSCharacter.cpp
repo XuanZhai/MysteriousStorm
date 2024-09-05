@@ -2,6 +2,7 @@
 
 
 #include "MSCharacter.h"
+#include "MysteriousStorm/Storm/MSStormBase.h"
 #include "MSBackpackComponent.h"
 
 // Sets default values
@@ -35,4 +36,29 @@ void AMSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+
+#pragma region Storm
+
+void AMSCharacter::AddStorm(AMSStormBase* Storm)
+{
+	if (!BackpackComponent || !Storm)
+	{
+		return;
+	}
+
+	BackpackComponent->AddStormEffect(Storm->GetEffectType(), Storm->GetCurrentEnergyLevel());
+}
+
+void AMSCharacter::RemoveStorm(AMSStormBase* Storm)
+{
+	if (!BackpackComponent || !Storm)
+	{
+		return;
+	}
+
+	BackpackComponent->RemoveStormEffect(Storm->GetEffectType());
+}
+
+#pragma endregion Storm
 
