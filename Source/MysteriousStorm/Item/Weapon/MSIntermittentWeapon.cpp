@@ -8,7 +8,11 @@
 
 # pragma region lifetime
 
-
+AMSIntermittentWeapon::AMSIntermittentWeapon()
+{
+	RotatingMovementComp = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovementComp"));
+	RotatingMovementComp->Deactivate();
+}
 void AMSIntermittentWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -17,15 +21,24 @@ void AMSIntermittentWeapon::BeginPlay()
 	WeaponType = WeaponConfig.WeaponType;
 	AnticipationTime = WeaponConfig.AnticipationTime;
 	AttackTime = WeaponConfig.AttackTime;
-	
+
 	bIsAttacking = false;
 	CachedAttackDirection = FVector::ZeroVector;
 	CachedAttackPosition = FVector::ZeroVector;
 	CachedAttackRotation = FRotator::ZeroRotator;
 	CachedOwnerPosition = FVector::ZeroVector;
+	CachedAttackDirections.Empty();
+	SearchEnemyCache.Empty();
+
 	AttackProcessTimer = 0;
 	WeaponIntervalTimer = 0;
 	AnticipationTimer = 0;
+
+	if (WeaponType == EWeaponType::Dart)
+	{
+		RotatingMovementComp->RotationRate = FRotator(0, 540, 0);
+		RotatingMovementComp->Activate();
+	}
 }
 
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
@@ -68,7 +81,8 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		{
 			AttackProcessTimer = 0;
 			bIsAttacking = false;
-		}else
+		}
+		else
 		{
 			AttackProcessTimer += DeltaSeconds;
 		}
@@ -76,6 +90,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 	}
 	StaticMeshComp->SetVisibility(true);
 	auto Scale = StaticMeshComp->GetComponentScale();
+	FVector NewLocation = FVector::ZeroVector;
 	switch (WeaponType)
 	{
 	case EWeaponType::Sword:
@@ -85,7 +100,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		Scale.Z = WeaponConfig.SectorRadius / 200;
 		StaticMeshComp->SetWorldScale3D(Scale);
 
-		// 攻击流程计时
+	// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
 			bIsAttacking = false;
@@ -133,21 +148,56 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
 		}
+		break;
 	case EWeaponType::Dart:
+		AttackProcessTimer += DeltaSeconds;
+		
+		if (AttackProcessTimer <= AttackTime / 2)
+		{
+			NewLocation = FMath::Lerp(CachedAttackPosition, CachedAttackPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance,
+			                       AttackProcessTimer / AttackTime * 2);
+		}
+		else if(AttackProcessTimer <= AttackTime)
+		{
+			NewLocation = FMath::Lerp(CachedAttackPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance, OwnerCharacter->GetActorLocation(),
+			                       (AttackProcessTimer / AttackTime - 0.5) * 2);
+		}else
+		{
+			bIsAttacking = false;
+			AttackProcessTimer = 0;
+		}
+		SetActorLocation(NewLocation);
+		break;
 	case EWeaponType::ShotGun:
-	
+		AttackProcessTimer += DeltaSeconds;
+		if (AttackProcessTimer >= AttackTime)
+		{
+			bIsAttacking = false;
+			AttackProcessTimer = 0;
+		}
+		else
+		{
+			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+			SetActorLocation(OwnerLocation + CachedAttackDirection[0] * 100);
+		}
+		break;
 	default:
 		break;
 	}
 
-	// 攻击前摇计时
-	if (AnticipationTimer >= AnticipationTime)return;
-	AnticipationTimer += DeltaSeconds;
-	if (AnticipationTimer >= AnticipationTime)
+	// 飞镖武器不参与统一计时
+	if (WeaponType != EWeaponType::Dart)
 	{
-		ApplyDamage();
+		// 攻击前摇计时
+		if (AnticipationTimer >= AnticipationTime)return;
+		AnticipationTimer += DeltaSeconds;
+		if (AnticipationTimer >= AnticipationTime)
+		{
+			ApplyDamage();
+		}
 	}
 }
+
 
 # pragma endregion
 
@@ -170,11 +220,24 @@ bool AMSIntermittentWeapon::TryAttack()
 			FVector(RandomRadius * FMath::Cos(RandomAngle), RandomRadius * FMath::Sin(RandomAngle),
 			        0);
 	}
+	if (WeaponType == EWeaponType::ShotGun)
+	{
+		// 生成随机的射击角度
+		// TODO: 需要问问策划是否需要不重叠
+		CachedAttackDirections.Empty();
+		for (int i = 0; i < WeaponConfig.AttackAmount; i++)
+		{
+			float RandomAngle = FMath::RandRange(-180, 180);
+			FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
+			CachedAttackDirections.Add(AttackDirection);
+		}
+	}
 	return true;
 }
 
 void AMSIntermittentWeapon::ApplyDamage()
 {
+	if (bIsStatic)return;
 	SearchEnemy();
 	for (const auto Enemy : SearchEnemyCache)
 	{
@@ -230,12 +293,43 @@ void AMSIntermittentWeapon::SearchEnemy()
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
-	
+
 	case EWeaponType::ShotGun:
-	// 基于多个扇形检测
-	
+		// 基于多个扇形检测
+		// TODO: 需要确定同一个敌人是否会被两个扇形同时伤害到
+		DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
+		                FVector::RightVector, FVector::ForwardVector);
+		for (auto direction : CachedAttackDirections)
+		{
+			DrawDebugLine(GetWorld(), AttackStart,
+			              AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			DrawDebugLine(GetWorld(), AttackStart,
+			              AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			for (; EnemyItr; ++EnemyItr)
+			{
+				// TODO: 怪物半径需要后续配置
+				if (OverlapSectorCircle(AttackStart, direction, WeaponConfig.SectorAngle, WeaponConfig.SectorRadius,
+				                        EnemyItr->GetActorLocation(), 10))
+				{
+					if (SearchEnemyCache.Contains(*EnemyItr))continue;
+					SearchEnemyCache.Add(*EnemyItr);
+				}
+			}
+		}
+
+
 	case EWeaponType::Dart:
-		// 基于矩形检测
+		for (; EnemyItr; ++EnemyItr)
+		{
+			// TODO: 怪物半径需要后续配置
+			if (OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius, EnemyItr->GetActorLocation(), 10))
+			{
+				if (SearchEnemyCache.Contains(*EnemyItr))continue;
+				SearchEnemyCache.Add(*EnemyItr);
+			}
+		}
 	default:
 		break;
 	}

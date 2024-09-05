@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MSWeaponActor.h"
+#include "GameFramework/RotatingMovementComponent.h"
 #include "MysteriousStorm/Character/MSEnemyCharacter.h"
 #include "MSIntermittentWeapon.generated.h"
 
@@ -35,18 +36,21 @@ protected:
 	FVector CachedAttackDirection;
 	FVector CachedOwnerPosition;
 	FRotator CachedAttackRotation;
+	TArray<FVector> CachedAttackDirections;
+	
 
-	UPROPERTY()
-	TArray<AMSEnemyCharacter*> SearchEnemyCache;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	URotatingMovementComponent* RotatingMovementComp;
 
 	void TickAttackProcess(float DeltaSeconds);
 	
 public:
+	AMSIntermittentWeapon();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual bool TryAttack() override;
 	virtual void ApplyDamage()override;
 
-	void SearchEnemy();
+	virtual void SearchEnemy() override;
 	
 };

@@ -18,6 +18,7 @@ void AMSEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	TryReadConfig();
+	MaxHealth = CurrentHealth = 100;
 }
 
 // Called every frame

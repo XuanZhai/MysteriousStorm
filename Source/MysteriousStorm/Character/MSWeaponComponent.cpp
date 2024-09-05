@@ -38,6 +38,7 @@ void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> We
 	Weapon->bIsStatic = false;
 	Weapons.Add(Weapon);
 
+	
 	AMSWeaponActor* StaticWeapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponData);
 	StaticWeapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
 	StaticWeapon->bIsStatic = true;

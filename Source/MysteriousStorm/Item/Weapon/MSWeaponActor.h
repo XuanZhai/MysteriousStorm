@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "GameFramework/Character.h"
+#include "MysteriousStorm/Character/MSEnemyCharacter.h"
 #include "MysteriousStorm/System/MSWeaponTableRow.h"
 #include "MSWeaponActor.generated.h"
 
@@ -17,6 +18,9 @@ class MYSTERIOUSSTORM_API AMSWeaponActor : public AMSItemActor
 {
 	GENERATED_BODY()
 protected:
+
+	UPROPERTY()
+	TArray<AMSEnemyCharacter*> SearchEnemyCache;
 	
 	UPROPERTY()
 	ACharacter* OwnerCharacter;
@@ -45,6 +49,7 @@ public:
 	
 	virtual bool TryAttack();
 	virtual void ApplyDamage();
+	virtual void SearchEnemy();
 	bool TryReadConfig();
 	virtual void Tick(float DeltaSeconds) override;
 	

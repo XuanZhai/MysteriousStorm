@@ -13,14 +13,17 @@ class MYSTERIOUSSTORM_API AMSEnemyCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AMSEnemyCharacter();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	float BodyRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
+	float MaxHealth;
+
+	float CurrentHealth;
 	
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")

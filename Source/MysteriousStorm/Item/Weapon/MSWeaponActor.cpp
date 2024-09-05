@@ -44,6 +44,10 @@ void AMSWeaponActor::ApplyDamage()
 {
 }
 
+void AMSWeaponActor::SearchEnemy()
+{
+}
+
 bool AMSWeaponActor::TryReadConfig()
 {
 	UGameInstance* GameInstance = GetGameInstance();
@@ -60,6 +64,7 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 		RuntimeOffset = Offset.RotateAngleAxis(OwnerCharacter->GetActorRotation().Yaw, FVector(0, 0, 1));
 		SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);
 	}
+	
 }
 
 
