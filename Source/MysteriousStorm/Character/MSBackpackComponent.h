@@ -38,9 +38,6 @@ protected:
 	TMap<UMSItemData*, int32> Items;
 
 	UPROPERTY(BlueprintReadWrite)
-	TSet<UMSItemData*> Weapons;
-
-	UPROPERTY(BlueprintReadWrite)
 	TSet<UMSBackpack*> Bags;
 
 	UPROPERTY()

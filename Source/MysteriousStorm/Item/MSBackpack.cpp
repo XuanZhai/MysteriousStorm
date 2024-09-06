@@ -14,8 +14,8 @@ void UMSBackpack::RemoveItem(UMSItemData* TargetItem)
 }
 
 void UMSBackpack::AddEffect(EMSEffect NewEffect)
-{	
-	if (Effects.Contains(NewEffect))
+{
+	if (DoesEffectExist(NewEffect))
 	{
 		return;
 	}
@@ -24,13 +24,11 @@ void UMSBackpack::AddEffect(EMSEffect NewEffect)
 	{
 		Item->AddEffect(NewEffect);
 	}
-
-	Effects.Add(NewEffect);
 }
 
 void UMSBackpack::RemoveEffect(EMSEffect TargetEffect)
 {
-	if (!Effects.Contains(TargetEffect))
+	if (!DoesEffectExist(TargetEffect))
 	{
 		return;
 	}
@@ -39,6 +37,14 @@ void UMSBackpack::RemoveEffect(EMSEffect TargetEffect)
 	{
 		Item->RemoveEffect(TargetEffect);
 	}
+}
 
-	Effects.Remove(TargetEffect);
+bool UMSBackpack::DoesEffectExist(EMSEffect TargetEffect) const
+{
+	if (Items.IsEmpty())
+	{
+		return false;
+	}
+
+	return Items.Array()[0]->DoesEffectExist(TargetEffect);
 }

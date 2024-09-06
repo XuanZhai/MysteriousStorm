@@ -54,6 +54,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	float RotateDegree;
 
+	UPROPERTY(BlueprintReadWrite)
+	TSet<TEnumAsByte<EMSEffect>> Effects;
+
 public:
 	UMSItemData();
 
@@ -61,7 +64,9 @@ public:
 
 	bool IsBag() const { return ItemType == EItemType::Bag; }
 
-	virtual void AddEffect(EMSEffect NewEffect) { UE_LOG(LogTemp, Warning, TEXT("%s add effect"), *Name); };
+	bool DoesEffectExist(EMSEffect TargetEffect) const { return Effects.Contains(TargetEffect); }
 
-	virtual void RemoveEffect(EMSEffect TargetEffect) { UE_LOG(LogTemp, Warning, TEXT("%s remove effect"), *Name); };
+	virtual void AddEffect(EMSEffect NewEffect);
+
+	virtual void RemoveEffect(EMSEffect TargetEffect);
 };

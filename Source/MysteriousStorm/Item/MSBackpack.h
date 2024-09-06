@@ -24,9 +24,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TSet<UMSItemData*> Items;
 
-	UPROPERTY(BlueprintReadWrite)
-	TSet<TEnumAsByte<EMSEffect>> Effects;
-
 public:
 	void SetBagData(UMSItemData* NewBag) {BackpackData = NewBag; }
 
@@ -40,7 +37,7 @@ public:
 
 	void RemoveEffect(EMSEffect TargetEffect);
 
-	bool DoesEffectExist(EMSEffect TargetEffect) const { return Effects.Contains(TargetEffect); }
+	bool DoesEffectExist(EMSEffect TargetEffect) const;
 
 	UMSItemData* GetBagData() const {return BackpackData; }
 };

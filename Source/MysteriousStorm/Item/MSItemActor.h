@@ -33,7 +33,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void InitItemData();
+	virtual void InitItemData();
 
 public:	
 	// Sets default values for this actor's properties

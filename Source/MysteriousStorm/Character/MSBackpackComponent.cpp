@@ -2,6 +2,8 @@
 
 
 #include "MSBackpackComponent.h"
+#include "MSWeaponComponent.h"
+#include "MSCharacter.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "MysteriousStorm/Item/MSItemData.h"
 #include "MysteriousStorm/Item/MSBackpack.h"
@@ -117,7 +119,11 @@ void UMSBackpackComponent::AddBackpackItem(UMSItemData* NewItemData, int32 TopLe
 	{
 		if (NewItemData->IsWeapon())
 		{
-			Weapons.Add(NewItemData);
+			AMSCharacter* Character = GetOwner() ? Cast<AMSCharacter>(GetOwner()) : nullptr;
+			if (UMSWeaponComponent* WeaponComponent = Character ? Character->GetWeaponComponent() : nullptr)
+			{
+				WeaponComponent->AddWeapon(NewItemData);
+			}
 		}
 
 		for (const auto& BagData : BackpackData)
@@ -165,7 +171,11 @@ void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bSpawnNewIte
 	{
 		if (TargetItem->IsWeapon())
 		{
-			Weapons.Remove(TargetItem);
+			AMSCharacter* Character = GetOwner() ? Cast<AMSCharacter>(GetOwner()) : nullptr;
+			if (UMSWeaponComponent* WeaponComponent = Character ? Character->GetWeaponComponent() : nullptr)
+			{
+				WeaponComponent->RemoveWeapon(TargetItem);
+			}
 		}
 
 		for (const auto& Bag : Bags)

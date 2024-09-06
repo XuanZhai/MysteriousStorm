@@ -45,6 +45,8 @@ public:
 
 	UMSBackpackComponent* GetBackpackComponent() const { return BackpackComponent;  }
 
+	UMSWeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
+
 protected:
 	//TSet<EMSEffect> StormState;
 
