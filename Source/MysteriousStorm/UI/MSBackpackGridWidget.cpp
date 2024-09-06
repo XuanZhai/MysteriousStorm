@@ -102,6 +102,7 @@ void UMSBackpackGridWidget::OnItemRemoved(UMSItemData* TargetItemData)
 	}
 	else 
 	{
+		BackpackComponent->RemoveItem(TargetItemData,false);
 		for (auto& Tile : Tiles)
 		{
 			if (Tile.Item == TargetItemData)

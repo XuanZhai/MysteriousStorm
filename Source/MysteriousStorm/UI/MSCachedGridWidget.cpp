@@ -10,6 +10,7 @@
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
 #include "MysteriousStorm/UI/MSBackpackWidget.h"
+#include "MysteriousStorm/System/MSGameState.h"
 
 void UMSCachedGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent)
 {
@@ -116,7 +117,13 @@ bool UMSCachedGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragD
 	{
 		if (DragSource == BackpackGrid)
 		{
-			BackpackComponent->RemoveItem(NewItemData);
+			//BackpackComponent->RemoveItem(NewItemData);
+			AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+			if (AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+			{
+				AMSItemActor* OutActor = nullptr;
+				GS->TrySpawnItemActorFromData(NewItemData, GetOwningPlayerPawn(), OutActor, true);
+			}
 		}
 	}
 

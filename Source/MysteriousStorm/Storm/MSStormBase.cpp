@@ -24,7 +24,8 @@ AMSStormBase::AMSStormBase()
 	MoveDirection = FVector::ZeroVector;
 	MoveSpeed = 0.0f;
 
-	CurrentEnergyLevel = 0;
+	StrengthLevel = 1;
+	CurrentEnergyLevel = 1;
 	CurrentEnergyTime = 0.0f;
 	EnergyIncreaseFactor = 1.0f;
 	EnergyDecreaseFactor = 1.0f;
@@ -65,18 +66,14 @@ void AMSStormBase::UpdateEnergy(float DeltaTime)
 {
 	if (bIsCharacterInStorm)
 	{
-		if (CurrentEnergyLevel >= EnergyRequiredTime.Num()-1)
+		if (CurrentEnergyLevel >= EnergyRequiredTime.Num())
 		{
 			return;
 		}
 		CurrentEnergyTime += DeltaTime*EnergyIncreaseFactor;
-		if (CurrentEnergyTime >= EnergyRequiredTime[CurrentEnergyLevel + 1])
+		if (CurrentEnergyTime >= EnergyRequiredTime[CurrentEnergyLevel])
 		{
 			CurrentEnergyLevel++;
-// 			if (OnEnergyLevelChanged.IsBound())
-// 			{
-// 				OnEnergyLevelChanged.Broadcast(CurrentEnergyLevel);
-// 			}
 			AddEffectToCharacter();
 		}
 	}
@@ -86,15 +83,13 @@ void AMSStormBase::UpdateEnergy(float DeltaTime)
 		{
 			return;
 		}
-		CurrentEnergyTime -= DeltaTime*EnergyDecreaseFactor;
-		if (CurrentEnergyTime <= EnergyRequiredTime[CurrentEnergyLevel])
+
+		CurrentEnergyTime = FMath::Max(0.0f, CurrentEnergyTime- DeltaTime * EnergyDecreaseFactor);
+
+		if (CurrentEnergyTime <= EnergyRequiredTime[CurrentEnergyLevel-1])
 		{
-			CurrentEnergyLevel--;
-// 			if (OnEnergyLevelChanged.IsBound())
-// 			{
-// 				OnEnergyLevelChanged.Broadcast(CurrentEnergyLevel);
-// 			}
-			AddEffectToCharacter();
+			CurrentEnergyLevel = FMath::Max(1, CurrentEnergyLevel - 1);
+			CurrentEnergyLevel == 1 ? AddEffectToCharacter() : RemoveEffectToCharacter();
 		}
 	}
 }
@@ -122,16 +117,17 @@ void AMSStormBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor
 
 void AMSStormBase::AddEffectToCharacter()
 {
-	if (!MainCharacter)
+	if (MainCharacter)
 	{
-		return;
+		MainCharacter->AddStormEffect(EffectType,CurrentEnergyLevel);
 	}
-
-	MainCharacter->AddStorm(this);
 }
 
 
 void AMSStormBase::RemoveEffectToCharacter()
 {
-	MainCharacter->RemoveStorm(this);
+	if (MainCharacter)
+	{
+		MainCharacter->RemoveStormEffect(EffectType);
+	}
 }

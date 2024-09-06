@@ -40,24 +40,26 @@ void AMSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 #pragma region Storm
 
-void AMSCharacter::AddStorm(AMSStormBase* Storm)
+void AMSCharacter::AddStormEffect(TEnumAsByte<EMSEffect> NewEffect, int32 StormLevel)
 {
-	if (!BackpackComponent || !Storm)
+	if (!BackpackComponent || !AttributeComponent)
 	{
 		return;
 	}
 
-	BackpackComponent->AddStormEffect(Storm->GetEffectType(), Storm->GetCurrentEnergyLevel());
+	BackpackComponent->AddStormEffect(NewEffect, StormLevel);
+	AttributeComponent->AddEffect(NewEffect);
 }
 
-void AMSCharacter::RemoveStorm(AMSStormBase* Storm)
+void AMSCharacter::RemoveStormEffect(TEnumAsByte<EMSEffect> TargetEffect)
 {
-	if (!BackpackComponent || !Storm)
+	if (!BackpackComponent || !AttributeComponent)
 	{
 		return;
 	}
 
-	BackpackComponent->RemoveStormEffect(Storm->GetEffectType());
+	BackpackComponent->RemoveStormEffect(TargetEffect);
+	AttributeComponent->RemoveEffect(TargetEffect);
 }
 
 #pragma endregion Storm

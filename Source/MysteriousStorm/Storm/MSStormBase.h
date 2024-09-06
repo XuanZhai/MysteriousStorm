@@ -25,13 +25,16 @@ enum EMSStormMoveType : uint8
 	Random = 2 UMETA(DisplayName = "RandomMovement"),
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class MYSTERIOUSSTORM_API AMSStormBase : public AActor
 {
 	GENERATED_BODY()
 	
 
 protected:
+
+	UPROPERTY()
+	int32 StrengthLevel;
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereTrigger;

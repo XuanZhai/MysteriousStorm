@@ -11,13 +11,7 @@
 class UMSBackpackComponent;
 class AMSStormBase;
 enum EMSStormType : uint8;
-
-UENUM(BlueprintType)
-enum EMSEffect : uint8
-{
-	SteamStormEffect = 0 UMETA(DisplayName = "SteamStorm")
-};
-
+enum EMSEffect : uint8;
 
 UCLASS()
 class MYSTERIOUSSTORM_API AMSCharacter : public ACharacter
@@ -56,9 +50,9 @@ protected:
 
 #pragma region Storm
 public:
-	void AddStorm(AMSStormBase* Storm);
+	void AddStormEffect(TEnumAsByte<EMSEffect> NewEffect, int32 StormLevel);
 
-	void RemoveStorm(AMSStormBase* Storm);
+	void RemoveStormEffect(TEnumAsByte<EMSEffect> TargetEffect);
 
 #pragma endregion
 };

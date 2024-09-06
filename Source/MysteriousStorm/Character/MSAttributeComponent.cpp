@@ -32,3 +32,17 @@ void UMSAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// ...
 }
 
+void UMSAttributeComponent::AddEffect(EMSEffect NewEffect)
+{
+	Effects.Add(NewEffect);
+
+	// TODO: Add Effect based on param.
+}
+
+void UMSAttributeComponent::RemoveEffect(EMSEffect TargetEffect)
+{
+	Effects.Remove(TargetEffect);
+
+	// TODO: Remove Effect based on param.
+}
+

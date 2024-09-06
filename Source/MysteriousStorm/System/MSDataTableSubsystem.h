@@ -7,7 +7,7 @@
 #include "MSDataTableSubsystem.generated.h"
 
 class UDataTable;
-class UMSStormConfig;
+class UMSEffectConfig;
 struct FStreamableHandle;
 /**
  * 
@@ -23,6 +23,7 @@ protected:
 	FSoftObjectPath ItemTablePath{ "/Game/Tables/DT_ItemData.DT_ItemData" };
 	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData" };
 	FSoftObjectPath EnemyTablePath{ "/Game/Tables/DT_EnemyData.DT_EnemyData" };
+	FSoftObjectPath EffectConfigPath{ "/Game/Tables/DA_EffectConfig.DA_EffectConfig" };
 	
 	UPROPERTY()
 	UDataTable* ItemTable;
@@ -32,6 +33,9 @@ protected:
 
 	UPROPERTY()
 	UDataTable* EnemyTable;
+
+	UPROPERTY()
+	UMSEffectConfig* EffectConfig;
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTableLoaded, UMSDataTableSubsystem*, DataTableSubsystem);
@@ -61,4 +65,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UDataTable* GetWeaponTable() const { return WeaponTable; }
+
+	UFUNCTION(BlueprintCallable)
+	UMSEffectConfig* GetEffectConfig() const { return EffectConfig; }
 };

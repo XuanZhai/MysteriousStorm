@@ -5,6 +5,7 @@
 #include "MSItemTableRow.h"
 #include "MSWeaponTableRow.h"
 #include "MSEnemyTableRow.h"
+#include "MSEffectConfig.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
@@ -22,6 +23,7 @@ void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ItemTable = Cast<UDataTable>(ItemTablePath.TryLoad());
 	WeaponTable = Cast<UDataTable>(WeaponTablePath.TryLoad());
 	EnemyTable = Cast<UDataTable>(EnemyTablePath.TryLoad());
+	EffectConfig = Cast<UMSEffectConfig>(EffectConfigPath.TryLoad());
 
 	//	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
 	// 		Paths, [this]()

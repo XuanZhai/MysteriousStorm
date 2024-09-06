@@ -170,7 +170,7 @@ void UMSBackpackComponent::RemoveItem(UMSItemData* TargetItem, bool bSpawnNewIte
 
 		for (const auto& Bag : Bags)
 		{
-			if (Bag->GetBagData() == TargetItem)
+			if (Bag->DoesItemExist(TargetItem))
 			{
 				Bag->RemoveItem(TargetItem);
 			}
@@ -224,8 +224,11 @@ UMSBackpack* UMSBackpackComponent::GetBackpackFromItemData(const UMSItemData* Ta
 
 void UMSBackpackComponent::AddStormEffect(EMSEffect NewEffect, int32 NewLevel)
 {
+	
 	if (AppliedEffects.Contains(NewEffect))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("AppliedEffects contains the level with level????????????????????? %d"), NewLevel);
+
 		auto& EffectInfo = AppliedEffects[NewEffect];
 		if (EffectInfo.Level < NewLevel)
 		{
@@ -250,11 +253,13 @@ void UMSBackpackComponent::AddStormEffect(EMSEffect NewEffect, int32 NewLevel)
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("AppliedEffects NOT contain the level with level!!!!!!!!!!!!!!!!!!!! %d"), NewLevel);
+
 		FMSStormEffectInfo NewInfo;
 		NewInfo.Effect = NewEffect;
 		NewInfo.Level = NewLevel;
 
-		for (int32 i = 0; i < NewEffect; i++)
+		for (int32 i = 0; i < NewLevel; i++)
 		{
 			for (const auto& Bag : Bags)
 			{
@@ -282,7 +287,7 @@ void UMSBackpackComponent::RemoveStormEffect(EMSEffect TargetEffect)
 	{
 		AffectedBag->RemoveEffect(TargetEffect);
 	}
-	EffectInfo.AffectedBags.Empty();
+	AppliedEffects.Remove(TargetEffect);
 }
 
 #pragma endregion Effects
