@@ -4,6 +4,7 @@
 #include "MSIntermittentWeapon.h"
 
 #include "EngineUtils.h"
+#include "WeaponUtils.h"
 #include "MysteriousStorm/Character/MSEnemyCharacter.h"
 
 # pragma region lifetime
@@ -100,7 +101,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		Scale.Z = WeaponConfig.SectorRadius / 200;
 		StaticMeshComp->SetWorldScale3D(Scale);
 
-	// 攻击流程计时
+		// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
 			bIsAttacking = false;
@@ -154,12 +155,12 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		
 		if (AttackProcessTimer <= AttackTime / 2)
 		{
-			NewLocation = FMath::Lerp(CachedAttackPosition, CachedAttackPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance,
+			NewLocation = FMath::Lerp(CachedOwnerPosition, CachedOwnerPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance,
 			                       AttackProcessTimer / AttackTime * 2);
 		}
 		else if(AttackProcessTimer <= AttackTime)
 		{
-			NewLocation = FMath::Lerp(CachedAttackPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance, OwnerCharacter->GetActorLocation(),
+			NewLocation = FMath::Lerp(CachedOwnerPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance, OwnerCharacter->GetActorLocation(),
 			                       (AttackProcessTimer / AttackTime - 0.5) * 2);
 		}else
 		{
@@ -202,7 +203,6 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 # pragma endregion
 
 # pragma region event
-# pragma optimize("", off)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
@@ -273,7 +273,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 		for (; EnemyItr; ++EnemyItr)
 		{
 			// TODO: 怪物半径需要后续配置
-			if (OverlapSectorCircle(AttackStart, AttackDirection, WeaponConfig.SectorAngle,
+			if (WeaponUtils::OverlapSectorCircle(AttackStart, AttackDirection, WeaponConfig.SectorAngle,
 			                        WeaponConfig.SectorRadius,
 			                        EnemyItr->GetActorLocation(), 10))
 			{
@@ -288,7 +288,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 		                1);
 		for (; EnemyItr; ++EnemyItr)
 		{
-			if (OverlapCircleCircle(CachedAttackPosition, WeaponConfig.DamageRange, EnemyItr->GetActorLocation(), 10))
+			if (WeaponUtils::OverlapCircleCircle(CachedAttackPosition, WeaponConfig.DamageRange, EnemyItr->GetActorLocation(), 10))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}
@@ -310,7 +310,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 			for (; EnemyItr; ++EnemyItr)
 			{
 				// TODO: 怪物半径需要后续配置
-				if (OverlapSectorCircle(AttackStart, direction, WeaponConfig.SectorAngle, WeaponConfig.SectorRadius,
+				if (WeaponUtils::OverlapSectorCircle(AttackStart, direction, WeaponConfig.SectorAngle, WeaponConfig.SectorRadius,
 				                        EnemyItr->GetActorLocation(), 10))
 				{
 					if (SearchEnemyCache.Contains(*EnemyItr))continue;
@@ -324,7 +324,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 		for (; EnemyItr; ++EnemyItr)
 		{
 			// TODO: 怪物半径需要后续配置
-			if (OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius, EnemyItr->GetActorLocation(), 10))
+			if (WeaponUtils::OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius, EnemyItr->GetActorLocation(), 10))
 			{
 				if (SearchEnemyCache.Contains(*EnemyItr))continue;
 				SearchEnemyCache.Add(*EnemyItr);
@@ -334,5 +334,4 @@ void AMSIntermittentWeapon::SearchEnemy()
 		break;
 	}
 }
-# pragma optimize("", on)
 # pragma endregion

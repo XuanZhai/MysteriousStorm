@@ -4,6 +4,7 @@
 #include "MSContinuousWeapon.h"
 
 #include "EngineUtils.h"
+#include "WeaponUtils.h"
 
 
 void AMSContinuousWeapon::BeginPlay()
@@ -37,7 +38,7 @@ void AMSContinuousWeapon::SearchEnemy()
 	{
 		AMSEnemyCharacter* Enemy = *EnemyItr;
 		FVector EnemyLocation = Enemy->GetActorLocation();
-		if (OverlapCircleCircle(OwnerCharacter->GetActorLocation(), WeaponConfig.DamageRange, EnemyLocation, 100))
+		if (WeaponUtils::OverlapCircleCircle(OwnerCharacter->GetActorLocation(), WeaponConfig.DamageRange, EnemyLocation, 100))
 		{
 			SearchEnemyCache.Add(Enemy);
 		}
@@ -46,8 +47,13 @@ void AMSContinuousWeapon::SearchEnemy()
 
 void AMSContinuousWeapon::Tick(float DeltaSeconds)
 {
-	if (bIsStatic)return;
-	Super::Tick(DeltaSeconds);
+	if (bIsStatic)
+	{
+		Super::Tick(DeltaSeconds);
+		return;
+	}
+	
+	StaticMeshComp->SetVisibility(true);
 	// 目前应该只有蒸汽重锤一个武器
 	IntervalTimer += DeltaSeconds;
 	if (IntervalTimer >= WeaponConfig.IntervalTime)
