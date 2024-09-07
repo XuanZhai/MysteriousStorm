@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "GameFramework/Character.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
 #include "MysteriousStorm/Character/MSEnemyCharacter.h"
 #include "MysteriousStorm/System/MSWeaponTableRow.h"
 #include "MSWeaponActor.generated.h"
@@ -32,23 +33,27 @@ protected:
 	FVector Offset;
 	bool bIsTimeStopped;
 	
-	FMSWeaponTableRow WeaponConfig;
-
 	// 基于level该种武器有多少把
 	int Level;
+	
+	FMSWeaponTableRow WeaponConfig;
 
 public:
 	AMSWeaponActor();
-	bool bIsStatic;
 
+	// 区分该武器的表现状态是否为静态
+	bool bIsStatic;
+		
+	bool ModifyLevel(bool bIncrease);
 	void SetTimeStop(bool bIsTimeStop);
 	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
 	virtual void BeginPlay() override;
+	void ApplyEffect(EMSEffect Effect, bool bIsRemove = false);
 	
 	virtual bool TryAttack();
 	virtual void ApplyDamage();
 	virtual void SearchEnemy();
-	bool TryReadConfig();
+	virtual void InitItemData() override;
 	virtual void Tick(float DeltaSeconds) override;
 	
 };

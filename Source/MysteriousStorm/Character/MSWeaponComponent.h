@@ -28,6 +28,7 @@ protected:
 	TArray<TSubclassOf<AMSWeaponActor>> TestWeaponData;
 	
 	// Called when the game starts
+	
 	virtual void BeginPlay() override;
 	void Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponData);
 	void Internal_RemoveWeapon(UMSItemData* Weapon);
@@ -36,5 +37,6 @@ public:
 
 	virtual void AddWeapon(UMSItemData* NewWeapon);
 	virtual void RemoveWeapon(UMSItemData* Weapon);
+	virtual void InitialWeaponSystem();
 		
 };

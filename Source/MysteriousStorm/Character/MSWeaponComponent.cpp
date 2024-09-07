@@ -75,11 +75,50 @@ void UMSWeaponComponent::Internal_RemoveWeapon(UMSItemData* Weapon)
 void UMSWeaponComponent::AddWeapon(UMSItemData* NewWeapon)
 {
 	// TODO: 类型检查
+	for (auto WeaponEntity : Weapons)
+	{
+		if(WeaponEntity->ItemData->ID==NewWeapon->ID)
+		{
+			// 如果已经拥有了同种类的武器，则先更改等级读取新配置，保留原有buff，再施加新武器buff
+			if(!WeaponEntity->ModifyLevel(true))
+			{
+				UE_LOG(LogTemp, Error, TEXT("can not remove weapon because of level"));
+				return;
+			}
+			// 应用新武器上挂载的effect
+			for(auto NewEffect: NewWeapon->Effects)
+			{
+				WeaponEntity->ApplyEffect(NewEffect);
+			}
+		}
+	}
 	Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor>(NewWeapon->AssetBP));
 }
 
 void UMSWeaponComponent::RemoveWeapon(UMSItemData* Weapon)
 {
+	for (auto WeaponEntity : Weapons)
+	{
+		if(WeaponEntity->ItemData->ID==Weapon->ID)
+		{
+			// 逻辑与加武器一样
+			if(!WeaponEntity->ModifyLevel(false))
+			{
+				UE_LOG(LogTemp, Error, TEXT("can not remove weapon because of level"));
+				return;
+			}
+			// 通过除去武器上挂载的effect计算新的数值
+			for(auto TargetEffect: Weapon->Effects)
+			{
+				WeaponEntity->ApplyEffect(TargetEffect,true);
+			}
+		}
+	}
 	Internal_RemoveWeapon(Weapon);
+}
+
+void UMSWeaponComponent::InitialWeaponSystem()
+{
+	// 每局开始时从背包中加载武器
 }
 # pragma endregion

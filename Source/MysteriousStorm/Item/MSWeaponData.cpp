@@ -3,3 +3,8 @@
 
 #include "MSWeaponData.h"
 
+UMSWeaponData::UMSWeaponData()
+{
+	Super();
+	Damage = 0;
+}
