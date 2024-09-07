@@ -1,9 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MSWeaponData.h"
+#include "MSHealthBarWidget.h"
 
-UMSWeaponData::UMSWeaponData()
-{
-	Damage = 0;
-}

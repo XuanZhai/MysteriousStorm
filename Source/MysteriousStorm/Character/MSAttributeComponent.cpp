@@ -3,6 +3,9 @@
 
 #include "MSAttributeComponent.h"
 
+#include "MysteriousStorm/System/MSDataTableSubsystem.h"
+#include "MysteriousStorm/System/MSEffectConfig.h"
+
 // Sets default values for this component's properties
 UMSAttributeComponent::UMSAttributeComponent()
 {
@@ -30,6 +33,19 @@ void UMSAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UMSAttributeComponent::Hurt(ACharacter* Source, float Damage)
+{
+	UMSEffectConfig* EffectConfig = GetWorld()->GetGameInstance()->GetSubsystem<UMSDataTableSubsystem>()->GetEffectConfig();	
+	for(auto Effect :Effects)
+	{
+		if(Effect==EMSEffect::SteamStormEffect)
+		{
+			Damage *= EffectConfig->SteamStormSelfDamageFactor;
+		}
+	}
+	currentHealth -= Damage;
 }
 
 void UMSAttributeComponent::AddEffect(EMSEffect NewEffect)

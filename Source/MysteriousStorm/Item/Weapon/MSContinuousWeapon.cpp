@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "WeaponUtils.h"
+#include "MysteriousStorm/Item/MSWeaponData.h"
 
 
 void AMSContinuousWeapon::BeginPlay()
@@ -27,7 +28,7 @@ void AMSContinuousWeapon::ApplyDamage()
 	SearchEnemy();
 	for (auto Enemy : SearchEnemyCache)
 	{
-		Enemy->Hurt();
+		Enemy->Hurt(Cast<UMSWeaponData>(ItemData)->Damage);
 	}
 }
 

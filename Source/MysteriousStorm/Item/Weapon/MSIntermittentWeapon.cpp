@@ -5,7 +5,8 @@
 
 #include "EngineUtils.h"
 #include "WeaponUtils.h"
-#include "MysteriousStorm/Character/MSEnemyCharacter.h"
+#include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
+#include "MysteriousStorm/Item/MSWeaponData.h"
 
 # pragma region lifetime
 
@@ -14,6 +15,7 @@ AMSIntermittentWeapon::AMSIntermittentWeapon()
 	RotatingMovementComp = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovementComp"));
 	RotatingMovementComp->Deactivate();
 }
+
 void AMSIntermittentWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -101,7 +103,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		Scale.Z = WeaponConfig.SectorRadius / 200;
 		StaticMeshComp->SetWorldScale3D(Scale);
 
-		// 攻击流程计时
+	// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
 			bIsAttacking = false;
@@ -152,17 +154,20 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		break;
 	case EWeaponType::Dart:
 		AttackProcessTimer += DeltaSeconds;
-		
+
 		if (AttackProcessTimer <= AttackTime / 2)
 		{
-			NewLocation = FMath::Lerp(CachedOwnerPosition, CachedOwnerPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance,
-			                       AttackProcessTimer / AttackTime * 2);
+			NewLocation = FMath::Lerp(CachedOwnerPosition,
+			                          CachedOwnerPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance,
+			                          AttackProcessTimer / AttackTime * 2);
 		}
-		else if(AttackProcessTimer <= AttackTime)
+		else if (AttackProcessTimer <= AttackTime)
 		{
-			NewLocation = FMath::Lerp(CachedOwnerPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance, OwnerCharacter->GetActorLocation(),
-			                       (AttackProcessTimer / AttackTime - 0.5) * 2);
-		}else
+			NewLocation = FMath::Lerp(CachedOwnerPosition + CachedAttackDirection * WeaponConfig.DartMaxDistance,
+			                          OwnerCharacter->GetActorLocation(),
+			                          (AttackProcessTimer / AttackTime - 0.5) * 2);
+		}
+		else
 		{
 			bIsAttacking = false;
 			AttackProcessTimer = 0;
@@ -241,7 +246,7 @@ void AMSIntermittentWeapon::ApplyDamage()
 	SearchEnemy();
 	for (const auto Enemy : SearchEnemyCache)
 	{
-		Enemy->Hurt();
+		Enemy->Hurt(Cast<UMSWeaponData>(ItemData)->Damage);
 	}
 }
 
@@ -274,8 +279,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 		{
 			// TODO: 怪物半径需要后续配置
 			if (WeaponUtils::OverlapSectorCircle(AttackStart, AttackDirection, WeaponConfig.SectorAngle,
-			                        WeaponConfig.SectorRadius,
-			                        EnemyItr->GetActorLocation(), 10))
+			                                     WeaponConfig.SectorRadius,
+			                                     EnemyItr->GetActorLocation(), 10))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}
@@ -288,7 +293,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 		                1);
 		for (; EnemyItr; ++EnemyItr)
 		{
-			if (WeaponUtils::OverlapCircleCircle(CachedAttackPosition, WeaponConfig.DamageRange, EnemyItr->GetActorLocation(), 10))
+			if (WeaponUtils::OverlapCircleCircle(CachedAttackPosition, WeaponConfig.DamageRange,
+			                                     EnemyItr->GetActorLocation(), 10))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}
@@ -310,8 +316,9 @@ void AMSIntermittentWeapon::SearchEnemy()
 			for (; EnemyItr; ++EnemyItr)
 			{
 				// TODO: 怪物半径需要后续配置
-				if (WeaponUtils::OverlapSectorCircle(AttackStart, direction, WeaponConfig.SectorAngle, WeaponConfig.SectorRadius,
-				                        EnemyItr->GetActorLocation(), 10))
+				if (WeaponUtils::OverlapSectorCircle(AttackStart, direction, WeaponConfig.SectorAngle,
+				                                     WeaponConfig.SectorRadius,
+				                                     EnemyItr->GetActorLocation(), 10))
 				{
 					if (SearchEnemyCache.Contains(*EnemyItr))continue;
 					SearchEnemyCache.Add(*EnemyItr);
@@ -324,7 +331,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 		for (; EnemyItr; ++EnemyItr)
 		{
 			// TODO: 怪物半径需要后续配置
-			if (WeaponUtils::OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius, EnemyItr->GetActorLocation(), 10))
+			if (WeaponUtils::OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius,
+			                                     EnemyItr->GetActorLocation(), 10))
 			{
 				if (SearchEnemyCache.Contains(*EnemyItr))continue;
 				SearchEnemyCache.Add(*EnemyItr);

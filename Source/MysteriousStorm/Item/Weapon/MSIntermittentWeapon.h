@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MSWeaponActor.h"
 #include "GameFramework/RotatingMovementComponent.h"
-#include "MysteriousStorm/Character/MSEnemyCharacter.h"
+#include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MSIntermittentWeapon.generated.h"
 
 /**

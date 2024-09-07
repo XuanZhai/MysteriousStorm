@@ -10,7 +10,8 @@ AMSEnemyCharacter::AMSEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	MaxHealth = CurrentHealth = 100;
+	EnemyID = 0;
 }
 
 // Called when the game starts or when spawned
@@ -18,25 +19,27 @@ void AMSEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	TryReadConfig();
-	MaxHealth = CurrentHealth = 100;
+	
 }
 
-// Called every frame
 void AMSEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	for (auto Ability : ProcessAbilities)
+	{
+		Ability->Update(DeltaTime);
+		Ability->TryActivateAbility();
+	}
 }
 
-// Called to bind functionality to input
-void AMSEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-void AMSEnemyCharacter::Hurt()
+void AMSEnemyCharacter::Hurt(float damage)
 {
-	Destroy();
+	CurrentHealth -= damage;
+	if (CurrentHealth <= 0)
+	{
+		Destroy();
+	}
 }
 
 bool AMSEnemyCharacter::TryReadConfig()

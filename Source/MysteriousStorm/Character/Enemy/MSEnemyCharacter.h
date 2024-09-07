@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MSEnemyAbility.h"
 #include "GameFramework/Character.h"
 #include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "MSEnemyCharacter.generated.h"
@@ -14,6 +15,7 @@ class MYSTERIOUSSTORM_API AMSEnemyCharacter : public ACharacter
 
 public:
 	AMSEnemyCharacter();
+	
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
@@ -31,14 +33,15 @@ protected:
 
 	FMSEnemyTableRow EnemyConfig;
 
+	UPROPERTY()
+	TSet<UMSEnemyAbility*> ProcessAbilities;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void Hurt();
+	void Hurt(float damage);
 	bool TryReadConfig();
 
 };

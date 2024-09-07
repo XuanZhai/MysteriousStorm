@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "GameFramework/Character.h"
-#include "MysteriousStorm/Character/MSCharacter.h"
-#include "MysteriousStorm/Character/MSEnemyCharacter.h"
+#include "MysteriousStorm/Character/MSAttributeComponent.h"
+#include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MysteriousStorm/System/MSWeaponTableRow.h"
 #include "MSWeaponActor.generated.h"
 
