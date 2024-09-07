@@ -23,8 +23,6 @@ protected:
 	UStaticMeshComponent* StaticMeshComp;
 	
 public:	
-	UPROPERTY(EditDefaultsOnly)
-	UMaterialInterface* BaseUIMaterial;
 
 	UPROPERTY()
 	UMSItemData* ItemData;

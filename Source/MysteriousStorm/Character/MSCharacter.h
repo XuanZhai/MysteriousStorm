@@ -57,4 +57,10 @@ public:
 	void RemoveStormEffect(TEnumAsByte<EMSEffect> TargetEffect);
 
 #pragma endregion
+
+#pragma region Item
+
+	bool TryUseItem(UMSItemData* ItemData);
+
+#pragma endregion
 };

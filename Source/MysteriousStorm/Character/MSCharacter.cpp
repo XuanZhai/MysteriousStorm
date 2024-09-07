@@ -3,6 +3,7 @@
 
 #include "MSCharacter.h"
 #include "MysteriousStorm/Storm/MSStormBase.h"
+#include "MysteriousStorm/Item/MSConsumableData.h"
 #include "MSBackpackComponent.h"
 
 // Sets default values
@@ -64,3 +65,30 @@ void AMSCharacter::RemoveStormEffect(TEnumAsByte<EMSEffect> TargetEffect)
 
 #pragma endregion Storm
 
+#pragma region Item
+
+bool AMSCharacter::TryUseItem(UMSItemData* ItemData)
+{
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	if (ItemData->IsConsumable())
+	{
+		const UMSConsumableData* ConsumableData = Cast<UMSConsumableData>(ItemData);
+
+		if (ConsumableData->ConsumableType == EMSConsumableType::Health)
+		{
+			if (!AttributeComponent->IsInMaxHealth())
+			{
+				AttributeComponent->AddHealth(ConsumableData->Value);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+#pragma endregion Item

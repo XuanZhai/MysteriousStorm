@@ -31,9 +31,11 @@ void AMSItemActor::InitItemData()
 
 	ItemData = NewObject<UMSItemData>();
 	FMSItemTableRow Row;
-
 	if (ItemData && TableSubsystem->TryGetRowByItemID(ItemID, Row))
 	{
+		
+
+
 		ItemData->ID = Row.ID;
 		ItemData->Name = Row.Name;
 		ItemData->ItemType = Row.ItemType;

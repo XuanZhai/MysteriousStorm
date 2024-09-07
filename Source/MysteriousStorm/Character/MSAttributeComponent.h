@@ -43,9 +43,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	void Hurt(ACharacter* Source, float Damage);
-
 #pragma region Effect
 
 	void AddEffect(EMSEffect NewEffect);
@@ -53,4 +50,14 @@ public:
 	void RemoveEffect(EMSEffect TargetEffect);
 
 #pragma endregion
+
+#pragma region Health
+
+	void Hurt(ACharacter* Source, float Damage);
+
+	bool IsInMaxHealth() const { return currentHealth == MaxHealth; }
+
+	void AddHealth(float Value);
+#pragma endregion
+
 };

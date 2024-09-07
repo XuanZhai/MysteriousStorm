@@ -96,4 +96,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RotateUI();
+
+	UFUNCTION(BlueprintCallable)
+	void UseItem();
 };

@@ -15,6 +15,7 @@ enum EItemType : uint8
 	Item = 0,
 	Weapon = 1,
 	Bag = 2,
+	Consumable = 3,
 	MAX
 };
 
@@ -63,6 +64,8 @@ public:
 	bool IsWeapon() const { return ItemType == EItemType::Weapon; }
 
 	bool IsBag() const { return ItemType == EItemType::Bag; }
+
+	bool IsConsumable() const { return ItemType == EItemType::Consumable; }
 
 	bool DoesEffectExist(EMSEffect TargetEffect) const { return Effects.Contains(TargetEffect); }
 

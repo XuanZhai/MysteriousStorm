@@ -62,3 +62,7 @@ void UMSAttributeComponent::RemoveEffect(EMSEffect TargetEffect)
 	// TODO: Remove Effect based on param.
 }
 
+void UMSAttributeComponent::AddHealth(float Value)
+{
+	currentHealth = FMath::Min(MaxHealth, currentHealth+Value);
+}

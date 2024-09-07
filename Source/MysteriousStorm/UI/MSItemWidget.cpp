@@ -7,6 +7,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
 
 void UMSItemWidget::SetSize()
 {
@@ -30,6 +31,8 @@ void UMSItemWidget::SetItemData(UMSItemData* NewItemData, EGridType NewItemSourc
 
 void UMSItemWidget::CallOnItemRemoved()
 {
+	RemoveFromParent();
+
 	if (OnItemRemoved.IsBound())
 	{
 		OnItemRemoved.Broadcast(ItemPayload->ItemData);
@@ -71,5 +74,15 @@ void UMSItemWidget::RotateUI()
 	if (UIMaterial)
 	{
 		UIMaterial->SetScalarParameterValue("RotationAngle", ItemPayload->ItemData->RotateDegree);
+	}
+}
+
+void UMSItemWidget::UseItem()
+{
+	AMSCharacter* MainCharacter = GetOwningPlayer() ? Cast<AMSCharacter>(GetOwningPlayer()) : nullptr;
+
+	if (MainCharacter && ItemPayload && MainCharacter->TryUseItem(ItemPayload->ItemData))
+	{
+		CallOnItemRemoved();
 	}
 }

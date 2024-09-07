@@ -13,7 +13,7 @@ enum EMSEffect : uint8;
 UENUM(BlueprintType)
 enum EMSStormType : uint8
 {
-	Default = 0,
+	DefaultStorm = 0,
 	SteamStorm = 1 UMETA(DisplayName = "SteamStorm"),
 };
 

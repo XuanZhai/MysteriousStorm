@@ -12,7 +12,7 @@ AMSStormBase::AMSStormBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-	StormType = EMSStormType::Default;
+	StormType = EMSStormType::DefaultStorm;
 	SphereTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("SphereTrigger"));
 	SphereTrigger->SetSphereRadius(TriggerRadius);
 	SphereTrigger->SetCollisionProfileName(TEXT("StormTrigger"));
