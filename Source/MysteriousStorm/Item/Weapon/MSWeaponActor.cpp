@@ -6,6 +6,7 @@
 #include "MysteriousStorm/Item/MSWeaponData.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSEffectConfig.h"
+#include "MysteriousStorm/System/MSGameState.h"
 
 
 AMSWeaponActor::AMSWeaponActor()
@@ -22,6 +23,11 @@ void AMSWeaponActor::BeginPlay()
 	Offset = FVector(-100, 0, 0);
 	RuntimeOffset = Offset;
 	bIsTimeStopped = false;
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	if (AMSGameState* GameState = GameMode ? Cast<AMSGameState>(GameMode) : nullptr; GameState)
+	{
+		GameState->OnGamePauseUpdated.AddUniqueDynamic(this,&AMSWeaponActor::SetTimeStop);
+	}
 }
 
 void AMSWeaponActor::ApplyEffect(EMSEffect Effect, bool bIsRemove)

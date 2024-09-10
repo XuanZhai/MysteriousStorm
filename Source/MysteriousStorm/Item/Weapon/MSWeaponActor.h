@@ -45,11 +45,14 @@ public:
 	bool bIsStatic;
 		
 	bool ModifyLevel(bool bIncrease);
+
+	UFUNCTION()
 	void SetTimeStop(bool bIsTimeStop);
-	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
-	virtual void BeginPlay() override;
-	void ApplyEffect(EMSEffect Effect, bool bIsRemove = false);
 	
+	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
+	void ApplyEffect(EMSEffect Effect, bool bIsRemove = false);
+
+	virtual void BeginPlay() override;
 	virtual bool TryAttack();
 	virtual void ApplyDamage();
 	virtual void SearchEnemy();
