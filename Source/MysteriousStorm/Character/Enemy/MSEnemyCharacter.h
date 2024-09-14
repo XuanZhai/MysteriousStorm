@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "MSEnemyAbility.h"
 #include "GameFramework/Character.h"
-#include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "MSEnemyCharacter.generated.h"
 
 UCLASS()
@@ -30,15 +29,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	int32 EnemyID;
-
-	FMSEnemyTableRow EnemyConfig;
+	
 
 	UPROPERTY()
-	TSet<UMSEnemyAbility*> ProcessAbilities;
+	TArray<UMSEnemyAbility*> PossessAbilities;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	TArray<UMSEnemyAbility*> GetProcessAbilities() const { return PossessAbilities; }
+	
 	
 
 	void Hurt(float damage);

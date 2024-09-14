@@ -10,20 +10,33 @@ UMSEnemyAbility::UMSEnemyAbility()
 	bIsActivated = false;
 }
 
-bool UMSEnemyAbility::TryActivateAbility()
+bool UMSEnemyAbility::TryActivateAbility_Implementation()
+{
+	
+	return CheckPrecondition();
+}
+
+
+bool UMSEnemyAbility::CheckPrecondition_Implementation()
 {
 	if(bIsActivated)return false;
-	return CheckPrecondition();
+	if(IntervalTimer < IntervalTime)return false;
+	return true;
 }
 
 void UMSEnemyAbility::Update(float DeltaTime)
 {
 	if(bIsActivated)
 	{
-		IntervalTimer += DeltaTime;
+		IntervalTimer = 0;
 	}else
 	{
-		IntervalTimer = 0;
+		IntervalTimer += DeltaTime;
 	}
 	
+}
+
+void UMSEnemyAbility::Init(ACharacter* Owner)
+{
+	OwnerEnemy = Owner;
 }

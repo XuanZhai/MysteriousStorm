@@ -2,7 +2,7 @@
 
 
 #include "MSEnemyCharacter.h"
-
+#include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 
 // Sets default values
@@ -19,13 +19,16 @@ void AMSEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	TryReadConfig();
-	
+	for (auto Ability : PossessAbilities)
+	{
+		Ability->Init(this);
+	}
 }
 
 void AMSEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	for (auto Ability : ProcessAbilities)
+	for (auto Ability : PossessAbilities)
 	{
 		Ability->Update(DeltaTime);
 		Ability->TryActivateAbility();
@@ -45,7 +48,9 @@ void AMSEnemyCharacter::Hurt(float damage)
 bool AMSEnemyCharacter::TryReadConfig()
 {
 	UGameInstance* GameInstance = GetGameInstance();
+	FMSEnemyTableRow EnemyConfig;
 	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetEnemyConfigByID(EnemyID, EnemyConfig);
+	
 	return true;
 }
 

@@ -3,26 +3,41 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "MSEnemyAbility.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class MYSTERIOUSSTORM_API UMSEnemyAbility : public UObject
 {
 	GENERATED_BODY()
+
 public:
 	UMSEnemyAbility();
-	virtual bool TryActivateAbility();
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool TryActivateAbility();
+	virtual bool TryActivateAbility_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool CheckPrecondition();
+	UFUNCTION(BlueprintCallable)
+	virtual bool CheckPrecondition_Implementation();
+
 	virtual void Update(float DeltaTime);
-	bool IsActivated() { return bIsActivated; }
-	
+	bool IsActivated() const { return bIsActivated; }
+	void Init(ACharacter* Owner);
+
 protected:
 	bool bIsActivated;
-	
+
+	UPROPERTY(BlueprintReadWrite)
+	ACharacter* OwnerEnemy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
 	float IntervalTime;
+
+	UPROPERTY(BlueprintReadWrite)
 	float IntervalTimer;
-	virtual bool CheckPrecondition() { return true; }
 };
