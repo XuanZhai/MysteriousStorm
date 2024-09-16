@@ -22,7 +22,7 @@ protected:
 
 	FSoftObjectPath ItemTablePath{ "/Game/Tables/DT_ItemData.DT_ItemData" };
 	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData" };
-	FSoftObjectPath EnemyTablePath{ "/Game/Tables/DT_EnemyData.DT_EnemyData" };
+	FSoftObjectPath EnemyTablePath{ "/Game/Tables/DT_EnemyConfigData.DT_EnemyConfigData" };
 	FSoftObjectPath EffectConfigPath{ "/Game/Tables/DA_EffectConfig.DA_EffectConfig" };
 	
 	UPROPERTY()

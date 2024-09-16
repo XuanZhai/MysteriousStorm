@@ -15,6 +15,14 @@ void UMSBTServiceCheckAbility::OnSearchStart(FBehaviorTreeSearchData& SearchData
 	Blackboard->SetValueAsInt("ValidAbilityIndex", -1);
 	if (EnemyCharacter)
 	{
+		for(int i = 0; i < EnemyCharacter->GetProcessAbilities().Num(); i++)
+		{
+			if(EnemyCharacter->GetProcessAbilities()[i]->IsActivated())
+			{
+				Blackboard->SetValueAsInt("ValidAbilityIndex", -1);
+				return;
+			}
+		}
 		for (int i = 0; i < EnemyCharacter->GetProcessAbilities().Num(); i++)
 		{
 			if (EnemyCharacter->GetProcessAbilities()[i]->CheckPrecondition())

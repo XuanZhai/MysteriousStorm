@@ -5,7 +5,7 @@
 
 #include "EngineUtils.h"
 #include "WeaponUtils.h"
-#include "MysteriousStorm/Item/MSWeaponData.h"
+#include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 
 
 void AMSContinuousWeapon::BeginPlay()

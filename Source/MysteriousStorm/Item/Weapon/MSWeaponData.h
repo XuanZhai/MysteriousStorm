@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MSItemData.h"
+#include "MysteriousStorm/Item/MSItemData.h"
 #include "MSWeaponData.generated.h"
 
 /**

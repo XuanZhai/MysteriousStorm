@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MSEnemyAbility.h"
+#include "MSEnemyAbilityBase.h"
 #include "GameFramework/Character.h"
 #include "MSEnemyCharacter.generated.h"
 
@@ -32,13 +32,15 @@ protected:
 	
 
 	UPROPERTY()
-	TArray<UMSEnemyAbility*> PossessAbilities;
+	TArray<UMSEnemyAbilityBase*> PossessAbilities;
+
+	bool bIsAbilityActive;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	TArray<UMSEnemyAbility*> GetProcessAbilities() const { return PossessAbilities; }
+	TArray<UMSEnemyAbilityBase*> GetProcessAbilities() const { return PossessAbilities; }
 	
 	
 

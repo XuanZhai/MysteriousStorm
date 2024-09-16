@@ -3,7 +3,7 @@
 
 #include "MSWeaponActor.h"
 
-#include "MysteriousStorm/Item/MSWeaponData.h"
+#include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSEffectConfig.h"
 #include "MysteriousStorm/System/MSGameState.h"

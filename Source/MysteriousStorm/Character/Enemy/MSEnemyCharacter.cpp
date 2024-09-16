@@ -12,6 +12,7 @@ AMSEnemyCharacter::AMSEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	MaxHealth = CurrentHealth = 100;
 	EnemyID = 0;
+	bIsAbilityActive = false;
 }
 
 // Called when the game starts or when spawned
@@ -50,7 +51,11 @@ bool AMSEnemyCharacter::TryReadConfig()
 	UGameInstance* GameInstance = GetGameInstance();
 	FMSEnemyTableRow EnemyConfig;
 	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetEnemyConfigByID(EnemyID, EnemyConfig);
-	
+	for (int i = 0; i < EnemyConfig.Abilities.Num(); i++)
+	{
+		UMSEnemyAbilityBase* Ability = NewObject<UMSEnemyAbilityBase>(this, EnemyConfig.Abilities[i]);
+		PossessAbilities.Add(Ability);
+	}
 	return true;
 }
 
