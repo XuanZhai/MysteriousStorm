@@ -79,7 +79,7 @@ void UMSItemWidget::RotateUI()
 
 void UMSItemWidget::UseItem()
 {
-	AMSCharacter* MainCharacter = GetOwningPlayer() ? Cast<AMSCharacter>(GetOwningPlayer()) : nullptr;
+	AMSCharacter* MainCharacter = GetOwningPlayerPawn() ? Cast<AMSCharacter>(GetOwningPlayerPawn()) : nullptr;
 
 	if (MainCharacter && ItemPayload && MainCharacter->TryUseItem(ItemPayload->ItemData))
 	{

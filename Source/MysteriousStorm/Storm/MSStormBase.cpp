@@ -3,6 +3,7 @@
 
 #include "MSStormBase.h"
 #include "MysteriousStorm/Character/MSCharacter.h"
+#include "MysteriousStorm/System/MSGameState.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -41,6 +42,12 @@ void AMSStormBase::BeginPlay()
 		APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
 		ACharacter* Character = PC ? PC->GetCharacter() : nullptr;
 		MainCharacter = Character ? Cast<AMSCharacter>(Character) : nullptr;
+
+		AGameModeBase* GameMode = World->GetAuthGameMode<AGameModeBase>();
+		if (AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
+		{
+			GS->OnGamePauseUpdated.AddUniqueDynamic(this,&AMSStormBase::UpdateOnPaused);
+		}
 	}
 
 }
@@ -130,4 +137,9 @@ void AMSStormBase::RemoveEffectToCharacter()
 	{
 		MainCharacter->RemoveStormEffect(EffectType);
 	}
+}
+
+void AMSStormBase::UpdateOnPaused(bool bNewPauseState)
+{
+	PrimaryActorTick.bCanEverTick = !bNewPauseState;
 }

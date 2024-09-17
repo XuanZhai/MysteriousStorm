@@ -80,11 +80,11 @@ bool AMSCharacter::TryUseItem(UMSItemData* ItemData)
 
 		if (ConsumableData->ConsumableType == EMSConsumableType::Health)
 		{
-			if (!AttributeComponent->IsInMaxHealth())
-			{
+			//if (!AttributeComponent->IsInMaxHealth())
+			//{
 				AttributeComponent->AddHealth(ConsumableData->Value);
 				return true;
-			}
+			//}
 		}
 	}
 

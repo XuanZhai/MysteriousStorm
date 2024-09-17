@@ -110,4 +110,7 @@ public:
 	int32 GetCurrentEnergyLevel() const { return CurrentEnergyLevel; }
 
 	TEnumAsByte<EMSEffect> GetEffectType() const { return EffectType; }
+
+	UFUNCTION()
+	void UpdateOnPaused(bool bNewPauseState);
 };
