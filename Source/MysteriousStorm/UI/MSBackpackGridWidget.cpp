@@ -10,6 +10,7 @@
 #include "MysteriousStorm/Item/MSItemData.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
 #include "MysteriousStorm/UI/MSBackpackWidget.h"
+#include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 
 void UMSBackpackGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent)
 {
@@ -37,6 +38,7 @@ void UMSBackpackGridWidget::Initialization(float NewTileSize, UMSBackpackCompone
 	Refresh();
 
 	BackpackComponent->OnBackpackChanged.AddDynamic(this, &UMSBackpackGridWidget::Refresh);
+	BackpackComponent->OnBackpackClosed.AddDynamic(this,&UMSBackpackGridWidget::CalculateGridData);
 }
 
 void UMSBackpackGridWidget::Refresh()
@@ -315,6 +317,80 @@ void UMSBackpackGridWidget::RetrieveItemsFromBackpack(UMSItemData* TargetBagData
 			{
 				OutItems.Add(Tiles[CurrentIndex].Item);
 			}
+		}
+	}
+}
+
+void UMSBackpackGridWidget::CalculateGridData()
+{
+	float CurrentTime = 0.0f;
+	float TotalTime = 0.0f;
+	TArray<bool> VisitList;
+	VisitList.Init(false,Tiles.Num());
+
+	for (int32 i = 0; i < Tiles.Num(); i++)
+	{
+		const FTileinfo& Tile = Tiles[i];
+
+		if (VisitList[i])
+		{
+			continue;
+		}
+		else if (!Tile.bHasBag)
+		{
+			VisitList[i] = true;
+			continue;
+		}
+		else if (!Tile.bHasItem)
+		{
+			CurrentTime += BagTime;
+			TotalTime += BagTime;
+			VisitList[i] = true;
+			continue;
+		}
+
+		FillVisitedList(Tile.Item, VisitList, i);
+		CurrentTime += ItemTime * (Tile.Item->XUISize * Tile.Item->YUISize);
+		TotalTime += ItemTime * (Tile.Item->XUISize * Tile.Item->YUISize);
+
+		if (Tile.Item->IsWeapon())
+		{
+			if (UMSWeaponData* TargetWeaponData = Cast<UMSWeaponData>(Tile.Item))
+			{
+				TargetWeaponData->TriggerTimeInRound = CurrentTime;
+			}
+		}
+	}
+
+	const auto& Backpack = BackpackComponent->GetItems();
+	for (const auto& Item : Backpack)
+	{
+		if (Item.Key->IsWeapon())
+		{
+			if (UMSWeaponData* TargetWeaponData = Cast<UMSWeaponData>(Item.Key))
+			{
+				TargetWeaponData->TotalRoundTime = TotalTime;
+				//UE_LOG(LogTemp,Warning, TEXT("Weapon %s has current time %f and total time %f"), *Item.Key->Name, TargetWeaponData->TriggerTimeInRound, TargetWeaponData->TotalRoundTime);
+			}
+		}
+	}
+}
+
+void UMSBackpackGridWidget::FillVisitedList(UMSItemData* ItemData, TArray<bool>& VisitedList, int32 TopLeftIndex) const
+{
+	int32 TileXStart = 0;
+	int32 TileYStart = 0;
+	IndexToTile(TopLeftIndex, TileXStart, TileYStart);
+	int32 TileXEnd = TileXStart + ItemData->XUISize;
+	int32 TileYEnd = TileYStart + ItemData->YUISize;
+
+	for (int32 x = TileXStart; x < TileXEnd; x++)
+	{
+		for (int32 y = TileYStart; y < TileYEnd; y++)
+		{
+			int32 CurrentIndex = 0;
+			TileToIndex(x, y, CurrentIndex);
+			VisitedList[CurrentIndex] = true;
 		}
 	}
 }

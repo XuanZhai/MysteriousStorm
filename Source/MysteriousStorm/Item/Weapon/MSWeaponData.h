@@ -17,6 +17,13 @@ public:
 	// 目前只存储可以通过effect修改的属性
 	float Damage;
 
+
+#pragma region Backpack
+
+	float TriggerTimeInRound;
+	float TotalRoundTime;
+
+#pragma endregion
+
 	UMSWeaponData();
-	
 };

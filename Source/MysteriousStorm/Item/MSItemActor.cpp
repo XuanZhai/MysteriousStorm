@@ -21,6 +21,12 @@ AMSItemActor::AMSItemActor()
 
 void AMSItemActor::InitItemData()
 {
+	ItemData = NewObject<UMSItemData>();
+	FillItemData();
+}
+
+void AMSItemActor::FillItemData()
+{
 	UGameInstance* GameInstance = GetGameInstance();
 	UMSDataTableSubsystem* TableSubsystem = GameInstance->GetSubsystem<UMSDataTableSubsystem>();
 
@@ -29,13 +35,9 @@ void AMSItemActor::InitItemData()
 		return;
 	}
 
-	ItemData = NewObject<UMSItemData>();
 	FMSItemTableRow Row;
 	if (ItemData && TableSubsystem->TryGetRowByItemID(ItemID, Row))
 	{
-		
-
-
 		ItemData->ID = Row.ID;
 		ItemData->Name = Row.Name;
 		ItemData->ItemType = Row.ItemType;

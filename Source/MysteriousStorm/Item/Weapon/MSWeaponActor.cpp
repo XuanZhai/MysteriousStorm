@@ -94,14 +94,17 @@ void AMSWeaponActor::SearchEnemy()
 
 void AMSWeaponActor::InitItemData()
 {
+	ItemData = NewObject<UMSWeaponData>();
+	FillItemData();
+
 	UGameInstance* GameInstance = GetGameInstance();
-	
-	if(!GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetWeaponConfigByItemIDWithLevel(ItemID,Level, WeaponConfig))
+
+	if (!GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetWeaponConfigByItemIDWithLevel(ItemID, Level, WeaponConfig))
 	{
 		UE_LOG(LogTemp, Error, TEXT("WeaponConfig is null"));
-		return ;
+		return;
 	}
-	ItemData = NewObject<UMSWeaponData>();
+
 	UMSWeaponData* WeaponData = Cast<UMSWeaponData>(ItemData);
 	WeaponData->Damage = WeaponConfig.Damage;
 	
@@ -111,7 +114,7 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	// 基于上一帧的runtimeoffset,将这一帧的旋转施加到actor上
-	if (bIsStatic && !bIsTimeStopped)
+	if (bIsStatic && !bIsTimeStopped && OwnerCharacter)
 	{
 		RuntimeOffset = Offset.RotateAngleAxis(OwnerCharacter->GetActorRotation().Yaw, FVector(0, 0, 1));
 		SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);

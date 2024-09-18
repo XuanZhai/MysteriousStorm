@@ -93,6 +93,11 @@ void UMSBackpackComponent::CloseBackpack()
 		AMSItemActor* OutActor = nullptr;
 		GS->SetGamePaused(false);
 	}
+
+	if (OnBackpackClosed.IsBound())
+	{
+		OnBackpackClosed.Broadcast();
+	}
 }
 
 bool UMSBackpackComponent::CanAddThisItem(UMSItemData* NewItemData, bool bIsBackpack) const

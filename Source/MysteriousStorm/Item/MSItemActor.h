@@ -33,6 +33,8 @@ protected:
 
 	virtual void InitItemData();
 
+	void FillItemData();
+
 public:	
 	// Sets default values for this actor's properties
 	AMSItemActor();

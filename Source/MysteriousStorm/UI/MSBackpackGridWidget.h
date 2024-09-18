@@ -28,6 +28,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UCanvasPanel* GridPanel;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BagTime = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ItemTime = 0.2f;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent);
@@ -47,6 +53,11 @@ public:
 	void RetrieveContainedBackpacks(UMSItemData* TargetItemData, int32 TopLeftIndex, TSet<UMSItemData*>& OutBackpacks);
 
 	void RetrieveItemsFromBackpack(UMSItemData* TargetBagData, int32 TopLeftIndex, TSet<UMSItemData*>& OutItems);
+
+	UFUNCTION()
+	void CalculateGridData();
+
+	void FillVisitedList(UMSItemData* ItemData, TArray<bool>& VisitedList, int32 TopLeftIndex) const;
 #pragma endregion
 
 #pragma region UI
