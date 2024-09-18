@@ -98,6 +98,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnBackpackOpened OnBackpackOpened;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPreBackpackClosed);
+	UPROPERTY(BlueprintAssignable)
+	FOnPreBackpackClosed OnPreBackpackClosed;
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackpackClosed);
 	UPROPERTY(BlueprintAssignable)
 	FOnBackpackClosed OnBackpackClosed;

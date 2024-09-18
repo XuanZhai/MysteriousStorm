@@ -38,7 +38,7 @@ void UMSBackpackGridWidget::Initialization(float NewTileSize, UMSBackpackCompone
 	Refresh();
 
 	BackpackComponent->OnBackpackChanged.AddDynamic(this, &UMSBackpackGridWidget::Refresh);
-	BackpackComponent->OnBackpackClosed.AddDynamic(this,&UMSBackpackGridWidget::CalculateGridData);
+	BackpackComponent->OnPreBackpackClosed.AddDynamic(this,&UMSBackpackGridWidget::CalculateGridData);
 }
 
 void UMSBackpackGridWidget::Refresh()

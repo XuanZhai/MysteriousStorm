@@ -94,6 +94,10 @@ void UMSBackpackComponent::CloseBackpack()
 		GS->SetGamePaused(false);
 	}
 
+	if (OnPreBackpackClosed.IsBound())
+	{
+		OnPreBackpackClosed.Broadcast();
+	}
 	if (OnBackpackClosed.IsBound())
 	{
 		OnBackpackClosed.Broadcast();
