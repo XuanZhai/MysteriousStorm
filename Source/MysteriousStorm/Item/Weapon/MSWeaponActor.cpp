@@ -16,6 +16,7 @@ AMSWeaponActor::AMSWeaponActor()
 	//TryReadConfig();
 	bIsStatic = true;
 	StaticMeshComp->SetGenerateOverlapEvents(false);
+	
 	// UMediaPlayer* MediaPlayer = NewObject<UMediaPlayer>();
 	MediaSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("MediaSoundComponent"));
 	SetTimeStop(true);
@@ -26,10 +27,11 @@ void AMSWeaponActor::BeginPlay()
 	// Level = 1;
 	CurrentOffsetInRound = 0;
 	Super::BeginPlay();
-	if (Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound > Cast<UMSWeaponData>(ItemData)->TotalRoundTime)
-	{
-		StaticMeshComp->SetGenerateOverlapEvents(true);
-	}
+	// if (Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound > Cast<UMSWeaponData>(ItemData)->TotalRoundTime)
+	// {
+	// 	StaticMeshComp->SetGenerateOverlapEvents(true);
+	// }
+	
 	Offset = FVector(-100, 0, 0);
 	RuntimeOffset = Offset;
 	bIsTimeStopped = false;
