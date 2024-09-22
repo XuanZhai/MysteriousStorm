@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "MysteriousStorm/Item/Weapon//MSWeaponActor.h"
+#include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 #include "MSWeaponComponent.generated.h"
 
 
@@ -30,13 +31,17 @@ protected:
 	// Called when the game starts
 	
 	virtual void BeginPlay() override;
-	void Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponData);
+	void Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponClass,UMSWeaponData* WeaponData);
 	void Internal_RemoveWeapon(UMSItemData* Weapon);
 
-public:	
-
+public:
+	
+	UFUNCTION()
+	void ResetCycle();
+	
 	virtual void AddWeapon(UMSItemData* NewWeapon);
 	virtual void RemoveWeapon(UMSItemData* Weapon);
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void InitialWeaponSystem();
 		
 };

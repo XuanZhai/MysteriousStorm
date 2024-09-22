@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MediaSoundComponent.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "GameFramework/Character.h"
 #include "MysteriousStorm/Character/MSAttributeComponent.h"
@@ -18,11 +19,17 @@ UCLASS(Abstract)
 class MYSTERIOUSSTORM_API AMSWeaponActor : public AMSItemActor
 {
 	GENERATED_BODY()
-protected:
 
+protected:
 	UPROPERTY()
 	TArray<AMSEnemyCharacter*> SearchEnemyCache;
-	
+
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
+	UMediaSoundComponent* MediaSoundComponent;
+
+	UPROPERTY(EditAnywhere, Category="WeaponParameter")
+	UMediaPlayer *MediaPlayer;
+
 	UPROPERTY()
 	ACharacter* OwnerCharacter;
 
@@ -32,23 +39,28 @@ protected:
 	FVector RuntimeOffset;
 	FVector Offset;
 	bool bIsTimeStopped;
-	
+
 	// 基于level该种武器有多少把
-	int Level;
-	
+	// int Level;
+
 	FMSWeaponTableRow WeaponConfig;
 
 public:
 	AMSWeaponActor();
 
+	float CurrentOffsetInRound;
+
 	// 区分该武器的表现状态是否为静态
 	bool bIsStatic;
-		
-	bool ModifyLevel(bool bIncrease);
+
+	// bool ModifyLevel(bool bIncrease);
 
 	UFUNCTION()
-	void SetTimeStop(bool bIsTimeStop);
+	void OnBackpackOpened();
 	
+	UFUNCTION()
+	void SetTimeStop(bool bIsTimeStop);
+
 	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
 	void ApplyEffect(EMSEffect Effect, bool bIsRemove = false);
 
@@ -58,5 +70,4 @@ public:
 	virtual void SearchEnemy();
 	virtual void InitItemData() override;
 	virtual void Tick(float DeltaSeconds) override;
-	
 };

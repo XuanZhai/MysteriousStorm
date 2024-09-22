@@ -40,6 +40,7 @@ void AMSEnemyCharacter::Tick(float DeltaTime)
 void AMSEnemyCharacter::Hurt(float damage)
 {
 	CurrentHealth -= damage;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Enemy Health: %f"), CurrentHealth));
 	if (CurrentHealth <= 0)
 	{
 		Destroy();

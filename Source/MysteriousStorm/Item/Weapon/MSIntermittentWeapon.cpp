@@ -14,13 +14,13 @@ AMSIntermittentWeapon::AMSIntermittentWeapon()
 {
 	RotatingMovementComp = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovementComp"));
 	RotatingMovementComp->Deactivate();
+	bCanBeActivated = true;
 }
 
 void AMSIntermittentWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	IntervalTime = WeaponConfig.IntervalTime;
 	WeaponType = WeaponConfig.WeaponType;
 	AnticipationTime = WeaponConfig.AnticipationTime;
 	AttackTime = WeaponConfig.AttackTime;
@@ -34,7 +34,7 @@ void AMSIntermittentWeapon::BeginPlay()
 	SearchEnemyCache.Empty();
 
 	AttackProcessTimer = 0;
-	WeaponIntervalTimer = 0;
+	// WeaponIntervalTimer = 0;
 	AnticipationTimer = 0;
 
 	if (WeaponType == EWeaponType::Dart)
@@ -47,8 +47,17 @@ void AMSIntermittentWeapon::BeginPlay()
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 {
 	// TODO: 根据cd更新UI
+	if(OwnerCharacter==nullptr)return;
 	Super::Tick(DeltaSeconds);
+	
 	if (bIsTimeStopped)return;
+
+	CurrentOffsetInRound += DeltaSeconds;
+	if (CurrentOffsetInRound >= Cast<UMSWeaponData>(ItemData)->TotalRoundTime)
+	{
+		CurrentOffsetInRound -= Cast<UMSWeaponData>(ItemData)->TotalRoundTime;
+		bCanBeActivated = true;
+	}
 
 	if (!bIsAttacking)
 	{
@@ -60,10 +69,10 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 		{
 			StaticMeshComp->SetVisibility(false);
 		}
-		WeaponIntervalTimer += DeltaSeconds;
-		if (WeaponIntervalTimer >= IntervalTime)
+		// WeaponIntervalTimer += DeltaSeconds;
+		if (CurrentOffsetInRound >= Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound && bCanBeActivated)
 		{
-			WeaponIntervalTimer -= IntervalTime;
+			// WeaponIntervalTimer -= IntervalTime;
 			AnticipationTimer = 0;
 			AttackProcessTimer = 0;
 			TryAttack();
@@ -213,6 +222,7 @@ bool AMSIntermittentWeapon::TryAttack()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("weapon attack"));
 	bIsAttacking = true;
+	bCanBeActivated = false;
 	CachedAttackDirection = OwnerCharacter->GetActorForwardVector();
 	CachedAttackRotation = OwnerCharacter->GetActorRotation();
 	CachedOwnerPosition = OwnerCharacter->GetActorLocation();

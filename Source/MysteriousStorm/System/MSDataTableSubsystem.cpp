@@ -65,18 +65,8 @@ bool UMSDataTableSubsystem::TryGetWeaponConfigByItemID(const int32 ItemID, struc
 {
 	if (WeaponTable)
 	{
-		return TryGetWeaponConfigByItemIDWithLevel(ItemID, 1, OutRow);
-	}
-	return false;
-}
-
-bool UMSDataTableSubsystem::TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level,
-                                                                struct FMSWeaponTableRow& OutRow) const
-{
-	FString Name = FString::FromInt(ItemID) + "_" + FString::FromInt(level);
-	if (WeaponTable)
-	{
-		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(Name), TEXT("Context")))
+		// return TryGetWeaponConfigByItemIDWithLevel(ItemID, 1, OutRow);
+		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(FString::FromInt(ItemID)), TEXT("Context")))
 		{
 			OutRow = *Row;
 			return true;
@@ -84,6 +74,21 @@ bool UMSDataTableSubsystem::TryGetWeaponConfigByItemIDWithLevel(const int32 Item
 	}
 	return false;
 }
+
+// bool UMSDataTableSubsystem::TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level,
+//                                                                 struct FMSWeaponTableRow& OutRow) const
+// {
+// 	FString Name = FString::FromInt(ItemID) + "_" + FString::FromInt(level);
+// 	if (WeaponTable)
+// 	{
+// 		if (FMSWeaponTableRow* Row = WeaponTable->FindRow<FMSWeaponTableRow>(FName(Name), TEXT("Context")))
+// 		{
+// 			OutRow = *Row;
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
 
 bool UMSDataTableSubsystem::TryGetEnemyConfigByID(const int32 EnemyID, struct FMSEnemyTableRow& OutRow) const
 {

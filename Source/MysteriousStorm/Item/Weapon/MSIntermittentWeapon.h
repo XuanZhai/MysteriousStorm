@@ -19,19 +19,19 @@ protected:
 
 #pragma region 武器配置相关
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="WeaponParameter")
-	float IntervalTime;
+	// UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="WeaponParameter")
+	// float IntervalTime;
 	
 	float AnticipationTime = 0;
 	float AttackTime = 0;
 	
 #pragma endregion 
 
-	float WeaponIntervalTimer;
+	// float WeaponIntervalTimer;
 	float AttackProcessTimer;
 	float AnticipationTimer;
+	bool bCanBeActivated;
 	
-	bool bIsAttacking;
 	FVector CachedAttackPosition;
 	FVector CachedAttackDirection;
 	FVector CachedOwnerPosition;
@@ -46,11 +46,15 @@ protected:
 	
 public:
 	AMSIntermittentWeapon();
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual bool TryAttack() override;
 	virtual void ApplyDamage()override;
 
+	UFUNCTION()
 	virtual void SearchEnemy() override;
+	
+	bool bIsAttacking;
 	
 };
