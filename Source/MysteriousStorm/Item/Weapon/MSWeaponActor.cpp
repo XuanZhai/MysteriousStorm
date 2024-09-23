@@ -27,7 +27,7 @@ void AMSWeaponActor::BeginPlay()
 	// Level = 1;
 	CurrentOffsetInRound = 0;
 	Super::BeginPlay();
-	if(!bIsEquipped)
+	if (!bIsEquipped)
 	{
 		StaticMeshComp->SetGenerateOverlapEvents(true);
 	}
@@ -115,10 +115,6 @@ void AMSWeaponActor::SearchEnemy()
 
 void AMSWeaponActor::InitItemData()
 {
-	if (ItemData != nullptr)return;
-	ItemData = NewObject<UMSWeaponData>();
-	FillItemData();
-
 	UGameInstance* GameInstance = GetGameInstance();
 
 	if (!GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetWeaponConfigByItemID(ItemID, WeaponConfig))
@@ -126,6 +122,9 @@ void AMSWeaponActor::InitItemData()
 		UE_LOG(LogTemp, Error, TEXT("WeaponConfig is null"));
 		return;
 	}
+	if (ItemData != nullptr)return;
+	ItemData = NewObject<UMSWeaponData>();
+	FillItemData();
 
 	UMSWeaponData* WeaponData = Cast<UMSWeaponData>(ItemData);
 	WeaponData->Damage = WeaponConfig.Damage;
