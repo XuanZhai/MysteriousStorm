@@ -25,7 +25,7 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UMSWeaponComponent* WeaponComponent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMSAttributeComponent* AttributeComponent;
 
 public:
@@ -46,6 +46,9 @@ public:
 	UMSBackpackComponent* GetBackpackComponent() const { return BackpackComponent;  }
 
 	UMSWeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	UMSAttributeComponent* GetAttributeComponent() const { return AttributeComponent; }
 
 protected:
 	//TSet<EMSEffect> StormState;

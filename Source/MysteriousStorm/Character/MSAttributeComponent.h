@@ -53,11 +53,20 @@ public:
 
 #pragma region Health
 
+	UFUNCTION(BlueprintCallable)
 	void Hurt(ACharacter* Source, float Damage);
 
 	bool IsInMaxHealth() const { return currentHealth == MaxHealth; }
 
+	UFUNCTION(BlueprintCallable)
 	void AddHealth(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentHealth() const { return currentHealth; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentHealthAsRatio() const { return currentHealth/MaxHealth; }
+
 #pragma endregion
 
 };

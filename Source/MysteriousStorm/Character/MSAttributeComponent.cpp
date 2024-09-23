@@ -23,7 +23,7 @@ void UMSAttributeComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	currentHealth = MaxHealth;
 }
 
 
