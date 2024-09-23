@@ -39,8 +39,8 @@ protected:
 	TArray<FVector> CachedAttackDirections;
 	
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	URotatingMovementComponent* RotatingMovementComp;
+	// UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	// URotatingMovementComponent* RotatingMovementComp;
 
 	void TickAttackProcess(float DeltaSeconds);
 	

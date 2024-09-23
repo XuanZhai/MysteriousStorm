@@ -17,10 +17,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 ItemID;
 
-	FVector Location;
+	// FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComp;
+
 	
 public:	
 

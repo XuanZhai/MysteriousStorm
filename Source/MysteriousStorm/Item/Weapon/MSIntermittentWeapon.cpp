@@ -12,8 +12,8 @@
 
 AMSIntermittentWeapon::AMSIntermittentWeapon()
 {
-	RotatingMovementComp = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovementComp"));
-	RotatingMovementComp->Deactivate();
+	// RotatingMovementComp = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovementComp"));
+	// RotatingMovementComp->Deactivate();
 	bCanBeActivated = true;
 }
 
@@ -39,8 +39,8 @@ void AMSIntermittentWeapon::BeginPlay()
 
 	if (WeaponType == EWeaponType::Dart)
 	{
-		RotatingMovementComp->RotationRate = FRotator(0, 540, 0);
-		RotatingMovementComp->Activate();
+		// RotatingMovementComp->RotationRate = FRotator(0, 540, 0);
+		// RotatingMovementComp->Activate();
 	}
 }
 
@@ -108,8 +108,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 	case EWeaponType::Sword:
 		// 按照目前的攻击进度设置位置，后续攻击时间考虑给策划配置
 		AttackProcessTimer += DeltaSeconds;
-
-		Scale.Z = WeaponConfig.SectorRadius / 200;
+		
 		StaticMeshComp->SetWorldScale3D(Scale);
 
 	// 攻击流程计时
@@ -117,8 +116,8 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		{
 			bIsAttacking = false;
 			AttackProcessTimer = 0;
-			Scale.Z = 0.2f;
-			StaticMeshComp->SetWorldScale3D(Scale);
+			// Scale.Z = 0.2f;
+			StaticMeshComp->SetWorldScale3D(FVector::OneVector*2);
 		}
 		else
 		{
@@ -128,7 +127,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 
 			SetActorLocation(OwnerLocation + OffsetDirection * WeaponConfig.SectorRadius / 2);
 			FRotator NewRotation = FRotator(
-				90, CachedAttackRotation.Yaw + WeaponConfig.SectorAngle * (AttackProcessTimer / AttackTime - 0.5), 0);
+				180, CachedAttackRotation.Yaw + WeaponConfig.SectorAngle * (AttackProcessTimer / AttackTime - 0.5), 0);
 			SetActorRotation(NewRotation);
 		}
 		break;
