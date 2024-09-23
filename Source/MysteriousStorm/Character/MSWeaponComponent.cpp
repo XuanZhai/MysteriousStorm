@@ -6,6 +6,7 @@
 #include "MSBackpackComponent.h"
 #include "Core/Tests/Containers/TestUtils.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/Item/MSItemData.h"
 #include "MysteriousStorm/Item/Weapon/MSIntermittentWeapon.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
@@ -48,17 +49,23 @@ void UMSWeaponComponent::BeginPlay()
 
 void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponClass, UMSWeaponData* WeaponData)
 {
-	AMSWeaponActor* Weapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponClass);
+	// AMSWeaponActor* Weapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponClass);
+	AMSWeaponActor* Weapon = Cast<AMSWeaponActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponClass, GetOwner()->GetTransform()));
+	Weapon->bIsEquipped = true;
 	Weapon->ItemData = WeaponData;
 	Weapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
 	Weapon->bIsStatic = false;
+	Weapon->FinishSpawning(GetOwner()->GetTransform());
 	Weapons.Add(Weapon);
 
 
-	AMSWeaponActor* StaticWeapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponClass);
+	// AMSWeaponActor* StaticWeapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponClass);
+	AMSWeaponActor* StaticWeapon = Cast<AMSWeaponActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponClass, GetOwner()->GetTransform()));
 	StaticWeapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
+	StaticWeapon->bIsEquipped = true;
 	StaticWeapon->ItemData = WeaponData;
 	StaticWeapon->bIsStatic = true;
+	StaticWeapon->FinishSpawning(GetOwner()->GetTransform());
 	StaticWeapons.Add(StaticWeapon);
 }
 

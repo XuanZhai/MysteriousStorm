@@ -48,6 +48,8 @@ protected:
 public:
 	AMSWeaponActor();
 
+	bool bIsEquipped;
+
 	float CurrentOffsetInRound;
 
 	// 区分该武器的表现状态是否为静态
