@@ -9,7 +9,13 @@ bool UMSEnemyAbility::TryActivateAbility_Implementation()
 {
 	if (Super::TryActivateAbility_Implementation())
 	{
-		Cast<AMSCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->GetAttributeComponent()->Hurt(OwnerEnemy, Damage);
+		auto PlayerController = GetWorld()->GetFirstPlayerController();
+
+		if (!PlayerController)
+		{
+			return false;
+		}
+		Cast<AMSCharacter>(PlayerController->GetPawn())->GetAttributeComponent()->Hurt(OwnerEnemy, Damage);
 		return true;
 	}
 	return false;
@@ -17,6 +23,12 @@ bool UMSEnemyAbility::TryActivateAbility_Implementation()
 
 bool UMSEnemyAbility::CheckPrecondition_Implementation()
 {
-	return Super::CheckPrecondition_Implementation() && (FVector::Distance(
-		GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), OwnerEnemy->GetActorLocation()) < 100);
+	auto PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (!PlayerController)
+	{
+		return false;
+	}
+	return Super::CheckPrecondition_Implementation() && (FVector::Distance(PlayerController->GetPawn()->GetActorLocation(),
+	                                                                       OwnerEnemy->GetActorLocation()) < 100);
 }

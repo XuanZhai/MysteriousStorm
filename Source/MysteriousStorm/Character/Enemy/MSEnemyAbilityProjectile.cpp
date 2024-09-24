@@ -24,6 +24,10 @@ bool UMSEnemyAbilityProjectile::TryActivateAbility_Implementation()
 bool UMSEnemyAbilityProjectile::CheckPrecondition_Implementation()
 {
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	if (!PlayerCharacter)
+	{
+		return false;
+	}
 	bool bIsInRange = FVector::Dist(PlayerCharacter->GetActorLocation(), OwnerEnemy->GetActorLocation()) < SearchRange;
 	return Super::CheckPrecondition_Implementation() && bIsInRange;
 }
