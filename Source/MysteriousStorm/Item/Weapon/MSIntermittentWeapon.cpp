@@ -273,16 +273,16 @@ void AMSIntermittentWeapon::SearchEnemy()
 	case EWeaponType::MachineGun:
 	case EWeaponType::Sword:
 		// 基于扇形检测
-		DrawDebugLine(GetWorld(), AttackStart,
-		              AttackStart + AttackDirection.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-		              WeaponConfig.SectorRadius,
-		              FColor::Green, false, 1.0f, 0, 1);
-		DrawDebugLine(GetWorld(), AttackStart,
-		              AttackStart + AttackDirection.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-		              WeaponConfig.SectorRadius,
-		              FColor::Green, false, 1.0f, 0, 1);
-		DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
-		                FVector::RightVector, FVector::ForwardVector);
+		// DrawDebugLine(GetWorld(), AttackStart,
+		//               AttackStart + AttackDirection.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+		//               WeaponConfig.SectorRadius,
+		//               FColor::Green, false, 1.0f, 0, 1);
+		// DrawDebugLine(GetWorld(), AttackStart,
+		//               AttackStart + AttackDirection.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+		//               WeaponConfig.SectorRadius,
+		//               FColor::Green, false, 1.0f, 0, 1);
+		// DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
+		//                 FVector::RightVector, FVector::ForwardVector);
 
 		for (; EnemyItr; ++EnemyItr)
 		{
