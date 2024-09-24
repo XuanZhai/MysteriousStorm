@@ -101,6 +101,9 @@ public:
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEnterStorm();
+
 	UFUNCTION()
 	virtual void AddEffectToCharacter();
 
