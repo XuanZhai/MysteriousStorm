@@ -13,5 +13,8 @@ UCLASS()
 class MYSTERIOUSSTORM_API UMSEnemyAbility : public UMSEnemyAbilityBase
 {
 	GENERATED_BODY()
+public:
+	virtual bool TryActivateAbility_Implementation() override;
+	virtual bool CheckPrecondition_Implementation() override;
 	
 };
