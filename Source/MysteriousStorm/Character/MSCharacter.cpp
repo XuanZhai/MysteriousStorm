@@ -4,6 +4,7 @@
 #include "MSCharacter.h"
 #include "MysteriousStorm/Storm/MSStormBase.h"
 #include "MysteriousStorm/Item/MSConsumableData.h"
+#include "Components/ArrowComponent.h"
 #include "MSBackpackComponent.h"
 
 // Sets default values
@@ -21,6 +22,7 @@ AMSCharacter::AMSCharacter()
 void AMSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	GetArrowComponent()->SetVisibility(false);
 	
 }
 
