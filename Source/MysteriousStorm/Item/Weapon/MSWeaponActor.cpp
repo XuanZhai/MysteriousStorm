@@ -5,6 +5,7 @@
 
 #include "MediaPlayer.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSEffectConfig.h"
@@ -35,13 +36,12 @@ void AMSWeaponActor::BeginPlay()
 	RuntimeOffset = Offset;
 	bIsTimeStopped = false;
 	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (AMSGameState* GameState = GameMode ? Cast<AMSGameState>(GameMode) : nullptr; GameState)
+	if (AMSGameState* GameState = GameMode ? GameMode->GetGameState<AMSGameState>() : nullptr; GameState)
 	{
 		GameState->OnGamePauseUpdated.AddUniqueDynamic(this, &AMSWeaponActor::SetTimeStop);
-		Cast<UMSBackpackComponent>(
-				GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass(
-					UMSBackpackComponent::StaticClass()))
-			->OnBackpackOpened.AddUniqueDynamic(this, &AMSWeaponActor::OnBackpackOpened);
+		Cast<AMSCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->GetBackpackComponent()
+		                                                                     ->OnBackpackOpened.AddUniqueDynamic(
+			                                                                     this, &AMSWeaponActor::OnBackpackOpened);
 	}
 }
 
