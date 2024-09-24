@@ -219,7 +219,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("weapon attack"));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("weapon attack"));
 	bIsAttacking = true;
 	bCanBeActivated = false;
 	CachedAttackDirection = OwnerCharacter->GetActorForwardVector();

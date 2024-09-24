@@ -18,6 +18,9 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
+	UParticleSystem* HurtParticle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	float BodyRadius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")

@@ -2,8 +2,11 @@
 
 
 #include "MSEnemyCharacter.h"
+
+#include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AMSEnemyCharacter::AMSEnemyCharacter()
@@ -40,7 +43,8 @@ void AMSEnemyCharacter::Tick(float DeltaTime)
 void AMSEnemyCharacter::Hurt(float damage)
 {
 	CurrentHealth -= damage;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Enemy Health: %f"), CurrentHealth));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HurtParticle, GetActorLocation());
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Enemy Health: %f"), CurrentHealth));
 	if (CurrentHealth <= 0)
 	{
 		Destroy();
