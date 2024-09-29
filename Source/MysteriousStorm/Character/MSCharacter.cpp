@@ -22,7 +22,7 @@ AMSCharacter::AMSCharacter()
 void AMSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GetArrowComponent()->SetVisibility(false);
+	// GetArrowComponent()->SetVisibility(false);
 	
 }
 
