@@ -289,7 +289,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 			// TODO: 怪物半径需要后续配置
 			if (WeaponUtils::OverlapSectorCircle(AttackStart, AttackDirection, WeaponConfig.SectorAngle,
 			                                     WeaponConfig.SectorRadius,
-			                                     EnemyItr->GetActorLocation(), 10))
+			                                     EnemyItr->GetActorLocation(), 100))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}
@@ -303,7 +303,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 		for (; EnemyItr; ++EnemyItr)
 		{
 			if (WeaponUtils::OverlapCircleCircle(CachedAttackPosition, WeaponConfig.DamageRange,
-			                                     EnemyItr->GetActorLocation(), 10))
+			                                     EnemyItr->GetActorLocation(), 100))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}
@@ -327,7 +327,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				// TODO: 怪物半径需要后续配置
 				if (WeaponUtils::OverlapSectorCircle(AttackStart, direction, WeaponConfig.SectorAngle,
 				                                     WeaponConfig.SectorRadius,
-				                                     EnemyItr->GetActorLocation(), 10))
+				                                     EnemyItr->GetActorLocation(), 100))
 				{
 					if (SearchEnemyCache.Contains(*EnemyItr))continue;
 					SearchEnemyCache.Add(*EnemyItr);

@@ -52,7 +52,7 @@ bool WeaponUtils::OverlapSectorCircle(FVector SectorCenter, FVector Forward, flo
 	}
 	auto Offset = CircleCenter - SectorCenter;
 	Offset.Normalize();
-	if (Forward.Dot(Offset) > FMath::Cos(Angle / 2))
+	if (Forward.Dot(Offset) > FMath::Cos(FMath::DegreesToRadians(Angle / 2)))
 	{
 		return true;
 	}
