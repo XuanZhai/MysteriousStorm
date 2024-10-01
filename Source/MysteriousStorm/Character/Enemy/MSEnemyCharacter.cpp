@@ -16,6 +16,8 @@ AMSEnemyCharacter::AMSEnemyCharacter()
 	MaxHealth = CurrentHealth = 100;
 	EnemyID = 0;
 	bIsAbilityActive = false;
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+	HealthBarWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +29,13 @@ void AMSEnemyCharacter::BeginPlay()
 	{
 		Ability->Init(this);
 	}
+	HealthBarWidget->SetWidgetClass(HealthBarWidgetClass);
+	HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	HealthBarWidget->SetPivot(FVector2d(0.5,0.5));
+	HealthBarWidget->SetDrawSize(FVector2d(150,10));
+	HealthBarWidget->SetRelativeLocation(FVector3d(0,0,140));
+	UMSHealthBarWidget* HealthBar = Cast<UMSHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+	HealthBar->UpdateHealthBar(CurrentHealth / MaxHealth);
 }
 
 void AMSEnemyCharacter::Tick(float DeltaTime)
@@ -45,10 +54,15 @@ void AMSEnemyCharacter::Hurt(float damage)
 	CurrentHealth -= damage;
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HurtParticle, GetActorLocation());
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Enemy Health: %f"), CurrentHealth));
+	// 更新敌人血条
+	UMSHealthBarWidget* HealthBar = Cast<UMSHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+	HealthBar->UpdateHealthBar(CurrentHealth / MaxHealth);
+	
 	if (CurrentHealth <= 0)
 	{
 		Destroy();
 	}
+	
 }
 
 bool AMSEnemyCharacter::TryReadConfig()

@@ -13,5 +13,11 @@ UCLASS()
 class MYSTERIOUSSTORM_API UMSHealthBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateHealthBar(float HealthPercent);
+
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float healthPercent;
 };

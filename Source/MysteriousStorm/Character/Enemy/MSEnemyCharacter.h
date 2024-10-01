@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "MSEnemyAbilityBase.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
+#include "MysteriousStorm/UI/MSHealthBarWidget.h"
 #include "MSEnemyCharacter.generated.h"
 
 UCLASS()
@@ -19,6 +21,12 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	UParticleSystem* HurtParticle;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UWidgetComponent* HealthBarWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
+	TSubclassOf<UMSHealthBarWidget> HealthBarWidgetClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	float BodyRadius;
