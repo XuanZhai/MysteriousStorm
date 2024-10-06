@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	UParticleSystem* HurtParticle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
+	UParticleSystem* DeadParticle;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UWidgetComponent* HealthBarWidget;
 
@@ -55,7 +58,7 @@ public:
 	
 	
 
-	void Hurt(float damage);
+	void Hurt(float damage, bool bPlayHurtParticle = true);
 	bool TryReadConfig();
 
 };

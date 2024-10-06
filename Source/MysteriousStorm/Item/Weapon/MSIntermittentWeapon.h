@@ -37,7 +37,9 @@ protected:
 	FVector CachedOwnerPosition;
 	FRotator CachedAttackRotation;
 	TArray<FVector> CachedAttackDirections;
-	
+
+	UPROPERTY(EditAnywhere,Category="WeaponParameter")
+	UParticleSystem* AttackParticle;
 
 	// UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	// URotatingMovementComponent* RotatingMovementComp;

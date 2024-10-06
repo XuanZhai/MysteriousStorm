@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "WeaponUtils.h"
+#include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 
@@ -111,7 +112,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		
 		StaticMeshComp->SetWorldScale3D(Scale);
 
-	// 攻击流程计时
+		// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
 			bIsAttacking = false;
@@ -253,6 +254,11 @@ void AMSIntermittentWeapon::ApplyDamage()
 {
 	if (bIsStatic)return;
 	SearchEnemy();
+	if(WeaponType==EWeaponType::Grenade)
+	{
+		// 手雷武器播放攻击爆炸特效
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackParticle, CachedAttackPosition);
+	}
 	for (const auto Enemy : SearchEnemyCache)
 	{
 		Enemy->Hurt(Cast<UMSWeaponData>(ItemData)->Damage);
@@ -298,8 +304,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 	case EWeaponType::Grenade:
 		// 基于范围内随机生成的圆形区域检测
 
-		DrawDebugSphere(GetWorld(), CachedAttackPosition, WeaponConfig.DamageRange, 100, FColor::Red, false, 10.0f, 0,
-		                1);
+		// DrawDebugSphere(GetWorld(), CachedAttackPosition, WeaponConfig.DamageRange, 100, FColor::Red, false, 10.0f, 0,
+		//                 1);
 		for (; EnemyItr; ++EnemyItr)
 		{
 			if (WeaponUtils::OverlapCircleCircle(CachedAttackPosition, WeaponConfig.DamageRange,

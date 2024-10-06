@@ -47,6 +47,10 @@ void UMSAttributeComponent::Hurt(ACharacter* Source, float Damage)
 	}
 	currentHealth -= Damage;
 	DrawDebugString(GetWorld(), FVector(0,0,0), FString::Printf(TEXT("hurt: %f"), Damage), nullptr, FColor::Red, 0.0f, true);
+	if(currentHealth<=0)
+	{
+		// 处理死亡逻辑
+	}
 }
 
 void UMSAttributeComponent::AddEffect(EMSEffect NewEffect)

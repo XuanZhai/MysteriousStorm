@@ -130,6 +130,7 @@ void AMSWeaponActor::InitItemData()
 	WeaponData->Damage = WeaponConfig.Damage;
 	WeaponData->TriggerTimeInRound = 2;
 	WeaponData->TotalRoundTime = 1;
+	WeaponType = WeaponConfig.WeaponType;
 }
 
 void AMSWeaponActor::Tick(float DeltaSeconds)
