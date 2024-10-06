@@ -2,15 +2,20 @@
 
 
 #include "MSCharacter.h"
+
+#include "EnhancedInputSubsystems.h"
 #include "MysteriousStorm/Storm/MSStormBase.h"
 #include "MysteriousStorm/Item/MSConsumableData.h"
 #include "Components/ArrowComponent.h"
 #include "MSBackpackComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "MysteriousStorm/System/MSGameState.h"
 
 // Sets default values
 AMSCharacter::AMSCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	BackpackComponent = CreateDefaultSubobject<UMSBackpackComponent>(TEXT("BackpackComponent"));
@@ -23,21 +28,32 @@ void AMSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	// GetArrowComponent()->SetVisibility(false);
-	
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	BackpackComponent->OnBackpackOpened.AddUniqueDynamic(this, &AMSCharacter::DisableCharacterInput);
+	BackpackComponent->OnBackpackClosed.AddUniqueDynamic(this, &AMSCharacter::EnableCharacterInput);
+}
+
+void AMSCharacter::EnableCharacterInput()
+{
+	GetMovementComponent()->Activate();
+}
+
+
+void AMSCharacter::DisableCharacterInput()
+{
+	GetMovementComponent()->Deactivate();
 }
 
 // Called every frame
 void AMSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
 void AMSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 
@@ -84,8 +100,8 @@ bool AMSCharacter::TryUseItem(UMSItemData* ItemData)
 		{
 			//if (!AttributeComponent->IsInMaxHealth())
 			//{
-				AttributeComponent->AddHealth(ConsumableData->Value);
-				return true;
+			AttributeComponent->AddHealth(ConsumableData->Value);
+			return true;
 			//}
 		}
 	}

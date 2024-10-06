@@ -28,6 +28,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMSAttributeComponent* AttributeComponent;
 
+	UFUNCTION(BlueprintCallable)
+	void DisableCharacterInput();
+
+	UFUNCTION(BlueprintCallable)
+	void EnableCharacterInput();
 public:
 	// Sets default values for this character's properties
 	AMSCharacter();

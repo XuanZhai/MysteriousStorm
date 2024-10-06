@@ -50,14 +50,13 @@ protected:
 
 	bool bIsAbilityActive;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	TArray<UMSEnemyAbilityBase*> GetProcessAbilities() const { return PossessAbilities; }
 	
-	
-
 	void Hurt(float damage, bool bPlayHurtParticle = true);
 	bool TryReadConfig();
 

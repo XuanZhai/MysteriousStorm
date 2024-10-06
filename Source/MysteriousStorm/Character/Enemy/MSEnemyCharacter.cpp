@@ -3,6 +3,7 @@
 
 #include "MSEnemyCharacter.h"
 
+#include "AIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
