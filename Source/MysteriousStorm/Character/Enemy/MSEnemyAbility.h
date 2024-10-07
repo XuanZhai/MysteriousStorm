@@ -16,5 +16,7 @@ class MYSTERIOUSSTORM_API UMSEnemyAbility : public UMSEnemyAbilityBase
 public:
 	virtual bool TryActivateAbility_Implementation() override;
 	virtual bool CheckPrecondition_Implementation() override;
+
+	
 	
 };

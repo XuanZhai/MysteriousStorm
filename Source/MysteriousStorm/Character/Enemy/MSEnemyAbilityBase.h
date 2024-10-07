@@ -30,6 +30,11 @@ public:
 	bool IsActivated() const { return bIsActivated; }
 	void Init(ACharacter* Owner);
 
+	
+	// 由于在行为树中ai的能力和移动是并行的，因此这里需要标记能力是否会打断移动
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bInterpretMovement = false;
+
 protected:
 	bool bIsActivated;
 
