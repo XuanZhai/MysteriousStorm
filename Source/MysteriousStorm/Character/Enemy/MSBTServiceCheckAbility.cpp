@@ -7,11 +7,12 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "MysteriousStorm/Character/MSCharacter.h"
 
-void UMSBTServiceCheckAbility::OnSearchStart(FBehaviorTreeSearchData& SearchData)
+
+void UMSBTServiceCheckAbility::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::OnSearchStart(SearchData);
-	AMSEnemyCharacter* EnemyCharacter = Cast<AMSEnemyCharacter>(SearchData.OwnerComp.GetAIOwner()->GetPawn());
-	UBlackboardComponent* Blackboard = SearchData.OwnerComp.GetBlackboardComponent();
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+	AMSEnemyCharacter* EnemyCharacter = Cast<AMSEnemyCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	Blackboard->SetValueAsInt("ValidAbilityIndex", -1);
 	if (EnemyCharacter)
 	{
@@ -32,5 +33,4 @@ void UMSBTServiceCheckAbility::OnSearchStart(FBehaviorTreeSearchData& SearchData
 			}
 		}
 	}
-	Blackboard->SetValueAsInt("ValidAbilityIndex", -1);
 }

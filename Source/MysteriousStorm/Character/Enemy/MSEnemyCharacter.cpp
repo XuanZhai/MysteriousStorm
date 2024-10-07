@@ -45,7 +45,7 @@ void AMSEnemyCharacter::Tick(float DeltaTime)
 	for (auto Ability : PossessAbilities)
 	{
 		Ability->Update(DeltaTime);
-		Ability->TryActivateAbility();
+		// Ability->TryActivateAbility();
 	}
 }
 

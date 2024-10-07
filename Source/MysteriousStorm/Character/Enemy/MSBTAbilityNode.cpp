@@ -7,19 +7,28 @@
 #include "MSEnemyCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+UMSBTAbilityNode::UMSBTAbilityNode()
+{
+	INIT_TASK_NODE_NOTIFY_FLAGS();
+}
+
 EBTNodeResult::Type UMSBTAbilityNode::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	return EBTNodeResult::InProgress;
+}
+
+void UMSBTAbilityNode::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	int ValidAbilityIndex = BlackboardComp->GetValueAsInt("ValidAbilityIndex");
 	if (ValidAbilityIndex == -1)
 	{
-		return EBTNodeResult::Failed;
+		return ;
 	}
 	
 	if(auto EnemyOwner = Cast<AMSEnemyCharacter>(OwnerComp.GetAIOwner()->GetPawn());EnemyOwner)
 	{
 		EnemyOwner->GetProcessAbilities()[ValidAbilityIndex]->TryActivateAbility();
-		return EBTNodeResult::Succeeded;
 	}
-	return EBTNodeResult::Failed;
 }

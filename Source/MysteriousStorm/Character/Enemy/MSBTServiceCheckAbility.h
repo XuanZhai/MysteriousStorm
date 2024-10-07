@@ -14,5 +14,5 @@ class MYSTERIOUSSTORM_API UMSBTServiceCheckAbility : public UBTService
 {
 	GENERATED_BODY()
 public:
-	virtual void OnSearchStart(FBehaviorTreeSearchData& SearchData) override;
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };
