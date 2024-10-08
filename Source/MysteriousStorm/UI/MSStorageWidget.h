@@ -12,6 +12,7 @@ class UBorder;
 class UMSItemWidget;
 class UMSItemData;
 class UMSBackpackComponent;
+class AMSStorageBox;
 /**
  * 
  */
@@ -29,6 +30,29 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UCanvasPanel* GridPanel;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 StorageColumnNum = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 StorageRowNum = 10;
+
+	TMap<UMSItemData*, int32> StorageData;
+
+protected:
+	virtual bool IsAvailableForNewItem(const UMSItemData* NewItemData, int32 TopLeftIndex) const override;
+
+	virtual void AddThisItemAt(UMSItemData* NewItemData, int32 TopLeftIndex) override;
+
+	UFUNCTION(BlueprintCallable)
+	void OnItemRemoved(UMSItemData* TargetItemData);
+
+	UFUNCTION(BlueprintCallable)
+	void MousePositionInTile(FVector2D MousePosition, bool& bIsRight, bool& bIsBottom) const;
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent);
@@ -36,4 +60,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Refresh();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void CreateLineSegment();
+
+	void ClearStorageTiles();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateStorageTiles(AMSStorageBox* StorageItemList);
+
+	UFUNCTION(BlueprintCallable)
+	void AddItemBack(UMSItemData* NewItemData);
 };

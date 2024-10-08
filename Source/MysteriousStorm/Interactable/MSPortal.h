@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "MSInteractableActor.h"
-#include "MSStorageBox.generated.h"
+#include "MSPortal.generated.h"
 
-class UMSItemData;
 /**
  * 
  */
 UCLASS()
-class MYSTERIOUSSTORM_API AMSStorageBox : public AMSInteractableActor
+class MYSTERIOUSSTORM_API AMSPortal : public AMSInteractableActor
 {
 	GENERATED_BODY()
-
-public:
-	TArray<UMSItemData*> StorageList;
+	
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector DestWorldLocation;
 
 protected:
 	virtual void BeginOverlapCallback() override;

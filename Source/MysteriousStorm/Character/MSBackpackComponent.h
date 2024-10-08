@@ -9,6 +9,7 @@
 class AMSItemActor;
 class UMSItemData;
 class UMSBackpack;
+class AMSStorageBox;
 enum EMSEffect : uint8;
 
 USTRUCT()
@@ -113,6 +114,15 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedFromBackpack, UMSItemData*, OldItemData);
 	UPROPERTY(BlueprintAssignable)
 	FOnItemRemovedFromBackpack OnItemRemovedFromBackpack;
+
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStorageBox, AMSStorageBox*, NewStorageBox);
+	UPROPERTY(BlueprintAssignable)
+	FOnEnterStorageBox OnEnterStorageBox;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLeaveStorageBox, AMSStorageBox*, OldStorageBox);
+	UPROPERTY(BlueprintAssignable)
+	FOnLeaveStorageBox OnLeaveStorageBox;
 
 	UPROPERTY()
 	bool NeedRefresh;

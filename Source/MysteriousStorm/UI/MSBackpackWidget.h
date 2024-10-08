@@ -12,6 +12,8 @@ class UMSBackpackComponent;
 class UMSItemData;
 class UMSCachedGridWidget;
 class UMSBackpackGridWidget;
+class UMSStorageWidget;
+class AMSStorageBox;
 
 /**
  * 
@@ -27,6 +29,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UMSBackpackGridWidget* WB_GridWidget;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UMSStorageWidget* WB_StorageGridWidget;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -45,4 +50,10 @@ protected:
 	void OnMouseDroppedCallback();
 #pragma endregion
 
+protected:
+	UFUNCTION()
+	void EnterStorageBox(AMSStorageBox* NewBox);
+
+	UFUNCTION()
+	void LeaveStorageBox(AMSStorageBox* OldBox);
 };

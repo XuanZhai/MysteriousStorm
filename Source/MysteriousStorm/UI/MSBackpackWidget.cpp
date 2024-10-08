@@ -6,18 +6,28 @@
 #include "MSGridWidget.h"
 #include "MSCachedGridWidget.h"
 #include "MSBackpackGridWidget.h"
+#include "MSStorageWidget.h"
 #include "Blueprint/DragDropOperation.h"
+#include "MysteriousStorm/Character/MSBackpackComponent.h"
 
 void UMSBackpackWidget::InitializeGrid()
 {
 	WB_GridWidget->Initialization(TileSize,BackpackComponent);
 	WB_CachedGridWidget->Initialization(TileSize,BackpackComponent);
+	WB_StorageGridWidget->Initialization(TileSize, BackpackComponent);
+	WB_StorageGridWidget->SetVisibility(ESlateVisibility::Collapsed);
+
 	WB_GridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
 	WB_CachedGridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
+	WB_StorageGridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
 
 	WB_CachedGridWidget->NeedDropBack.AddUniqueDynamic(WB_GridWidget, &UMSBackpackGridWidget::AddItemBack);
+	WB_StorageGridWidget->NeedDropBack.AddUniqueDynamic(WB_GridWidget, &UMSBackpackGridWidget::AddItemBack);
 	WB_GridWidget->NeedDropBack.AddUniqueDynamic(WB_CachedGridWidget, &UMSCachedGridWidget::AddItemBack);
 	WB_GridWidget->PutChildToGround.AddUniqueDynamic(WB_CachedGridWidget, &UMSCachedGridWidget::AddChildItem);
+
+	BackpackComponent->OnEnterStorageBox.AddUniqueDynamic(this, &UMSBackpackWidget::EnterStorageBox);
+	BackpackComponent->OnLeaveStorageBox.AddUniqueDynamic(this, &UMSBackpackWidget::LeaveStorageBox);
 }
 
 bool UMSBackpackWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -49,4 +59,16 @@ void UMSBackpackWidget::OnMouseDroppedCallback()
 {
 	WB_GridWidget->bDrawDropLocation = false;
 	WB_CachedGridWidget->bDrawDropLocation =false;
+}
+
+void UMSBackpackWidget::EnterStorageBox(AMSStorageBox* NewBox)
+{
+	WB_CachedGridWidget->SetVisibility(ESlateVisibility::Collapsed);
+	WB_StorageGridWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMSBackpackWidget::LeaveStorageBox(AMSStorageBox* OldBox)
+{
+	WB_CachedGridWidget->SetVisibility(ESlateVisibility::Visible);
+	WB_StorageGridWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
