@@ -85,11 +85,14 @@ void UMSStorageWidget::UpdateStorageTiles(AMSStorageBox* StorageBox)
 {
 	ClearStorageTiles();
 
+	const auto OldStorageData = StorageData;
+	StorageData.Empty();
+
 	for (const auto& Item : StorageBox->StorageList)
 	{
-		if (StorageData.Contains(Item) && IsAvailableForNewItem(Item, StorageData[Item]))
+		if (OldStorageData.Contains(Item) && IsAvailableForNewItem(Item, OldStorageData[Item]))
 		{
-			AddThisItemAt(Item, StorageData[Item]);
+			AddThisItemAt(Item, OldStorageData[Item]);
 		}
 		else
 		{
@@ -170,6 +173,9 @@ void UMSStorageWidget::OnItemRemoved(UMSItemData* TargetItemData)
 			Tile.ClearAllData();
 		}
 	}
+
+	BackpackComponent->InteractingStorageBox->StorageList.Remove(TargetItemData);
+	UpdateStorageTiles(BackpackComponent->InteractingStorageBox);
 }
 
 bool UMSStorageWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -191,14 +197,11 @@ bool UMSStorageWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 
 	if (bFindPlaceToDrop)
 	{
-		if (DragSource == BackpackGrid)
+		if (DragSource == BackpackGrid || DragSource == EGridType::StorageGrid)
 		{
-			//AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
-			//if (AMSGameState* GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr)
-			//{
-			//	AMSItemActor* OutActor = nullptr;
-			//	GS->TrySpawnItemActorFromData(NewItemData, GetOwningPlayerPawn(), OutActor, true);
-			//}
+			BackpackComponent->InteractingStorageBox->StorageList.Add(NewItemData);
+			UpdateStorageTiles(BackpackComponent->InteractingStorageBox);
+			Refresh();
 		}
 	}
 

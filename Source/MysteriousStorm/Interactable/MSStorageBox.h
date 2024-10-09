@@ -16,6 +16,7 @@ class MYSTERIOUSSTORM_API AMSStorageBox : public AMSInteractableActor
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
 	TArray<UMSItemData*> StorageList;
 
 protected:

@@ -8,6 +8,7 @@ void AMSStorageBox::BeginOverlapCallback()
 {
 	if (auto BackpackComp = InteractingCharacter ? InteractingCharacter->GetBackpackComponent() : nullptr)
 	{
+		BackpackComp->InteractingStorageBox = this;
 		if (BackpackComp->OnEnterStorageBox.IsBound())
 		{
 			BackpackComp->OnEnterStorageBox.Broadcast(this);
@@ -23,5 +24,6 @@ void AMSStorageBox::EndOverlapCallback()
 		{
 			BackpackComp->OnLeaveStorageBox.Broadcast(this);
 		}
+		BackpackComp->InteractingStorageBox = nullptr;
 	}
 }

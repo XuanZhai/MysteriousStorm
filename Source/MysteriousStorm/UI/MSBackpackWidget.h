@@ -14,6 +14,7 @@ class UMSCachedGridWidget;
 class UMSBackpackGridWidget;
 class UMSStorageWidget;
 class AMSStorageBox;
+class UCanvasPanel;
 
 /**
  * 
@@ -32,6 +33,12 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UMSStorageWidget* WB_StorageGridWidget;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UCanvasPanel* CachedGridCanvas;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UCanvasPanel* StorageGridCanvas;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

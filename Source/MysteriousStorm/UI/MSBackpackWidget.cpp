@@ -9,13 +9,14 @@
 #include "MSStorageWidget.h"
 #include "Blueprint/DragDropOperation.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
+#include "Components/CanvasPanel.h"
 
 void UMSBackpackWidget::InitializeGrid()
 {
 	WB_GridWidget->Initialization(TileSize,BackpackComponent);
 	WB_CachedGridWidget->Initialization(TileSize,BackpackComponent);
 	WB_StorageGridWidget->Initialization(TileSize, BackpackComponent);
-	WB_StorageGridWidget->SetVisibility(ESlateVisibility::Collapsed);
+	StorageGridCanvas->SetVisibility(ESlateVisibility::Collapsed);
 
 	WB_GridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
 	WB_CachedGridWidget->OnMouseDropped.AddUniqueDynamic(this, &UMSBackpackWidget::OnMouseDroppedCallback);
@@ -63,12 +64,12 @@ void UMSBackpackWidget::OnMouseDroppedCallback()
 
 void UMSBackpackWidget::EnterStorageBox(AMSStorageBox* NewBox)
 {
-	WB_CachedGridWidget->SetVisibility(ESlateVisibility::Collapsed);
-	WB_StorageGridWidget->SetVisibility(ESlateVisibility::Visible);
+	CachedGridCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	StorageGridCanvas->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMSBackpackWidget::LeaveStorageBox(AMSStorageBox* OldBox)
 {
-	WB_CachedGridWidget->SetVisibility(ESlateVisibility::Visible);
-	WB_StorageGridWidget->SetVisibility(ESlateVisibility::Collapsed);
+	CachedGridCanvas->SetVisibility(ESlateVisibility::Visible);
+	StorageGridCanvas->SetVisibility(ESlateVisibility::Collapsed);
 }

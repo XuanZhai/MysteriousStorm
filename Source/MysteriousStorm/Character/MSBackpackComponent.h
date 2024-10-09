@@ -159,4 +159,9 @@ public:
 
 	void RemoveStormEffect(EMSEffect TargetEffect);
 #pragma endregion
+
+#pragma region StorageBox
+public:
+	AMSStorageBox* InteractingStorageBox;
+#pragma endregion
 };
