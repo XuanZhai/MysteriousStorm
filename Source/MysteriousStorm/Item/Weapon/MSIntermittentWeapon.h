@@ -31,6 +31,8 @@ protected:
 	float AttackProcessTimer;
 	float AnticipationTimer;
 	bool bCanBeActivated;
+	// 在武器被激活后的攻击次数
+	int AttackTimes;
 	
 	FVector CachedAttackPosition;
 	FVector CachedAttackDirection;
@@ -45,6 +47,7 @@ protected:
 	// URotatingMovementComponent* RotatingMovementComp;
 
 	void TickAttackProcess(float DeltaSeconds);
+	void OnAttackProcessEnd();
 	
 public:
 	AMSIntermittentWeapon();
@@ -56,7 +59,10 @@ public:
 
 	UFUNCTION()
 	virtual void SearchEnemy() override;
+
+	virtual int ProcessEffect() override;
 	
 	bool bIsAttacking;
+	
 	
 };

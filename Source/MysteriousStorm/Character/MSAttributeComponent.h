@@ -11,6 +11,9 @@ enum EMSEffect : uint8
 {
 	None = 0,
 	SteamStormEffect = 1 UMETA(DisplayName = "SteamStorm"),
+	InvalidationEffect  = 2 UMETA(DisplayName = "失效"),
+	OverloadEffect = 3 UMETA(DisplayName = "超载"),
+	CriticalEffect = 4 UMETA(DisplayName = "猛击"),
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

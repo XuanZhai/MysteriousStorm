@@ -18,6 +18,8 @@ AMSWeaponActor::AMSWeaponActor()
 	bIsStatic = true;
 	bIsEquipped = false;
 	StaticMeshComp->SetGenerateOverlapEvents(false);
+	CriticalLevel = 0;
+	OverloadLevel = 0;
 	// UMediaPlayer* MediaPlayer = NewObject<UMediaPlayer>();
 	MediaSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("MediaSoundComponent"));
 	SetTimeStop(true);
@@ -58,6 +60,11 @@ void AMSWeaponActor::ApplyEffect(EMSEffect Effect, bool bIsRemove)
 		break;
 	}
 	Cast<UMSWeaponData>(ItemData)->Damage = WeaponConfig.Damage * DamageDiff;
+}
+
+int AMSWeaponActor::ProcessEffect()
+{
+	return 1;
 }
 
 

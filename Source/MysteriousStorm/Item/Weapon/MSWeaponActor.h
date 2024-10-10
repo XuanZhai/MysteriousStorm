@@ -24,6 +24,9 @@ protected:
 	UPROPERTY()
 	TArray<AMSEnemyCharacter*> SearchEnemyCache;
 
+	UPROPERTY()
+	TMap<TEnumAsByte<EMSEffect>, int> RuntimeEffects;
+
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
 	UMediaSoundComponent* MediaSoundComponent;
 
@@ -43,6 +46,10 @@ protected:
 	// 基于level该种武器有多少把
 	// int Level;
 
+	int OverloadLevel;
+	int CriticalLevel;
+	float CurrentDamage;
+	
 	FMSWeaponTableRow WeaponConfig;
 
 public:
@@ -65,6 +72,9 @@ public:
 
 	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
 	void ApplyEffect(EMSEffect Effect, bool bIsRemove = false);
+
+	// 返回值确定本次遍历的攻击次数
+	virtual int ProcessEffect();
 
 	virtual void BeginPlay() override;
 	virtual bool TryAttack();

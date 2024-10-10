@@ -23,4 +23,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Storm|SteamStorm")
 	float SteamStormHitDamageFactor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Jewelry|Critical")
+	int CriticalDeltaDamage;
 };

@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
+#include "MysteriousStorm/System/MSDataTableSubsystem.h"
+#include "MysteriousStorm/System/MSEffectConfig.h"
 
 # pragma region lifetime
 
@@ -37,6 +39,7 @@ void AMSIntermittentWeapon::BeginPlay()
 	AttackProcessTimer = 0;
 	// WeaponIntervalTimer = 0;
 	AnticipationTimer = 0;
+	AttackTimes = 0;
 
 	if (WeaponType == EWeaponType::Dart)
 	{
@@ -76,7 +79,11 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 			// WeaponIntervalTimer -= IntervalTime;
 			AnticipationTimer = 0;
 			AttackProcessTimer = 0;
-			TryAttack();
+			AttackTimes = ProcessEffect();
+			if (AttackTimes > 0)
+			{
+				TryAttack();
+			}
 		}
 	}
 	else
@@ -115,10 +122,18 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
-			bIsAttacking = false;
-			AttackProcessTimer = 0;
-			// Scale.Z = 0.2f;
-			StaticMeshComp->SetWorldScale3D(FVector::OneVector*2);
+			AttackTimes--;
+			if (AttackTimes > 0)
+			{
+				AttackProcessTimer = 0;
+			}
+			else
+			{
+				bIsAttacking = false;
+				AttackProcessTimer = 0;
+				// Scale.Z = 0.2f;
+				StaticMeshComp->SetWorldScale3D(FVector::OneVector*2);
+			}
 		}
 		else
 		{
@@ -136,8 +151,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		AttackProcessTimer += DeltaSeconds;
 		if (AttackProcessTimer >= AttackTime)
 		{
-			bIsAttacking = false;
-			AttackProcessTimer = 0;
+			OnAttackProcessEnd();
 		}
 		else
 		{
@@ -152,8 +166,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		AttackProcessTimer += DeltaSeconds;
 		if (AttackProcessTimer >= AttackTime)
 		{
-			bIsAttacking = false;
-			AttackProcessTimer = 0;
+			OnAttackProcessEnd();
 		}
 		else
 		{
@@ -178,8 +191,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		}
 		else
 		{
-			bIsAttacking = false;
-			AttackProcessTimer = 0;
+			OnAttackProcessEnd();
 		}
 		SetActorLocation(NewLocation);
 		break;
@@ -187,8 +199,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		AttackProcessTimer += DeltaSeconds;
 		if (AttackProcessTimer >= AttackTime)
 		{
-			bIsAttacking = false;
-			AttackProcessTimer = 0;
+			OnAttackProcessEnd();
 		}
 		else
 		{
@@ -357,4 +368,35 @@ void AMSIntermittentWeapon::SearchEnemy()
 		break;
 	}
 }
+
+int AMSIntermittentWeapon::ProcessEffect()
+{
+	// TODO: 根据effect配置计算运行时的buff层数
+	CurrentDamage = Cast<UMSWeaponData>(ItemData)->Damage;
+	if(CriticalLevel>=3)
+	{
+		UMSEffectConfig* EffectConfig = GetGameInstance()->GetSubsystem<UMSDataTableSubsystem>()->GetEffectConfig();
+		CurrentDamage += EffectConfig->CriticalDeltaDamage;
+	}
+	if(OverloadLevel>=3)
+	{
+		return 2;
+	}
+	return 1;
+}
+
+void AMSIntermittentWeapon::OnAttackProcessEnd()
+{
+	AttackTimes--;
+	if (AttackTimes > 0)
+	{
+		AttackProcessTimer = 0;
+	}
+	else
+	{
+		bIsAttacking = false;
+		AttackProcessTimer = 0;
+	}
+}
 # pragma endregion
+
