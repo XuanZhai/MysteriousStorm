@@ -332,6 +332,8 @@ void UMSBackpackGridWidget::CalculateGridData()
 	TArray<bool> VisitList;
 	VisitList.Init(false,Tiles.Num());
 
+	BackpackComponent->ClearAllEffectsToWeapon();
+
 	for (int32 i = 0; i < Tiles.Num(); i++)
 	{
 		const FTileinfo& Tile = Tiles[i];
