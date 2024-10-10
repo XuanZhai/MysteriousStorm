@@ -12,6 +12,7 @@ class USizeBox;
 class UBorder;
 class UImage;
 class UMSItemData;
+class UMSTipsWidget;
 
 UCLASS(BlueprintType)
 class MYSTERIOUSSTORM_API UMSDragPayload : public UObject
@@ -60,6 +61,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage* ItemImage;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UMSTipsWidget* WB_TipsWidget;
+
 	UPROPERTY(BlueprintReadOnly)
 	float TileSize = 0.0f;
 
@@ -74,6 +78,10 @@ protected:
 
 protected:
 	void SetSize();
+
+	void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+
+	void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UMSItemData*, TargetItemData);

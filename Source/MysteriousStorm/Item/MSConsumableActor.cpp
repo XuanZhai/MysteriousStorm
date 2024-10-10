@@ -33,6 +33,7 @@ void AMSConsumableActor::InitItemData()
 		ConsumableData->XUISize = Row.XUISize;
 		ConsumableData->YUISize = Row.YUISize;
 		ConsumableData->AssetBP = Row.AssetBP;
+		ConsumableData->Description = Row.Description;
 	}
 	ConsumableData->Value = Value;
 	ConsumableData->ConsumableType = ConsumableType;

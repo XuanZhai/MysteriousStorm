@@ -2,12 +2,23 @@
 
 
 #include "MSItemWidget.h"
+#include "MSTipsWidget.h"
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "MysteriousStorm/Item/MSItemData.h"
 #include "MysteriousStorm/Character/MSCharacter.h"
+
+void UMSItemWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	WB_TipsWidget->ShowTips(ItemPayload->ItemData->Description);
+}
+
+void UMSItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	WB_TipsWidget->HideTips();
+}
 
 void UMSItemWidget::SetSize()
 {

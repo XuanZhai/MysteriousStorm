@@ -42,6 +42,9 @@ public:
 	TEnumAsByte<EItemType> ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 XUISize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -45,6 +45,7 @@ void AMSItemActor::FillItemData()
 		ItemData->XUISize = Row.XUISize;
 		ItemData->YUISize = Row.YUISize;
 		ItemData->AssetBP = Row.AssetBP;
+		ItemData->Description = Row.Description;
 	}
 }
 

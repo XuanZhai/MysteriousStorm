@@ -28,6 +28,7 @@ void AMSSpecialItemActor::InitItemData()
 		SpecialItemData->XUISize = Row.XUISize;
 		SpecialItemData->YUISize = Row.YUISize;
 		SpecialItemData->AssetBP = Row.AssetBP;
+		SpecialItemData->Description = Row.Description;
 	}
 	SpecialItemData->AffectMap = AffectMap;
 	SpecialItemData->SpecialItemType = SpecialItemType;

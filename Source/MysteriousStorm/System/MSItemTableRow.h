@@ -26,6 +26,9 @@ struct MYSTERIOUSSTORM_API FMSItemTableRow : public FTableRowBase
 	TEnumAsByte<EItemType> ItemType;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString Description;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<AMSItemActor> AssetBP;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
