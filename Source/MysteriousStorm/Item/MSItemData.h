@@ -16,6 +16,7 @@ enum EItemType : uint8
 	Weapon = 1,
 	Bag = 2,
 	Consumable = 3,
+	SpecialItem = 4,
 	MAX
 };
 
@@ -56,7 +57,7 @@ public:
 	float RotateDegree;
 
 	UPROPERTY(BlueprintReadWrite)
-	TSet<TEnumAsByte<EMSEffect>> Effects;
+	TMap<TEnumAsByte<EMSEffect>, int32> Effects;
 
 public:
 	UMSItemData();
@@ -67,9 +68,13 @@ public:
 
 	bool IsConsumable() const { return ItemType == EItemType::Consumable; }
 
+	bool IsSpecialItem() const { return ItemType == EItemType::SpecialItem; }
+
 	bool DoesEffectExist(EMSEffect TargetEffect) const { return Effects.Contains(TargetEffect); }
 
-	virtual void AddEffect(EMSEffect NewEffect);
+	virtual void AddEffect(EMSEffect NewEffect, int32 Level = 1);
 
 	virtual void RemoveEffect(EMSEffect TargetEffect);
+
+	virtual void ClearEffect();
 };

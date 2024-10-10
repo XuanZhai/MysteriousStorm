@@ -58,6 +58,8 @@ public:
 	void CalculateGridData();
 
 	void FillVisitedList(UMSItemData* ItemData, TArray<bool>& VisitedList, int32 TopLeftIndex) const;
+
+	void ApplySpecialItemEffect(UMSItemData* ItemData, int32 Index);
 #pragma endregion
 
 #pragma region UI

@@ -43,5 +43,7 @@ public:
 	virtual void RemoveWeapon(UMSItemData* Weapon);
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void InitialWeaponSystem();
+
+	const TArray<AMSWeaponActor*>& GetWeapons() const { return Weapons; }
 		
 };

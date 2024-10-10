@@ -8,9 +8,13 @@
 #include "Components/Border.h"
 #include "Blueprint/DragDropOperation.h"
 #include "MysteriousStorm/Item/MSItemData.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
+#include "MysteriousStorm/Character/MSWeaponComponent.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
+#include "MysteriousStorm/Character/MSAttributeComponent.h"
 #include "MysteriousStorm/UI/MSBackpackWidget.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
+#include "MysteriousStorm/Item/MSSpecialItemData.h"
 
 void UMSBackpackGridWidget::Initialization(float NewTileSize, UMSBackpackComponent* NewBackpackComponent)
 {
@@ -360,6 +364,10 @@ void UMSBackpackGridWidget::CalculateGridData()
 				TargetWeaponData->TriggerTimeInRound = CurrentTime;
 			}
 		}
+		else if (Tile.Item->IsSpecialItem())
+		{
+			ApplySpecialItemEffect(Tile.Item,i);
+		}
 	}
 
 	const auto& Backpack = BackpackComponent->GetItems();
@@ -372,6 +380,115 @@ void UMSBackpackGridWidget::CalculateGridData()
 				TargetWeaponData->TotalRoundTime = TotalTime;
 				//UE_LOG(LogTemp,Warning, TEXT("Weapon %s has current time %f and total time %f"), *Item.Key->Name, TargetWeaponData->TriggerTimeInRound, TargetWeaponData->TotalRoundTime);
 			}
+		}
+	}
+}
+
+void UMSBackpackGridWidget::ApplySpecialItemEffect(UMSItemData* ItemData, int32 Index)
+{
+	UMSSpecialItemData* SpecialItemData = Cast<UMSSpecialItemData>(ItemData);
+	if (!SpecialItemData)
+	{
+		return;
+	}
+
+	int32 TileX = 0;
+	int32 TileY = 0;
+	IndexToTile(Index, TileX, TileY);
+
+	if (SpecialItemData->SpecialItemType == EMSSpecialItemType::Boxer)
+	{
+
+		AActor* Owner = BackpackComponent->GetOwner();
+		AMSCharacter* Character = Owner ? Cast<AMSCharacter>(Owner) : nullptr;
+
+		if (UMSWeaponComponent* WeaponComp = Character ? Character->GetWeaponComponent() : nullptr)
+		{
+			const auto& Weapons = WeaponComp->GetWeapons();
+			if (Weapons.Num() <= 3)
+			{
+				BackpackComponent->ApplyEffectToWeapons(EMSEffect::CriticalEffect,5);
+			}
+		}
+	}
+
+	// TopLeft Item 0
+	if (TileX > 0 && TileY > 0)
+	{
+		const auto& TargetItem = Tiles[Index - ColumnNum - 1];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[0])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// Top Item 1
+	if (TileY > 0)
+	{
+		const auto& TargetItem = Tiles[Index - ColumnNum];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[1])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// TopRight Item 2
+	if (TileX < ColumnNum-1 && TileY > 0)
+	{
+		const auto& TargetItem = Tiles[Index - ColumnNum + 1];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[2])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// Left Item 3
+	if (TileX > 0)
+	{
+		const auto& TargetItem = Tiles[Index - 1];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[3])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// Right Item 5
+	if (TileX < ColumnNum - 1)
+	{
+		const auto& TargetItem = Tiles[Index + 1];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[5])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// BottomLeft Item 6
+	if (TileX > 0 && TileY < RowNum - 1)
+	{
+		const auto& TargetItem = Tiles[Index + ColumnNum - 1];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[6])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// Bottom Item 7
+	if (TileY < RowNum - 1)	
+	{
+		const auto& TargetItem = Tiles[Index + ColumnNum];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[7])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
+		}
+	}
+
+	// Bottom Right 8
+	if (TileX < ColumnNum-1 && TileY < RowNum - 1)
+	{
+		const auto& TargetItem = Tiles[Index + ColumnNum + 1];
+		if (TargetItem.bHasItem && TargetItem.Item->IsWeapon() && SpecialItemData->AffectMap[8])
+		{
+			TargetItem.Item->AddEffect(SpecialItemData->GridEffect, SpecialItemData->GridEffectLevel);
 		}
 	}
 }

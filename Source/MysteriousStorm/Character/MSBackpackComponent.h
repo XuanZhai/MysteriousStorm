@@ -158,6 +158,10 @@ public:
 	void AddStormEffect(EMSEffect NewEffect, int32 NewLevel);
 
 	void RemoveStormEffect(EMSEffect TargetEffect);
+
+	void ApplyEffectToWeapons(EMSEffect NewEffect, int32 EffectLevel = 1);
+
+	void ClearAllEffectsToWeapon();
 #pragma endregion
 
 #pragma region StorageBox

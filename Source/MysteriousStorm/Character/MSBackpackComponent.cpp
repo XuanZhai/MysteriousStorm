@@ -309,4 +309,26 @@ void UMSBackpackComponent::RemoveStormEffect(EMSEffect TargetEffect)
 	AppliedEffects.Remove(TargetEffect);
 }
 
+void UMSBackpackComponent::ApplyEffectToWeapons(EMSEffect NewEffect, int32 EffectLevel)
+{
+	for (const auto& Item : Items)
+	{
+		if (Item.Key->IsWeapon())
+		{
+			Item.Key->AddEffect(NewEffect, EffectLevel);
+		}
+	}
+}
+
+void UMSBackpackComponent::ClearAllEffectsToWeapon()
+{
+	for (const auto& Item : Items)
+	{
+		if (Item.Key->IsWeapon())
+		{
+			Item.Key->ClearEffect();
+		}
+	}
+}
+
 #pragma endregion Effects
