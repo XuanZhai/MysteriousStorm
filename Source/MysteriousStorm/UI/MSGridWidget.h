@@ -15,6 +15,7 @@ enum EGridType : uint8
 {
 	CachedGrid = 0 UMETA(DisplayName = "CachedGrid"),
 	BackpackGrid = 1 UMETA(DisplayName = "BackpackGrid"),
+	StorageGrid = 2 UMETA(DisplayName = "StorageGrid"),
 	DEFAULT UMETA(DisplayName = "Default"),
 };
 

@@ -9,6 +9,7 @@
 class AMSItemActor;
 class UMSItemData;
 class UMSBackpack;
+class AMSStorageBox;
 enum EMSEffect : uint8;
 
 USTRUCT()
@@ -114,6 +115,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnItemRemovedFromBackpack OnItemRemovedFromBackpack;
 
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStorageBox, AMSStorageBox*, NewStorageBox);
+	UPROPERTY(BlueprintAssignable)
+	FOnEnterStorageBox OnEnterStorageBox;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLeaveStorageBox, AMSStorageBox*, OldStorageBox);
+	UPROPERTY(BlueprintAssignable)
+	FOnLeaveStorageBox OnLeaveStorageBox;
+
 	UPROPERTY()
 	bool NeedRefresh;
 
@@ -148,5 +158,10 @@ public:
 	void AddStormEffect(EMSEffect NewEffect, int32 NewLevel);
 
 	void RemoveStormEffect(EMSEffect TargetEffect);
+#pragma endregion
+
+#pragma region StorageBox
+public:
+	AMSStorageBox* InteractingStorageBox;
 #pragma endregion
 };

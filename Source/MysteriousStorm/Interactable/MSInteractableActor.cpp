@@ -36,7 +36,9 @@ void AMSInteractableActor::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 {
 	if (AMSCharacter* CastedCharacter = Cast<AMSCharacter>(OtherActor))
 	{
+		InteractingCharacter = CastedCharacter;
 		bIsInteractable = true;
+		BeginOverlapCallback();
 	}
 }
 
@@ -45,7 +47,9 @@ void AMSInteractableActor::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent
 {
 	if (AMSCharacter* CastedCharacter = Cast<AMSCharacter>(OtherActor))
 	{
+		EndOverlapCallback();
 		bIsInteractable = false;
+		InteractingCharacter = nullptr;
 	}
 }
 

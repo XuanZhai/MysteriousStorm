@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
 #include "MSInteractableActor.generated.h"
 
 class AMSCharacter;
@@ -53,6 +54,8 @@ protected:
 
 	bool bIsInteracting;
 
+	AMSCharacter* InteractingCharacter;
+
 public:	
 	// Sets default values for this actor's properties
 	AMSInteractableActor();
@@ -69,6 +72,10 @@ protected:
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+
+	virtual void BeginOverlapCallback() {}
+
+	virtual void EndOverlapCallback() {}
 
 public:	
 	// Called every frame
