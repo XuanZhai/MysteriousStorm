@@ -13,11 +13,21 @@
 void UMSItemWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	WB_TipsWidget->ShowTips(ItemPayload->ItemData->Description);
+
+	if (OnMouseEntered.IsBound())
+	{
+		OnMouseEntered.Broadcast(ItemPayload->ItemData);
+	}
 }
 
 void UMSItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	WB_TipsWidget->HideTips();
+
+	if (OnMouseLeft.IsBound())
+	{
+		OnMouseLeft.Broadcast();
+	}
 }
 
 void UMSItemWidget::SetSize()

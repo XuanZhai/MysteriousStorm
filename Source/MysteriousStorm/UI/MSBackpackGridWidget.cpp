@@ -13,6 +13,7 @@
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
 #include "MysteriousStorm/Character/MSAttributeComponent.h"
 #include "MysteriousStorm/UI/MSBackpackWidget.h"
+#include "MSStarWidget.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 #include "MysteriousStorm/Item/MSSpecialItemData.h"
 
@@ -68,12 +69,18 @@ void UMSBackpackGridWidget::Refresh()
 			NewItemWidget->SetTileSize(TileSize);
 			NewItemWidget->SetItemData(Item.Key,EGridType::BackpackGrid);
 			NewItemWidget->OnItemRemoved.AddUniqueDynamic(this, &UMSBackpackGridWidget::OnItemRemoved);
+
+			if (Item.Key->IsSpecialItem())
+			{
+				NewItemWidget->OnMouseEntered.AddUniqueDynamic(this, &UMSBackpackGridWidget::OnEnterItemWidget);
+				NewItemWidget->OnMouseLeft.AddUniqueDynamic(this, &UMSBackpackGridWidget::OnLeaveItemWidget);
+			}
 		}
 
 		auto PanelSlot = GridPanel->AddChild(NewWidget);
 		if (UCanvasPanelSlot* CanvasPanelSlot = PanelSlot ? Cast<UCanvasPanelSlot>(PanelSlot) : nullptr)
 		{
-			CanvasPanelSlot->SetZOrder(Item.Key->IsBag() ? 0 : 1);
+			CanvasPanelSlot->SetZOrder(Item.Key->IsBag() ? 0 : 2);
 			CanvasPanelSlot->SetAutoSize(true);
 			CanvasPanelSlot->SetPosition(FVector2D(TileX * TileSize, TileY * TileSize));
 		}
@@ -323,6 +330,123 @@ void UMSBackpackGridWidget::RetrieveItemsFromBackpack(UMSItemData* TargetBagData
 			}
 		}
 	}
+}
+
+int32 UMSBackpackGridWidget::ItemDataToSwitcherIndex(UMSItemData* SelfItemData, UMSItemData* TargetItemData)
+{
+	UMSSpecialItemData* SpecialItemData = Cast<UMSSpecialItemData>(SelfItemData);
+
+	if (SpecialItemData->GridEffect != EMSEffect::InvalidationEffect)
+	{
+		return (TargetItemData && TargetItemData->IsWeapon()) ? 1 : 0;
+	}
+	else
+	{
+		return (TargetItemData && TargetItemData->IsWeapon()) ? 3 : 2;
+	}
+}
+
+UMSStarWidget* UMSBackpackGridWidget::CreateStarWidget(int32 TargetX, int TargetY)
+{
+	UUserWidget* NewWidget = CreateWidget(this, StarWidgetClass);
+	auto PanelSlot = GridPanel->AddChild(NewWidget);
+	if (UCanvasPanelSlot* CanvasPanelSlot = PanelSlot ? Cast<UCanvasPanelSlot>(PanelSlot) : nullptr)
+	{
+		CanvasPanelSlot->SetZOrder(3);
+		CanvasPanelSlot->SetAutoSize(true);
+		CanvasPanelSlot->SetPosition(FVector2D(TargetX * TileSize, TargetY * TileSize));
+	}
+
+	return Cast<UMSStarWidget>(NewWidget);
+}
+
+void UMSBackpackGridWidget::OnEnterItemWidget(UMSItemData* TargetItemData)
+{
+	UMSSpecialItemData* SpecialItemData = Cast<UMSSpecialItemData>(TargetItemData);
+
+	if (!SpecialItemData->bIsGridType)
+	{
+		return;
+	}
+
+	const TMap<UMSItemData*, int32>& NewItems = BackpackComponent->GetItems();
+	int32 Index = NewItems[TargetItemData];
+
+	int32 TileX = 0;
+	int32 TileY = 0;
+	IndexToTile(Index, TileX, TileY);
+
+	// TopLeft Item 0
+	if (TileX > 0 && TileY > 0 && SpecialItemData->AffectMap[0])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX - 1, TileY - 1);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index - ColumnNum - 1].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// Top Item 1
+	if (TileY > 0 && SpecialItemData->AffectMap[1])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX, TileY - 1);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index - ColumnNum].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// TopRight Item 2
+	if (TileX < ColumnNum - 1 && TileY > 0 && SpecialItemData->AffectMap[2])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX + 1, TileY - 1);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index - ColumnNum + 1].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// Left Item 3
+	if (TileX > 0 && SpecialItemData->AffectMap[3])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX - 1, TileY);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index - 1].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// Right Item 5
+	if (TileX < ColumnNum - 1 && SpecialItemData->AffectMap[5])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX + 1, TileY);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index + 1].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// BottomLeft Item 6
+	if (TileX > 0 && TileY < RowNum - 1 && SpecialItemData->AffectMap[6])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX - 1, TileY + 1);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index + ColumnNum - 1].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// Bottom Item 7
+	if (TileY < RowNum - 1 && SpecialItemData->AffectMap[7])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX, TileY + 1);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index + ColumnNum].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+	// Bottom Right 8
+	if (TileX < ColumnNum - 1 && TileY < RowNum - 1 && SpecialItemData->AffectMap[8])
+	{
+		const auto& StarWidget = CreateStarWidget(TileX + 1, TileY + 1);
+		StarWidget->SwitchImage(ItemDataToSwitcherIndex(TargetItemData, Tiles[Index + ColumnNum + 1].Item));
+		StarWidgetList.Add(StarWidget);
+	}
+
+	for (auto& StarWidget : StarWidgetList)
+	{
+		StarWidget->SetSize(FVector2D(TileSize));
+	}
+}
+
+void UMSBackpackGridWidget::OnLeaveItemWidget()
+{
+	for (auto& StarWidget : StarWidgetList)
+	{
+		StarWidget->RemoveFromParent();
+		StarWidget = nullptr;
+	}
+	StarWidgetList.Empty();
 }
 
 void UMSBackpackGridWidget::CalculateGridData()

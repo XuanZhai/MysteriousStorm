@@ -11,6 +11,7 @@ class UBorder;
 class UMSItemWidget;
 class UMSItemData;
 class UMSBackpackComponent;
+class UMSStarWidget;
 /**
  * 
  */
@@ -63,6 +64,13 @@ public:
 #pragma endregion
 
 #pragma region UI
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UMSStarWidget> StarWidgetClass;
+
+	TArray<UMSStarWidget*> StarWidgetList;
+
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void CreateLineSegment();
@@ -76,5 +84,15 @@ protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
 
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+
+	UFUNCTION()
+	void OnEnterItemWidget(UMSItemData* TargetItemData);
+
+	UFUNCTION()
+	void OnLeaveItemWidget();
+
+	int32 ItemDataToSwitcherIndex(UMSItemData* SelfItemData, UMSItemData* TargetItemData);
+
+	UMSStarWidget* CreateStarWidget(int32 TargetX, int TargetY);
 #pragma endregion
 };

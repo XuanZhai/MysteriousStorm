@@ -24,6 +24,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TEnumAsByte<EMSSpecialItemType> SpecialItemType;
 
+	UPROPERTY(EditDefaultsOnly)
 	bool bIsGridType = false;
 
 	UPROPERTY(EditDefaultsOnly)

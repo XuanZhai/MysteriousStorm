@@ -88,6 +88,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnItemRemoved OnItemRemoved;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseEntered, UMSItemData*, TargetItemData);
+	UPROPERTY(BlueprintAssignable)
+	FOnMouseEntered OnMouseEntered;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMouseLeft);
+	UPROPERTY(BlueprintAssignable)
+	FOnMouseLeft OnMouseLeft;
+
 	UFUNCTION(BlueprintCallable)
 	void CallOnItemRemoved();
 

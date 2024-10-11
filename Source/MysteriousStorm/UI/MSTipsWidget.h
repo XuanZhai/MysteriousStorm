@@ -30,7 +30,9 @@ protected:
 	void ShowTipsInternal();
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void ShowTips(FString Info);
 
+	UFUNCTION(BlueprintCallable)
 	void HideTips();
 };
