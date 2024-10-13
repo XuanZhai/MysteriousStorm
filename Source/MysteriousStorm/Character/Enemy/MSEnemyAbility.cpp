@@ -15,7 +15,9 @@ bool UMSEnemyAbility::TryActivateAbility_Implementation()
 		{
 			return false;
 		}
-		Player->GetAttributeComponent()->Hurt(OwnerEnemy, Damage);
+		
+		AMSEnemyCharacter* EnemyPlayer = Cast<AMSEnemyCharacter>(OwnerEnemy);
+		Player->GetAttributeComponent()->Hurt(OwnerEnemy, EnemyPlayer->GetEnemyConfig()->AbilityDamage[GetIndex()]);
 		return true;
 	}
 	return false;
@@ -32,3 +34,5 @@ bool UMSEnemyAbility::CheckPrecondition_Implementation()
 	return Super::CheckPrecondition_Implementation() && (FVector::Distance(Player->GetActorLocation(),
 	                                                                       OwnerEnemy->GetActorLocation()) < 100);
 }
+
+

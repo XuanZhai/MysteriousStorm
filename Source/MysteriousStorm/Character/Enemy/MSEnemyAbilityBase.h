@@ -38,8 +38,8 @@ public:
 protected:
 	bool bIsActivated;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Damage;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	// float Damage;
 
 	UPROPERTY(BlueprintReadWrite)
 	ACharacter* OwnerEnemy;
@@ -52,4 +52,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnAbilityEnd();
+	
+	int GetIndex();
 };

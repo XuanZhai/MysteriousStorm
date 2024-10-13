@@ -14,8 +14,7 @@ AMSEnemyCharacter::AMSEnemyCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	MaxHealth = CurrentHealth = 100;
-	EnemyID = 0;
+	
 	bIsAbilityActive = false;
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
 	HealthBarWidget->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
@@ -25,7 +24,12 @@ AMSEnemyCharacter::AMSEnemyCharacter()
 void AMSEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	TryReadConfig();
+	if(!TryReadConfig())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to read enemy config"));
+	}
+	MaxHealth = CurrentHealth = EnemyConfig.MaxHealth;
+	bIsAbilityActive = false;
 	for (auto Ability : PossessAbilities)
 	{
 		Ability->Init(this);
@@ -53,6 +57,7 @@ void AMSEnemyCharacter::Tick(float DeltaTime)
 void AMSEnemyCharacter::Hurt(float damage, bool bPlayHurtParticle)
 {
 	CurrentHealth -= damage;
+	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
 	if (bPlayHurtParticle)UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HurtParticle, GetActorLocation());
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Enemy Health: %f"), CurrentHealth));
 	// 更新敌人血条
@@ -68,7 +73,6 @@ void AMSEnemyCharacter::Hurt(float damage, bool bPlayHurtParticle)
 bool AMSEnemyCharacter::TryReadConfig()
 {
 	UGameInstance* GameInstance = GetGameInstance();
-	FMSEnemyTableRow EnemyConfig;
 	GameInstance->GetSubsystem<UMSDataTableSubsystem>()->TryGetEnemyConfigByID(EnemyID, EnemyConfig);
 	for (int i = 0; i < EnemyConfig.Abilities.Num(); i++)
 	{

@@ -3,6 +3,7 @@
 
 #include "MSEnemyAbilityProjectile.h"
 
+#include "MSEnemyCharacter.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,7 +14,11 @@ bool UMSEnemyAbilityProjectile::TryActivateAbility_Implementation()
 		auto Projectile = GetWorld()->SpawnActor<AMSEnemyProjectile>(ProjectileClass, OwnerEnemy->GetActorLocation(),
 		                                                             OwnerEnemy->GetActorRotation(),
 		                                                             FActorSpawnParameters());
-		Projectile->InitData(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
+		AMSEnemyCharacter* Enemy = Cast<AMSEnemyCharacter>(OwnerEnemy);
+		int index = GetIndex();
+		Projectile->InitData(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation(),
+		                     Enemy->GetEnemyConfig()->AbilityDamage[index],
+		                     Enemy->GetEnemyConfig()->AbilityDamageRadius[index]);
 		bIsActivated = true;
 		IntervalTimer = 0;
 		return true;

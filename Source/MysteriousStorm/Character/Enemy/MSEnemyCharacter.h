@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MSEnemyAbilityBase.h"
+#include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 #include "MysteriousStorm/UI/MSHealthBarWidget.h"
@@ -37,6 +38,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	float MaxHealth;
 
+	UPROPERTY(BlueprintReadWrite)
 	float CurrentHealth;
 	
 	virtual void BeginPlay() override;
@@ -44,11 +46,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	int32 EnemyID;
 	
-
 	UPROPERTY()
 	TArray<UMSEnemyAbilityBase*> PossessAbilities;
 
 	bool bIsAbilityActive;
+	FMSEnemyTableRow EnemyConfig;
 
 
 public:	
@@ -56,8 +58,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	TArray<UMSEnemyAbilityBase*> GetProcessAbilities() const { return PossessAbilities; }
-	
+
+	UFUNCTION(BlueprintCallable)
 	void Hurt(float damage, bool bPlayHurtParticle = true);
 	bool TryReadConfig();
+
+	TArray<UMSEnemyAbilityBase*> GetAbilities() const { return PossessAbilities; }
+	FMSEnemyTableRow* GetEnemyConfig() { return &EnemyConfig; }
 
 };

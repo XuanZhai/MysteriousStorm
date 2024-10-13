@@ -3,6 +3,8 @@
 
 #include "MSEnemyProjectile.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 AMSEnemyProjectile::AMSEnemyProjectile()
 {
@@ -16,7 +18,7 @@ AMSEnemyProjectile::AMSEnemyProjectile()
 		TEXT("ProjectileMovementComponent"));
 }
 
-void AMSEnemyProjectile::InitData(FVector NewPosition)
+void AMSEnemyProjectile::InitData(FVector NewPosition, int NewDamage, float NewDamageRadius)
 {
 	TargetPosition = NewPosition;
 	auto Distance = FVector::Dist(TargetPosition, GetActorLocation());
@@ -25,6 +27,8 @@ void AMSEnemyProjectile::InitData(FVector NewPosition)
 	ProjectileMovementComponent->Velocity = (TargetPosition - GetActorLocation()).GetSafeNormal() * HorizontalSpeed +
 		FVector(0, 0, VerticalSpeed);
 	ProjectileMovementComponent->Activate();
+	Damage = NewDamage;
+	DamageRadius = NewDamageRadius;
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +43,9 @@ void AMSEnemyProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (TargetPosition == GetActorLocation())
 	{
+		// 播放爆炸特效
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, GetActorLocation());
+
 		Destroy();
 	}
 }

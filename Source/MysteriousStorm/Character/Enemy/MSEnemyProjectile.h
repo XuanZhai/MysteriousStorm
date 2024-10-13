@@ -15,8 +15,8 @@ class MYSTERIOUSSTORM_API AMSEnemyProjectile : public AActor
 public:
 	// Sets default values for this actor's properties
 	AMSEnemyProjectile();
-	
-	void InitData(FVector NewPosition);
+
+	void InitData(FVector NewPosition, int NewDamage, float NewDamageRadius);
 
 	UPROPERTY(EditAnywhere)
 	UProjectileMovementComponent* ProjectileMovementComponent;
@@ -24,13 +24,22 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* ProjectileMesh;
 
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ExplosionParticle;
+
 protected:
 	UPROPERTY(EditAnywhere, Category="PathParameter")
 	float HorizontalSpeed;
 
 	UPROPERTY()
 	FVector TargetPosition;
-	
+
+	UPROPERTY(BlueprintReadWrite)
+	int Damage;
+
+	UPROPERTY(BlueprintReadWrite)
+	float DamageRadius;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

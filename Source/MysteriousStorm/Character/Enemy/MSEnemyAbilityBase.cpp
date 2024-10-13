@@ -3,6 +3,8 @@
 
 #include "MSEnemyAbilityBase.h"
 
+#include "MSEnemyCharacter.h"
+
 UMSEnemyAbilityBase::UMSEnemyAbilityBase()
 {
 	IntervalTime = 0;
@@ -50,5 +52,16 @@ void UMSEnemyAbilityBase::Init(ACharacter* Owner)
 void UMSEnemyAbilityBase::OnAbilityEnd()
 {
 	bIsActivated = false;
+}
+
+int UMSEnemyAbilityBase::GetIndex()
+{
+	AMSEnemyCharacter* EnemyPlayer = Cast<AMSEnemyCharacter>(OwnerEnemy);
+	int Index = 0;
+	if (EnemyPlayer)
+	{
+		Index = EnemyPlayer->GetProcessAbilities().IndexOfByKey(this);
+	}
+	return Index;
 }
 
