@@ -18,5 +18,7 @@ public:
 protected:
 	virtual bool CheckPrecondition() override;
 	virtual bool TryActivateAbility() override;
-	
+	virtual void Update(float DeltaTime) override;
+
+	FVector TargetPosition;
 };

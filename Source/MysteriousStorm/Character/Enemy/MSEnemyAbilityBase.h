@@ -29,7 +29,7 @@ public:
 	
 	// 由于在行为树中ai的能力和移动是并行的，因此这里需要标记能力是否会打断移动
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bInterpretMovement = false;
+	bool bInterruptMovement = false;
 
 protected:
 	bool bIsActivated;
