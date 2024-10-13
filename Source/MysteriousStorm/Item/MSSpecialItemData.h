@@ -13,6 +13,8 @@ enum EMSSpecialItemType : uint8
 {
 	DefaultSpecialItem = 0,
 	Boxer = 1, // 拳击手
+	StrongCore = 2, // 大力原件
+	EnergyChip = 3, // 能量芯片
 };
 /**
  * 
