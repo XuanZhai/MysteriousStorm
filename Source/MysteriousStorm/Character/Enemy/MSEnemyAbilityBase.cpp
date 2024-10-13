@@ -12,9 +12,9 @@ UMSEnemyAbilityBase::UMSEnemyAbilityBase()
 	bIsActivated = false;
 }
 
-bool UMSEnemyAbilityBase::TryActivateAbility_Implementation()
+bool UMSEnemyAbilityBase::TryActivateAbility()
 {
-	if (CheckPrecondition_Implementation())
+	if (CheckPrecondition())
 	{
 		bIsActivated = true;
 		IntervalTimer = 0;
@@ -24,7 +24,7 @@ bool UMSEnemyAbilityBase::TryActivateAbility_Implementation()
 }
 
 
-bool UMSEnemyAbilityBase::CheckPrecondition_Implementation()
+bool UMSEnemyAbilityBase::CheckPrecondition()
 {
 	if (bIsActivated)return false;
 	if (IntervalTimer < IntervalTime)return false;

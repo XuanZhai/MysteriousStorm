@@ -7,9 +7,9 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
-bool UMSEnemyAbilityProjectile::TryActivateAbility_Implementation()
+bool UMSEnemyAbilityProjectile::TryActivateAbility()
 {
-	if (CheckPrecondition_Implementation())
+	if (CheckPrecondition())
 	{
 		auto Projectile = GetWorld()->SpawnActor<AMSEnemyProjectile>(ProjectileClass, OwnerEnemy->GetActorLocation(),
 		                                                             OwnerEnemy->GetActorRotation(),
@@ -26,7 +26,7 @@ bool UMSEnemyAbilityProjectile::TryActivateAbility_Implementation()
 	return false;
 }
 
-bool UMSEnemyAbilityProjectile::CheckPrecondition_Implementation()
+bool UMSEnemyAbilityProjectile::CheckPrecondition()
 {
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (!PlayerCharacter)
@@ -34,5 +34,5 @@ bool UMSEnemyAbilityProjectile::CheckPrecondition_Implementation()
 		return false;
 	}
 	bool bIsInRange = FVector::Dist(PlayerCharacter->GetActorLocation(), OwnerEnemy->GetActorLocation()) < SearchRange;
-	return Super::CheckPrecondition_Implementation() && bIsInRange;
+	return Super::CheckPrecondition() && bIsInRange;
 }

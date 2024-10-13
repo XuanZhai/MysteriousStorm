@@ -22,6 +22,6 @@ protected:
 	float SearchRange;
 
 public:
-	virtual bool TryActivateAbility_Implementation() override;
-	virtual bool CheckPrecondition_Implementation() override;
+	virtual bool TryActivateAbility() override;
+	virtual bool CheckPrecondition() override;
 };

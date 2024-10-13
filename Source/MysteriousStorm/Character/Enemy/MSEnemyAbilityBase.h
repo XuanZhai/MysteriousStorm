@@ -15,16 +15,12 @@ class MYSTERIOUSSTORM_API UMSEnemyAbilityBase : public UObject
 
 public:
 	UMSEnemyAbilityBase();
-
-	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
-	bool TryActivateAbility();
+	
 	UFUNCTION(BlueprintCallable)
-	virtual bool TryActivateAbility_Implementation();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool CheckPrecondition();
+	virtual bool TryActivateAbility();
+	
 	UFUNCTION(BlueprintCallable)
-	virtual bool CheckPrecondition_Implementation();
+	virtual bool CheckPrecondition();
 
 	virtual void Update(float DeltaTime);
 	bool IsActivated() const { return bIsActivated; }

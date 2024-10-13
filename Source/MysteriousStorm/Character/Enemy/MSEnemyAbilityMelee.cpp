@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MSEnemyAbility.h"
+#include "MSEnemyAbilityMelee.h"
 
 #include "MysteriousStorm/Character/MSCharacter.h"
 
-bool UMSEnemyAbility::TryActivateAbility_Implementation()
+bool UMSEnemyAbilityMelee::TryActivateAbility()
 {
-	if (Super::TryActivateAbility_Implementation())
+	if (Super::TryActivateAbility())
 	{
 		auto Player = Cast<AMSCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
@@ -23,7 +23,7 @@ bool UMSEnemyAbility::TryActivateAbility_Implementation()
 	return false;
 }
 
-bool UMSEnemyAbility::CheckPrecondition_Implementation()
+bool UMSEnemyAbilityMelee::CheckPrecondition()
 {
 	auto Player = Cast<AMSCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
@@ -31,7 +31,7 @@ bool UMSEnemyAbility::CheckPrecondition_Implementation()
 	{
 		return false;
 	}
-	return Super::CheckPrecondition_Implementation() && (FVector::Distance(Player->GetActorLocation(),
+	return Super::CheckPrecondition() && (FVector::Distance(Player->GetActorLocation(),
 	                                                                       OwnerEnemy->GetActorLocation()) < 100);
 }
 
