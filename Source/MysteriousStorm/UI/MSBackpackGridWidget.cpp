@@ -537,6 +537,22 @@ void UMSBackpackGridWidget::ApplySpecialItemEffect(UMSItemData* ItemData, int32 
 			}
 		}
 	}
+	else if (SpecialItemData->SpecialItemType == EMSSpecialItemType::StrongCore)
+	{
+		for (int32 i = Index; i < Tiles.Num(); i++)
+		{
+			if (Tiles[i].bHasItem && Tiles[i].Item->IsWeapon())
+			{
+				Tiles[i].Item->AddEffect(EMSEffect::CriticalEffect,10);
+				break;
+			}
+		}
+	}
+
+	if (!SpecialItemData->bIsGridType)
+	{
+		return;
+	}
 
 	// TopLeft Item 0
 	if (TileX > 0 && TileY > 0)
