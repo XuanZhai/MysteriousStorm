@@ -6,8 +6,7 @@
 #include "MSWeaponTableRow.h"
 #include "MSEnemyTableRow.h"
 #include "MSEffectConfig.h"
-#include "Engine/StreamableManager.h"
-#include "Engine/AssetManager.h"
+#include "MSAudioTableRow.h"
 #include "Engine/DataTable.h"
 
 void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -16,7 +15,8 @@ void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		ItemTablePath,
 		WeaponTablePath,
-		EnemyTablePath
+		EnemyTablePath,
+		AudioTablePath,
 	};
 
 	// TODO: Change it to Async
@@ -24,6 +24,7 @@ void UMSDataTableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	WeaponTable = Cast<UDataTable>(WeaponTablePath.TryLoad());
 	EnemyTable = Cast<UDataTable>(EnemyTablePath.TryLoad());
 	EffectConfig = Cast<UMSEffectConfig>(EffectConfigPath.TryLoad());
+	AudioTable = Cast<UDataTable>(AudioTablePath.TryLoad());
 
 	//	StreamableHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
 	// 		Paths, [this]()
@@ -75,6 +76,7 @@ bool UMSDataTableSubsystem::TryGetWeaponConfigByItemID(const int32 ItemID, struc
 	return false;
 }
 
+
 // bool UMSDataTableSubsystem::TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level,
 //                                                                 struct FMSWeaponTableRow& OutRow) const
 // {
@@ -99,6 +101,27 @@ bool UMSDataTableSubsystem::TryGetEnemyConfigByID(const int32 EnemyID, struct FM
 		{
 			OutRow = *Row;
 			return true;
+		}
+	}
+	return false;
+}
+
+bool UMSDataTableSubsystem::TryGetAudioByIDWithType(const int32 ItemID, EAudioType Type,
+	struct FMSAudioTableRow& OutRow) const
+{
+	if(AudioTable)
+	{
+		TArray<FName> RowNames = AudioTable->GetRowNames();
+		for (auto RowName : RowNames)
+		{
+			if (FMSAudioTableRow* Row = AudioTable->FindRow<FMSAudioTableRow>(RowName, TEXT("Context")))
+			{
+				if (Row->CorrespondingItemID == ItemID && Row->AudioType == Type)
+				{
+					OutRow = *Row;
+					return true;
+				}
+			}
 		}
 	}
 	return false;

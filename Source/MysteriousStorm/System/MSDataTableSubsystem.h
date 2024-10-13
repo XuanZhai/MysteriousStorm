@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "MSAudioTableRow.h"
 #include "MSDataTableSubsystem.generated.h"
 
 class UDataTable;
@@ -24,6 +25,7 @@ protected:
 	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData" };
 	FSoftObjectPath EnemyTablePath{ "/Game/Tables/DT_EnemyConfigData.DT_EnemyConfigData" };
 	FSoftObjectPath EffectConfigPath{ "/Game/Tables/DA_EffectConfig.DA_EffectConfig" };
+	FSoftObjectPath AudioTablePath{ "/Game/Tables/DT_AudioData.DT_AudioData" };
 	
 	UPROPERTY()
 	UDataTable* ItemTable;
@@ -33,6 +35,9 @@ protected:
 
 	UPROPERTY()
 	UDataTable* EnemyTable;
+
+	UPROPERTY()
+	UDataTable* AudioTable;
 
 	UPROPERTY()
 	UMSEffectConfig* EffectConfig;
@@ -59,8 +64,10 @@ public:
 
 	bool TryGetWeaponConfigByItemID(const int32 ItemID, struct FMSWeaponTableRow& OutRow) const;
 
-	bool TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level, struct FMSWeaponTableRow& OutRow) const;
+	// bool TryGetWeaponConfigByItemIDWithLevel(const int32 ItemID, const int32 level, struct FMSWeaponTableRow& OutRow) const;
 
+	bool TryGetAudioByIDWithType(const int32 ItemID, EAudioType Type ,struct FMSAudioTableRow& OutRow) const;
+	
 	bool TryGetEnemyConfigByID(const int32 EnemyID, struct FMSEnemyTableRow& OutRow) const;
 
 	UFUNCTION(BlueprintCallable)
