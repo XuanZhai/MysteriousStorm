@@ -20,6 +20,9 @@ protected:
 	FVector DestWorldLocation;
 
 protected:
+	UFUNCTION(BlueprintNativeEvent)
+	void OnEnterPortal();
+
 	virtual void BeginOverlapCallback() override;
 
 	virtual void EndOverlapCallback() override;

@@ -49,3 +49,31 @@ bool AMSGameState::TrySpawnItemActorFromData(UMSItemData* InItemData, AActor* Sp
 	}
 	return false;
 }
+
+FSpawnItemPlan AMSGameState::GetRandomItemSpawnPlan(bool bIsEnemy) const
+{
+	if (bIsEnemy)
+	{
+		if (SpawnEnemyPlanList.Num() == 0)
+		{
+			return FSpawnItemPlan();
+		}
+
+		// Generate a random index
+		int32 RandomIndex = FMath::RandRange(0, SpawnEnemyPlanList.Num() - 1);
+
+		// Return the value at that index
+		return SpawnEnemyPlanList[RandomIndex];
+	}
+
+	if (SpawnItemPlanList.Num() == 0)
+	{
+		return FSpawnItemPlan();
+	}
+
+	// Generate a random index
+	int32 RandomIndex = FMath::RandRange(0, SpawnItemPlanList.Num() - 1);
+
+	// Return the value at that index
+	return SpawnItemPlanList[RandomIndex];
+}

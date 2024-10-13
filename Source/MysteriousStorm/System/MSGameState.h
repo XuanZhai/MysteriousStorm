@@ -4,10 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
+#include "MysteriousStorm/Item/MSItemActor.h"
 #include "MSGameState.generated.h"
 
 class UMSItemData;
-class AMSItemActor;
+
+USTRUCT(BlueprintType)
+struct FSpawnItemPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 ItemCount = 0;
+};
+
+
+USTRUCT(BlueprintType)
+struct FSpawnItemPlan 
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FSpawnItemPair> ItemNumPairs;
+};
+
 /**
  * 
  */
@@ -26,6 +49,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGamePause;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FSpawnItemPlan> SpawnItemPlanList;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FSpawnItemPlan> SpawnEnemyPlanList;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -36,4 +65,7 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGamePauseUpdated, bool, NewState);
 	UPROPERTY(BlueprintAssignable)
 	FOnGamePauseUpdated OnGamePauseUpdated;
+
+
+	FSpawnItemPlan GetRandomItemSpawnPlan(bool bIsEnemy) const;
 };

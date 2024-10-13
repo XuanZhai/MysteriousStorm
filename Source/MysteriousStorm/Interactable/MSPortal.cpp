@@ -5,6 +5,8 @@
 
 void AMSPortal::BeginOverlapCallback()
 {
+	OnEnterPortal();
+
 	if (InteractingCharacter)
 	{
 		InteractingCharacter->SetActorLocation(DestWorldLocation);
@@ -12,6 +14,11 @@ void AMSPortal::BeginOverlapCallback()
 }
 
 void AMSPortal::EndOverlapCallback()
+{
+
+}
+
+void AMSPortal::OnEnterPortal_Implementation()
 {
 
 }
