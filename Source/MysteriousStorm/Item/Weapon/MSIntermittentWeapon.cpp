@@ -51,9 +51,9 @@ void AMSIntermittentWeapon::BeginPlay()
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 {
 	// TODO: 根据cd更新UI
-	if(OwnerCharacter==nullptr)return;
+	if (OwnerCharacter == nullptr)return;
 	Super::Tick(DeltaSeconds);
-	
+
 	if (bIsTimeStopped)return;
 
 	CurrentOffsetInRound += DeltaSeconds;
@@ -116,10 +116,10 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 	case EWeaponType::Sword:
 		// 按照目前的攻击进度设置位置，后续攻击时间考虑给策划配置
 		AttackProcessTimer += DeltaSeconds;
-		
+
 		StaticMeshComp->SetWorldScale3D(Scale);
 
-		// 攻击流程计时
+	// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
 			AttackTimes--;
@@ -132,7 +132,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 				bIsAttacking = false;
 				AttackProcessTimer = 0;
 				// Scale.Z = 0.2f;
-				StaticMeshComp->SetWorldScale3D(FVector::OneVector*2);
+				StaticMeshComp->SetWorldScale3D(FVector::OneVector * 2);
 			}
 		}
 		else
@@ -265,7 +265,7 @@ void AMSIntermittentWeapon::ApplyDamage()
 {
 	if (bIsStatic)return;
 	SearchEnemy();
-	if(WeaponType==EWeaponType::Grenade)
+	if (WeaponType == EWeaponType::Grenade)
 	{
 		// 手雷武器播放攻击爆炸特效
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackParticle, CachedAttackPosition);
@@ -288,6 +288,16 @@ void AMSIntermittentWeapon::SearchEnemy()
 	switch (WeaponType)
 	{
 	case EWeaponType::MachineGun:
+		DrawDebugBox(GetWorld(), AttackStart, FVector(500, 100, 100), FColor::Red, false, 1.0f, 0, 1);
+		for (; EnemyItr; ++EnemyItr)
+        {
+            if (WeaponUtils::OverlapSectorCircle(AttackStart, AttackDirection, 180, 250,
+                                                 EnemyItr->GetActorLocation(), 100))
+            {
+                SearchEnemyCache.Add(*EnemyItr);
+            }
+        }
+		break;
 	case EWeaponType::Sword:
 		// 基于扇形检测
 		// DrawDebugLine(GetWorld(), AttackStart,
@@ -373,12 +383,12 @@ int AMSIntermittentWeapon::ProcessEffect()
 {
 	// TODO: 根据effect配置计算运行时的buff层数
 	CurrentDamage = Cast<UMSWeaponData>(ItemData)->Damage;
-	if(CriticalLevel>=3)
+	if (CriticalLevel >= 3)
 	{
 		UMSEffectConfig* EffectConfig = GetGameInstance()->GetSubsystem<UMSDataTableSubsystem>()->GetEffectConfig();
 		CurrentDamage += EffectConfig->CriticalDeltaDamage;
 	}
-	if(OverloadLevel>=3)
+	if (OverloadLevel >= 3)
 	{
 		return 2;
 	}
@@ -399,4 +409,3 @@ void AMSIntermittentWeapon::OnAttackProcessEnd()
 	}
 }
 # pragma endregion
-
