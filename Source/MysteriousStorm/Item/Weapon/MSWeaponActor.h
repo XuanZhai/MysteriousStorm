@@ -6,6 +6,7 @@
 #include "MediaSoundComponent.h"
 #include "MysteriousStorm/Item/MSItemActor.h"
 #include "GameFramework/Character.h"
+#include "NiagaraComponent.h"
 #include "MysteriousStorm/Character/MSAttributeComponent.h"
 #include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MysteriousStorm/System/MSWeaponTableRow.h"
@@ -30,6 +31,9 @@ protected:
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
 	UMediaSoundComponent* MediaSoundComponent;
 
+	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess="true"))
+	UNiagaraSystem* WeaponNiagaraSystem;
+
 	UPROPERTY(EditAnywhere, Category="WeaponParameter")
 	UMediaPlayer *MediaPlayer;
 
@@ -51,6 +55,9 @@ protected:
 	float CurrentDamage;
 	
 	FMSWeaponTableRow WeaponConfig;
+
+	UFUNCTION()
+	UNiagaraComponent* SpawnNiagaraSystem(FVector Location, FRotator Rotation);
 
 public:
 	AMSWeaponActor();

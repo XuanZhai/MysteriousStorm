@@ -283,20 +283,27 @@ void AMSIntermittentWeapon::SearchEnemy()
 	TActorIterator<AMSEnemyCharacter> EnemyItr = TActorIterator<AMSEnemyCharacter>(GetWorld());
 	FVector AttackDirection = OwnerCharacter->GetActorForwardVector();
 	FVector AttackStart = OwnerCharacter->GetActorLocation();
-
+	FQuat Rotator = AttackDirection.Rotation().Quaternion();
 
 	switch (WeaponType)
 	{
 	case EWeaponType::MachineGun:
-		DrawDebugBox(GetWorld(), AttackStart, FVector(500, 100, 100), FColor::Red, false, 1.0f, 0, 1);
+		// 获取attack direction的rotator
+
+		DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
+		             FVector(WeaponConfig.RectangleLength, WeaponConfig.RectangleWidth, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
 		for (; EnemyItr; ++EnemyItr)
-        {
-            if (WeaponUtils::OverlapSectorCircle(AttackStart, AttackDirection, 180, 250,
-                                                 EnemyItr->GetActorLocation(), 100))
-            {
-                SearchEnemyCache.Add(*EnemyItr);
-            }
-        }
+		{
+			FVector Right = FRotator(0, 90, 0).RotateVector(AttackDirection);
+			if (WeaponUtils::OverlapRectangleCircle(AttackStart +
+			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection, Right,
+			                                        FVector2f(WeaponConfig.RectangleLength, WeaponConfig.RectangleWidth),
+			                                        EnemyItr->GetActorLocation(), 100))
+			{
+				SearchEnemyCache.Add(*EnemyItr);
+			}
+		}
+		SpawnNiagaraSystem(AttackStart, (-AttackDirection).Rotation());
 		break;
 	case EWeaponType::Sword:
 		// 基于扇形检测

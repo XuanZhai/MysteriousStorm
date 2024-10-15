@@ -4,6 +4,7 @@
 #include "MSWeaponActor.h"
 
 #include "MediaPlayer.h"
+#include "NiagaraFunctionLibrary.h"
 #include "MysteriousStorm/Character/MSBackpackComponent.h"
 #include "MysteriousStorm/Character/MSCharacter.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
@@ -11,6 +12,11 @@
 #include "MysteriousStorm/System/MSEffectConfig.h"
 #include "MysteriousStorm/System/MSGameState.h"
 
+
+UNiagaraComponent* AMSWeaponActor::SpawnNiagaraSystem(FVector Location, FRotator Rotation)
+{
+	return UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), WeaponNiagaraSystem, Location, Rotation);
+}
 
 AMSWeaponActor::AMSWeaponActor()
 {
