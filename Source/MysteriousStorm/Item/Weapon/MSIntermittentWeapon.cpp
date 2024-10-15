@@ -27,6 +27,7 @@ void AMSIntermittentWeapon::BeginPlay()
 	WeaponType = WeaponConfig.WeaponType;
 	AnticipationTime = WeaponConfig.AnticipationTime;
 	AttackTime = WeaponConfig.AttackTime;
+	LastAttackTimeForDart = 0;
 
 	bIsAttacking = false;
 	CachedAttackDirection = FVector::ZeroVector;
@@ -194,6 +195,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			OnAttackProcessEnd();
 		}
 		SetActorLocation(NewLocation);
+		if(AttackProcessTimer - LastAttackTimeForDart >= WeaponConfig.MinDamageInterval)
+        {
+            ApplyDamage();
+            LastAttackTimeForDart = AttackProcessTimer;
+        }
 		break;
 	case EWeaponType::ShotGun:
 		AttackProcessTimer += DeltaSeconds;
@@ -376,7 +382,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 		{
 			// TODO: 怪物半径需要后续配置
 			if (WeaponUtils::OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius,
-			                                     EnemyItr->GetActorLocation(), 10))
+			                                     EnemyItr->GetActorLocation(), 100))
 			{
 				if (SearchEnemyCache.Contains(*EnemyItr))continue;
 				SearchEnemyCache.Add(*EnemyItr);
@@ -407,6 +413,7 @@ int AMSIntermittentWeapon::ProcessEffect()
 void AMSIntermittentWeapon::OnAttackProcessEnd()
 {
 	AttackTimes--;
+	LastAttackTimeForDart = 0;
 	if (AttackTimes > 0)
 	{
 		AttackProcessTimer = 0;

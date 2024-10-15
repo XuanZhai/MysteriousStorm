@@ -28,8 +28,8 @@ protected:
 	UPROPERTY()
 	TMap<TEnumAsByte<EMSEffect>, int> RuntimeEffects;
 
-	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
-	UMediaSoundComponent* MediaSoundComponent;
+	// UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
+	// UMediaSoundComponent* MediaSoundComponent;
 
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess="true"),Category="WeaponParameter")
 	UNiagaraSystem* WeaponNiagaraSystem;

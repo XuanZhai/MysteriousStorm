@@ -49,6 +49,8 @@ protected:
 	void TickAttackProcess(float DeltaSeconds);
 	void OnAttackProcessEnd();
 
+	float LastAttackTimeForDart;
+
 public:
 	AMSIntermittentWeapon();
 
