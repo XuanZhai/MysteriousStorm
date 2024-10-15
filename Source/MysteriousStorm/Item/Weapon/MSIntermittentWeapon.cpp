@@ -291,13 +291,13 @@ void AMSIntermittentWeapon::SearchEnemy()
 		// 获取attack direction的rotator
 
 		DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
-		             FVector(WeaponConfig.RectangleLength, WeaponConfig.RectangleWidth, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
+		             FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
 		for (; EnemyItr; ++EnemyItr)
 		{
 			FVector Right = FRotator(0, 90, 0).RotateVector(AttackDirection);
 			if (WeaponUtils::OverlapRectangleCircle(AttackStart +
 			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection, Right,
-			                                        FVector2f(WeaponConfig.RectangleLength, WeaponConfig.RectangleWidth),
+			                                        FVector2f(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2),
 			                                        EnemyItr->GetActorLocation(), 100))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
