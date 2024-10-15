@@ -204,7 +204,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		else
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-			SetActorLocation(OwnerLocation + CachedAttackDirection[0] * 100);
+			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
 		}
 		break;
 	default:
@@ -253,9 +253,9 @@ bool AMSIntermittentWeapon::TryAttack()
 		CachedAttackDirections.Empty();
 		for (int i = 0; i < WeaponConfig.AttackAmount; i++)
 		{
-			float RandomAngle = FMath::RandRange(-180, 180);
-			FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
-			CachedAttackDirections.Add(AttackDirection);
+			// float RandomAngle = FMath::RandRange(-180, 180);
+			// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
+			CachedAttackDirections.Add(CachedAttackDirection);
 		}
 	}
 	return true;
@@ -342,7 +342,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
-
+		break;
 	case EWeaponType::ShotGun:
 		// 基于多个扇形检测
 		// TODO: 需要确定同一个敌人是否会被两个扇形同时伤害到
@@ -368,7 +368,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 				}
 			}
 		}
-
+		SpawnNiagaraSystem(AttackStart, FRotator(0,-90,0).RotateVector(AttackDirection).Rotation());
+	    break;
 
 	case EWeaponType::Dart:
 		for (; EnemyItr; ++EnemyItr)
@@ -381,6 +382,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
+		break;
 	default:
 		break;
 	}
