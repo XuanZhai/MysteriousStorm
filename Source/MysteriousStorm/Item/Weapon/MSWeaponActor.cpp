@@ -26,8 +26,6 @@ AMSWeaponActor::AMSWeaponActor()
 	StaticMeshComp->SetGenerateOverlapEvents(false);
 	CriticalLevel = 0;
 	OverloadLevel = 0;
-	// UMediaPlayer* MediaPlayer = NewObject<UMediaPlayer>();
-	MediaSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("MediaSoundComponent"));
 	SetTimeStop(true);
 }
 
