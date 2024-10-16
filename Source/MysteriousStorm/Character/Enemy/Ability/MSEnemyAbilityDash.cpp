@@ -19,28 +19,31 @@ bool UMSEnemyAbilityDash::CheckPrecondition()
 
 bool UMSEnemyAbilityDash::TryActivateAbility()
 {
-	return Super::TryActivateAbility();
+	if(!CheckPrecondition())
+		return false;
+	AMSCharacter* Enemy = Cast<AMSCharacter>(OwnerEnemy);
+	AMSCharacter* Player = Cast<AMSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	bIsActivated = true;
+	FVector Direction = (Player->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal();
+	TargetPosition = Enemy->GetActorLocation() + Direction * 500;
 }
 
 void UMSEnemyAbilityDash::Update(float DeltaTime)
 {
 	if (!bIsActivated)
 	{
-		if(TargetPosition != FVector::ZeroVector)
-		{
-			OwnerEnemy->SetActorLocation(FMath::VInterpTo(OwnerEnemy->GetActorLocation(), TargetPosition, DeltaTime, 1000));
-		}else
-		{
-			IntervalTimer += DeltaTime;
-		}
-		
+		IntervalTimer += DeltaTime;
 	}
 	else
 	{
-		AMSCharacter* Enemy = Cast<AMSCharacter>(OwnerEnemy);
-		AMSCharacter* Player = Cast<AMSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		bIsActivated = false;
-		FVector Direction = (Player->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal();
-		TargetPosition = Enemy->GetActorLocation() + Direction * 500;
+		if(TargetPosition != FVector::ZeroVector)
+		{
+			OwnerEnemy->SetActorLocation(FMath::VInterpTo(OwnerEnemy->GetActorLocation(), TargetPosition, DeltaTime, 1000));
+		}
+		if(FVector::Dist(TargetPosition, OwnerEnemy->GetActorLocation()) < 10)
+		{
+			bIsActivated = false;
+			IntervalTimer = 0;
+		}
 	}
 }
