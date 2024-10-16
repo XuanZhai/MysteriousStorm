@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	float DamageRadius;
 
+	float Time;
+	float Timer;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

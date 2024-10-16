@@ -20,10 +20,16 @@ struct MYSTERIOUSSTORM_API FMSEnemyTableRow : public FTableRowBase
 	int32 ID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Radius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<UMSEnemyAbilityBase>> Abilities;

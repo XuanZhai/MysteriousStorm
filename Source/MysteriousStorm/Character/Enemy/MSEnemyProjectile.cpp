@@ -4,6 +4,7 @@
 #include "MSEnemyProjectile.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
 
 // Sets default values
 AMSEnemyProjectile::AMSEnemyProjectile()
@@ -22,7 +23,7 @@ void AMSEnemyProjectile::InitData(FVector NewPosition, int NewDamage, float NewD
 {
 	TargetPosition = NewPosition;
 	auto Distance = FVector::Dist(TargetPosition, GetActorLocation());
-	auto Time = Distance / HorizontalSpeed;
+	Time = Distance / HorizontalSpeed;
 	auto VerticalSpeed = -1 * GetWorld()->GetGravityZ() * 0.5 * Time;
 	ProjectileMovementComponent->Velocity = (TargetPosition - GetActorLocation()).GetSafeNormal() * HorizontalSpeed +
 		FVector(0, 0, VerticalSpeed);
@@ -41,10 +42,16 @@ void AMSEnemyProjectile::BeginPlay()
 void AMSEnemyProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (TargetPosition == GetActorLocation())
+	Timer += DeltaTime;
+	if (Timer >= Time)
 	{
 		// 播放爆炸特效
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, GetActorLocation());
+		AMSCharacter* Player = Cast<AMSCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		if (FVector::Dist(Player->GetActorLocation(), GetActorLocation()) <= DamageRadius)
+		{
+			Player->GetAttributeComponent()->Hurt(nullptr, Damage);
+		}
 
 		Destroy();
 	}
