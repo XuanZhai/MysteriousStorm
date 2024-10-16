@@ -19,23 +19,30 @@ AMSEnemyProjectile::AMSEnemyProjectile()
 		TEXT("ProjectileMovementComponent"));
 }
 
-void AMSEnemyProjectile::InitData(FVector NewPosition, int NewDamage, float NewDamageRadius)
+void AMSEnemyProjectile::InitData(FVector NewPosition, int NewDamage, float NewDamageRadius,float Speed)
 {
 	TargetPosition = NewPosition;
 	auto Distance = FVector::Dist(TargetPosition, GetActorLocation());
+	HorizontalSpeed = Speed;
 	Time = Distance / HorizontalSpeed;
-	auto VerticalSpeed = -1 * GetWorld()->GetGravityZ() * 0.5 * Time;
-	ProjectileMovementComponent->Velocity = (TargetPosition - GetActorLocation()).GetSafeNormal() * HorizontalSpeed +
-		FVector(0, 0, VerticalSpeed);
-	ProjectileMovementComponent->Activate();
+	VerticalSpeed = -1 * GetWorld()->GetGravityZ() * 0.5 * Time;
 	Damage = NewDamage;
 	DamageRadius = NewDamageRadius;
+	StartMove();
 }
 
 // Called when the game starts or when spawned
 void AMSEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AMSEnemyProjectile::StartMove()
+{
+	FVector SpeedDirection = (TargetPosition - GetActorLocation()).GetSafeNormal();
+	ProjectileMovementComponent->Velocity = SpeedDirection * HorizontalSpeed +
+		FVector(0, 0, VerticalSpeed);
+	ProjectileMovementComponent->Activate();
 }
 
 // Called every frame

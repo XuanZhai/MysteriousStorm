@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	AMSEnemyProjectile();
 
-	void InitData(FVector NewPosition, int NewDamage, float NewDamageRadius);
+	virtual void InitData(FVector NewPosition, int NewDamage, float NewDamageRadius,float Speed);
 
 	UPROPERTY(EditAnywhere)
 	UProjectileMovementComponent* ProjectileMovementComponent;
@@ -28,7 +28,7 @@ public:
 	UParticleSystem* ExplosionParticle;
 
 protected:
-	UPROPERTY(EditAnywhere, Category="PathParameter")
+	float VerticalSpeed;
 	float HorizontalSpeed;
 
 	UPROPERTY()
@@ -45,6 +45,7 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void StartMove();
 
 public:
 	// Called every frame

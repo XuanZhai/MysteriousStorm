@@ -3,7 +3,7 @@
 
 #include "MSEnemyAbilityBase.h"
 
-#include "MSEnemyCharacter.h"
+#include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 
 UMSEnemyAbilityBase::UMSEnemyAbilityBase()
 {

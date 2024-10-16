@@ -4,7 +4,7 @@
 #include "MSBTAbilityNode.h"
 
 #include "AIController.h"
-#include "MSEnemyCharacter.h"
+#include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UMSBTAbilityNode::UMSBTAbilityNode()

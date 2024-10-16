@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MSEnemyAbilityBase.h"
-#include "MSEnemyProjectile.h"
+#include "MysteriousStorm/Character/Enemy/Projectile/MSEnemyProjectile.h"
 #include "MSEnemyAbilityProjectile.generated.h"
 
 /**
@@ -20,6 +20,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Ability")
 	float SearchRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="Ability")
+	float HorizontalSpeed;
 
 public:
 	virtual bool TryActivateAbility() override;

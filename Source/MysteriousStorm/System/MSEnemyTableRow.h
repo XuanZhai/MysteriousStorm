@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "MysteriousStorm/Character/Enemy/MSEnemyAbilityBase.h"
+#include "MysteriousStorm/Character/Enemy/Ability/MSEnemyAbilityBase.h"
 #include "MSEnemyTableRow.generated.h"
 
 /**

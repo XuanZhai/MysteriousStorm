@@ -3,7 +3,7 @@
 
 #include "MSEnemyAbilityProjectile.h"
 
-#include "MSEnemyCharacter.h"
+#include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -18,7 +18,7 @@ bool UMSEnemyAbilityProjectile::TryActivateAbility()
 		int index = GetIndex();
 		Projectile->InitData(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation(),
 		                     Enemy->GetEnemyConfig()->AbilityDamage[index],
-		                     Enemy->GetEnemyConfig()->AbilityDamageRadius[index]);
+		                     Enemy->GetEnemyConfig()->AbilityDamageRadius[index],HorizontalSpeed);
 		bIsActivated = true;
 		IntervalTimer = 0;
 		return true;
