@@ -27,6 +27,7 @@ void AMSIntermittentWeapon::BeginPlay()
 	WeaponType = WeaponConfig.WeaponType;
 	AnticipationTime = WeaponConfig.AnticipationTime;
 	AttackTime = WeaponConfig.AttackTime;
+	LastAttackTimeForDart = 0;
 
 	bIsAttacking = false;
 	CachedAttackDirection = FVector::ZeroVector;
@@ -194,6 +195,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			OnAttackProcessEnd();
 		}
 		SetActorLocation(NewLocation);
+		if(AttackProcessTimer - LastAttackTimeForDart >= WeaponConfig.MinDamageInterval)
+        {
+            ApplyDamage();
+            LastAttackTimeForDart = AttackProcessTimer;
+        }
 		break;
 	case EWeaponType::ShotGun:
 		AttackProcessTimer += DeltaSeconds;
@@ -204,7 +210,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		else
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-			SetActorLocation(OwnerLocation + CachedAttackDirection[0] * 100);
+			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
 		}
 		break;
 	default:
@@ -253,9 +259,9 @@ bool AMSIntermittentWeapon::TryAttack()
 		CachedAttackDirections.Empty();
 		for (int i = 0; i < WeaponConfig.AttackAmount; i++)
 		{
-			float RandomAngle = FMath::RandRange(-180, 180);
-			FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
-			CachedAttackDirections.Add(AttackDirection);
+			// float RandomAngle = FMath::RandRange(-180, 180);
+			// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
+			CachedAttackDirections.Add(CachedAttackDirection);
 		}
 	}
 	return true;
@@ -291,13 +297,13 @@ void AMSIntermittentWeapon::SearchEnemy()
 		// 获取attack direction的rotator
 
 		DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
-		             FVector(WeaponConfig.RectangleLength, WeaponConfig.RectangleWidth, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
+		             FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
 		for (; EnemyItr; ++EnemyItr)
 		{
 			FVector Right = FRotator(0, 90, 0).RotateVector(AttackDirection);
 			if (WeaponUtils::OverlapRectangleCircle(AttackStart +
 			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection, Right,
-			                                        FVector2f(WeaponConfig.RectangleLength, WeaponConfig.RectangleWidth),
+			                                        FVector2f(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2),
 			                                        EnemyItr->GetActorLocation(), 100))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
@@ -342,7 +348,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
-
+		break;
 	case EWeaponType::ShotGun:
 		// 基于多个扇形检测
 		// TODO: 需要确定同一个敌人是否会被两个扇形同时伤害到
@@ -368,19 +374,21 @@ void AMSIntermittentWeapon::SearchEnemy()
 				}
 			}
 		}
-
+		SpawnNiagaraSystem(AttackStart, FRotator(0,-90,0).RotateVector(AttackDirection).Rotation());
+	    break;
 
 	case EWeaponType::Dart:
 		for (; EnemyItr; ++EnemyItr)
 		{
 			// TODO: 怪物半径需要后续配置
 			if (WeaponUtils::OverlapCircleCircle(GetActorLocation(), WeaponConfig.DartDetectionRadius,
-			                                     EnemyItr->GetActorLocation(), 10))
+			                                     EnemyItr->GetActorLocation(), 100))
 			{
 				if (SearchEnemyCache.Contains(*EnemyItr))continue;
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
+		break;
 	default:
 		break;
 	}
@@ -405,6 +413,7 @@ int AMSIntermittentWeapon::ProcessEffect()
 void AMSIntermittentWeapon::OnAttackProcessEnd()
 {
 	AttackTimes--;
+	LastAttackTimeForDart = 0;
 	if (AttackTimes > 0)
 	{
 		AttackProcessTimer = 0;

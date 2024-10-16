@@ -90,9 +90,9 @@ bool WeaponUtils::OverlapRectangleCircle(FVector RectangleCenter, FVector Forwar
 
 	Forward.Normalize();
 	Right.Normalize();
-	FVector ProjectedOffset = FVector::DotProduct(Offset, Forward) * Forward + FVector::DotProduct(Offset, Right) *
-		Right;
-	if (ProjectedOffset.X > (Extent.X + CircleRadius) || ProjectedOffset.Y > (Extent.Y + CircleRadius))
+	FVector ProjectedOffset = FVector::DotProduct(Offset, Forward) * FVector::ForwardVector + FVector::DotProduct(Offset, Right) *
+		FVector::RightVector;
+	if (FMath::Abs(ProjectedOffset.X) > (Extent.X + CircleRadius) || FMath::Abs(ProjectedOffset.Y) > (Extent.Y + CircleRadius))
 	{
 		return false;
 	}
