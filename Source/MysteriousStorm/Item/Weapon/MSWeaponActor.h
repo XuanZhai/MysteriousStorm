@@ -56,6 +56,9 @@ protected:
 	UFUNCTION()
 	UNiagaraComponent* SpawnNiagaraSystem(FVector Location, FRotator Rotation);
 
+	UPROPERTY()
+	UNiagaraComponent* NiagaraComponent;
+
 public:
 	AMSWeaponActor();
 

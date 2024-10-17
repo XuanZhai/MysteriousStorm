@@ -173,6 +173,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
+			SetActorRotation(OwnerCharacter->GetActorRotation());
 		}
 		break;
 	case EWeaponType::Dart:
@@ -195,11 +196,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			OnAttackProcessEnd();
 		}
 		SetActorLocation(NewLocation);
-		if(AttackProcessTimer - LastAttackTimeForDart >= WeaponConfig.MinDamageInterval)
-        {
-            ApplyDamage();
-            LastAttackTimeForDart = AttackProcessTimer;
-        }
+		if (AttackProcessTimer - LastAttackTimeForDart >= WeaponConfig.MinDamageInterval)
+		{
+			ApplyDamage();
+			LastAttackTimeForDart = AttackProcessTimer;
+		}
 		break;
 	case EWeaponType::ShotGun:
 		AttackProcessTimer += DeltaSeconds;
@@ -211,6 +212,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
+			SetActorRotation(OwnerCharacter->GetActorRotation());
 		}
 		break;
 	default:
@@ -290,7 +292,6 @@ void AMSIntermittentWeapon::SearchEnemy()
 	FVector AttackDirection = OwnerCharacter->GetActorForwardVector();
 	FVector AttackStart = OwnerCharacter->GetActorLocation();
 	FQuat Rotator = AttackDirection.Rotation().Quaternion();
-
 	switch (WeaponType)
 	{
 	case EWeaponType::MachineGun:
@@ -309,7 +310,9 @@ void AMSIntermittentWeapon::SearchEnemy()
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
-		SpawnNiagaraSystem(AttackStart, (-AttackDirection).Rotation());
+
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0));
+	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
 		break;
 	case EWeaponType::Sword:
 		// 基于扇形检测
@@ -374,8 +377,9 @@ void AMSIntermittentWeapon::SearchEnemy()
 				}
 			}
 		}
-		SpawnNiagaraSystem(AttackStart, FRotator(0,-90,0).RotateVector(AttackDirection).Rotation());
-	    break;
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0).RotateVector(AttackDirection).Rotation());
+	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
+		break;
 
 	case EWeaponType::Dart:
 		for (; EnemyItr; ++EnemyItr)
@@ -422,6 +426,10 @@ void AMSIntermittentWeapon::OnAttackProcessEnd()
 	{
 		bIsAttacking = false;
 		AttackProcessTimer = 0;
+	}
+	if (NiagaraComponent)
+	{
+		NiagaraComponent->DestroyComponent();
 	}
 }
 # pragma endregion

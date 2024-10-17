@@ -15,7 +15,9 @@
 
 UNiagaraComponent* AMSWeaponActor::SpawnNiagaraSystem(FVector Location, FRotator Rotation)
 {
-	return UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), WeaponNiagaraSystem, Location, Rotation);
+	// return UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), WeaponNiagaraSystem, Location, Rotation);
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(WeaponNiagaraSystem, StaticMeshComp, "", FVector::ZeroVector, Rotation,
+	EAttachLocation::KeepRelativeOffset, true, true, ENCPoolMethod::AutoRelease, false);
 }
 
 AMSWeaponActor::AMSWeaponActor()
