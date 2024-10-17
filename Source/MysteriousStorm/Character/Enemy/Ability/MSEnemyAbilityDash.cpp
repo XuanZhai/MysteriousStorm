@@ -26,6 +26,7 @@ bool UMSEnemyAbilityDash::TryActivateAbility()
 	bIsActivated = true;
 	FVector Direction = (Player->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal();
 	TargetPosition = Enemy->GetActorLocation() + Direction * 500;
+	return true;
 }
 
 void UMSEnemyAbilityDash::Update(float DeltaTime)
