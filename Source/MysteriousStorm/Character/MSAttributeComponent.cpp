@@ -3,6 +3,7 @@
 
 #include "MSAttributeComponent.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSEffectConfig.h"
 
@@ -48,8 +49,13 @@ void UMSAttributeComponent::Hurt(ACharacter* Source, float Damage)
 	DrawDebugString(GetWorld(), FVector(0,0,0), FString::Printf(TEXT("hurt: %f"), Damage), nullptr, FColor::Red, 0.0f, true);
 	if(currentHealth<=0)
 	{
-		// 死亡后直接传送回家
-		GetOwner()->SetActorLocation(FVector(350,21980,51));
+		// 在场景中寻找RebirthTarget对象，然后将当前角色传送到那个位置
+		if(RebirthTarget)
+		{
+			TArray<AActor*> FoundActors;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), RebirthTarget, FoundActors);
+			GetOwner()->SetActorLocation(FoundActors[0]->GetActorLocation());
+		}
 		currentHealth = 100;
 		
 	}

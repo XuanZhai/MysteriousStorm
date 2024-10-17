@@ -35,13 +35,15 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	TSet<TEnumAsByte<EMSEffect>> Effects;
-
 protected:
 
 	float currentHealth;
 	
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> RebirthTarget;
 
 public:	
 	// Called every frame
