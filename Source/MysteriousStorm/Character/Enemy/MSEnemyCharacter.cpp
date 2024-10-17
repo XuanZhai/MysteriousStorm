@@ -4,6 +4,8 @@
 #include "MSEnemyCharacter.h"
 
 #include "AIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
@@ -30,6 +32,7 @@ void AMSEnemyCharacter::BeginPlay()
 	}
 	MaxHealth = CurrentHealth = EnemyConfig.MaxHealth;
 	bIsAbilityActive = false;
+	GetCharacterMovement()->MaxWalkSpeed = EnemyConfig.Speed;
 	for (auto Ability : PossessAbilities)
 	{
 		Ability->Init(this);

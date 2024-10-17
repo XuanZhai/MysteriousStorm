@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "MysteriousStorm/Character/Enemy/MSEnemyAbilityBase.h"
+#include "MysteriousStorm/Character/Enemy/Ability/MSEnemyAbilityBase.h"
 #include "MSEnemyTableRow.generated.h"
 
 /**
@@ -20,10 +20,16 @@ struct MYSTERIOUSSTORM_API FMSEnemyTableRow : public FTableRowBase
 	int32 ID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Radius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<UMSEnemyAbilityBase>> Abilities;

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MSEnemyAbilityBase.h"
+#include "Ability/MSEnemyAbilityBase.h"
 #include "MysteriousStorm/System/MSEnemyTableRow.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
