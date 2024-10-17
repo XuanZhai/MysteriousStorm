@@ -108,9 +108,8 @@ void AMSStormBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAct
 		MainCharacter = CastedCharacter;
 		AddEffectToCharacter();
 		bIsCharacterInStorm = true;
+		OnEnterStorm();
 	}
-
-	OnEnterStorm();
 }
 
 void AMSStormBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)

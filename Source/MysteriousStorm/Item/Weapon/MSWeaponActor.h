@@ -28,9 +28,6 @@ protected:
 	UPROPERTY()
 	TMap<TEnumAsByte<EMSEffect>, int> RuntimeEffects;
 
-	// UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
-	// UMediaSoundComponent* MediaSoundComponent;
-
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess="true"),Category="WeaponParameter")
 	UNiagaraSystem* WeaponNiagaraSystem;
 
@@ -63,14 +60,11 @@ public:
 	AMSWeaponActor();
 
 	bool bIsEquipped;
-
 	float CurrentOffsetInRound;
 
 	// 区分该武器的表现状态是否为静态
 	bool bIsStatic;
-
-	// bool ModifyLevel(bool bIncrease);
-
+	
 	UFUNCTION()
 	void OnBackpackOpened();
 	
