@@ -28,7 +28,10 @@ void UMSBTAbilityNode::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	}
 	
 	if(auto EnemyOwner = Cast<AMSEnemyCharacter>(OwnerComp.GetAIOwner()->GetPawn());EnemyOwner)
-	{
-		EnemyOwner->GetProcessAbilities()[ValidAbilityIndex]->TryActivateAbility();
+	{	
+		if (ValidAbilityIndex < EnemyOwner->GetProcessAbilities().Num())
+		{
+			EnemyOwner->GetProcessAbilities()[ValidAbilityIndex]->TryActivateAbility();
+		}
 	}
 }

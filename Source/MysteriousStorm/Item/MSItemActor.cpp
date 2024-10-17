@@ -14,6 +14,9 @@ AMSItemActor::AMSItemActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	NewRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+
+	SetRootComponent(NewRootComponent);
 	StaticMeshComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ItemID = 0;

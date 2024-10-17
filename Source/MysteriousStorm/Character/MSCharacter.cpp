@@ -96,7 +96,7 @@ bool AMSCharacter::TryUseItem(UMSItemData* ItemData)
 	{
 		const UMSConsumableData* ConsumableData = Cast<UMSConsumableData>(ItemData);
 
-		if (ConsumableData->ConsumableType == EMSConsumableType::Health)
+		if (ConsumableData && ConsumableData->ConsumableType == EMSConsumableType::Health)
 		{
 			//if (!AttributeComponent->IsInMaxHealth())
 			//{
