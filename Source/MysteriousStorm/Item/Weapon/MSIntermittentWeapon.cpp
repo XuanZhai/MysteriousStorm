@@ -353,8 +353,6 @@ void AMSIntermittentWeapon::SearchEnemy()
 		}
 		break;
 	case EWeaponType::ShotGun:
-		// 基于多个扇形检测
-		// TODO: 需要确定同一个敌人是否会被两个扇形同时伤害到
 		DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
 		                FVector::RightVector, FVector::ForwardVector);
 		for (auto direction : CachedAttackDirections)
@@ -377,7 +375,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				}
 			}
 		}
-		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0).RotateVector(AttackDirection).Rotation());
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator::ZeroRotator);
 	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
 		break;
 
