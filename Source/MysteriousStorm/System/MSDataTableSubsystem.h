@@ -25,7 +25,7 @@ protected:
 	FSoftObjectPath WeaponTablePath{ "/Game/Tables/DT_WeaponData.DT_WeaponData" };
 	FSoftObjectPath EnemyTablePath{ "/Game/Tables/DT_EnemyConfigData.DT_EnemyConfigData" };
 	FSoftObjectPath EffectConfigPath{ "/Game/Tables/DA_EffectConfig.DA_EffectConfig" };
-	FSoftObjectPath AudioTablePath{ "/Game/Tables/DT_AudioData.DT_AudioData" };
+	FSoftObjectPath AudioTablePath{ "/Game/Tables/DT_AudioConfigData.DT_AudioConfigData" };
 	
 	UPROPERTY()
 	UDataTable* ItemTable;

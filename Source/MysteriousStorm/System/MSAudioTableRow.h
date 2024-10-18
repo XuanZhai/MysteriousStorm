@@ -10,6 +10,8 @@ UENUM(BlueprintType)
 enum class EAudioType : uint8
 {
 	Default,
+	UIClick,
+	OpenBackpack,
 };
 
 USTRUCT(BlueprintType)
