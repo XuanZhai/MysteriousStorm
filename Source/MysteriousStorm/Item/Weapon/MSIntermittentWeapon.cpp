@@ -172,8 +172,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		else
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
-			SetActorRotation(OwnerCharacter->GetActorRotation());
+			FVector Forward = OwnerCharacter->GetActorForwardVector();
+			SetActorLocation(OwnerLocation + Forward * 100);
+			FVector v = (GetActorLocation()-(OwnerCharacter->GetActorLocation()));
+			v.Normalize();
+			SetActorRotation(v.Rotation());
 		}
 		break;
 	case EWeaponType::Dart:
@@ -211,8 +214,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		else
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
-			SetActorRotation(OwnerCharacter->GetActorRotation());
+			FVector Forward = OwnerCharacter->GetActorForwardVector();
+			SetActorLocation(OwnerLocation + Forward * 100);
+			FVector v = (GetActorLocation()-(OwnerCharacter->GetActorLocation()));
+			v.Normalize();
+			SetActorRotation(v.Rotation());
 		}
 		break;
 	default:
@@ -311,7 +317,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 			}
 		}
 
-		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0));
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, 180, 0));
 	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
 		break;
 	case EWeaponType::Sword:
