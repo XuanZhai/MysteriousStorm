@@ -35,8 +35,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UMSHUDItemWidget> ChildWidgetClass;
 
+	UPROPERTY(BlueprintReadOnly)
 	float TotalTime = 0.0f;
 
+	UPROPERTY(BlueprintReadOnly)
 	float CurrentTime = 0.0f;
 
 	bool CanTick = true;
