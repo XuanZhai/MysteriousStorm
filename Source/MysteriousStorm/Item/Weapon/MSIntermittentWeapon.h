@@ -65,4 +65,5 @@ public:
 	virtual int ProcessEffect() override;
 
 	bool bIsAttacking;
+	void ResetWeapon();
 };

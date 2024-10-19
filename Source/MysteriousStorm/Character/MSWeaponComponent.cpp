@@ -104,7 +104,15 @@ void UMSWeaponComponent::ResetCycle()
 		Weapon->SetTimeStop(false);
 		if(auto IntermittentWeapon = Cast<AMSIntermittentWeapon>(Weapon);IntermittentWeapon)
 		{
-			IntermittentWeapon->bIsAttacking = false;
+			IntermittentWeapon->ResetWeapon();
+		}
+	}
+	for (auto Weapon : StaticWeapons)
+	{
+		Weapon->SetTimeStop(false);
+		if(auto IntermittentWeapon = Cast<AMSIntermittentWeapon>(Weapon);IntermittentWeapon)
+		{
+			IntermittentWeapon->ResetWeapon();
 		}
 	}
 }

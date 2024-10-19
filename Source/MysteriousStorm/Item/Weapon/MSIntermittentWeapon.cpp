@@ -85,6 +85,7 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 			{
 				TryAttack();
 			}
+			bCanBeActivated = false;
 		}
 	}
 	else
@@ -416,6 +417,21 @@ int AMSIntermittentWeapon::ProcessEffect()
 		return 2;
 	}
 	return 1;
+}
+
+void AMSIntermittentWeapon::ResetWeapon()
+{
+	bIsAttacking = false;
+	AttackProcessTimer = 0;
+	AnticipationTimer = 0;
+	AttackTimes = 0;
+	LastAttackTimeForDart = 0;
+	bCanBeActivated = true;
+	CurrentOffsetInRound = 0;
+	if (NiagaraComponent)
+	{
+		NiagaraComponent->DestroyComponent();
+	}
 }
 
 void AMSIntermittentWeapon::OnAttackProcessEnd()

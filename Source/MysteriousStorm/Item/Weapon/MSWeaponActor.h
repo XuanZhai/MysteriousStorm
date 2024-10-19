@@ -87,4 +87,5 @@ public:
 	virtual void SearchEnemy();
 	virtual void InitItemData() override;
 	virtual void Tick(float DeltaSeconds) override;
+	void DestoryNiagaraComponent();
 };

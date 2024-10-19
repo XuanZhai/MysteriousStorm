@@ -157,3 +157,8 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 		SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);
 	}
 }
+
+void AMSWeaponActor::DestoryNiagaraComponent()
+{
+	NiagaraComponent->DestroyComponent();
+}
