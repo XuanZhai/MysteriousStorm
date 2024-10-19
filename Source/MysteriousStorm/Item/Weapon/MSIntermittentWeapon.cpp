@@ -382,7 +382,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				}
 			}
 		}
-		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator::ZeroRotator);
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0));
 	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
 		break;
 

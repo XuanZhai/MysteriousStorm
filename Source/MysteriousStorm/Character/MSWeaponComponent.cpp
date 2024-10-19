@@ -75,6 +75,7 @@ void UMSWeaponComponent::Internal_RemoveWeapon(UMSItemData* WeaponData)
 {
 	for (const auto WeaponActor : Weapons)
 	{
+		WeaponActor->Reset();
 		if (WeaponActor->GetItemData() == WeaponData)
 		{
 			Weapons.Remove(WeaponActor);
