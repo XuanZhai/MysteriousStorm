@@ -78,16 +78,16 @@ void AMSItemActor::Tick(float DeltaTime)
 		return;
 	}
 
-	if (!GS)
-	{
-		AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
-		GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr;
-	}
+	//if (!GS)
+	//{
+	//	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+	//	GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr;
+	//}
 
-	if (GS && !GS->GetIsGamePaused())
-	{
-		FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 100.0f, 0.0f) * DeltaTime;
-		SetActorRotation(NewRotation);
-	}
+	//if (GS && !GS->GetIsGamePaused())
+	//{
+	//	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 100.0f, 0.0f) * DeltaTime;
+	//	SetActorRotation(NewRotation);
+	//}
 }
 
