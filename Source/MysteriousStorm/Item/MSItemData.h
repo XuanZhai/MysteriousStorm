@@ -62,6 +62,13 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TMap<TEnumAsByte<EMSEffect>, int32> Effects;
 
+#pragma region Backpack
+
+	float TriggerTimeInRound = 0.0f;
+	float TotalRoundTime = 0.0f;
+
+#pragma endregion
+
 public:
 	UMSItemData();
 

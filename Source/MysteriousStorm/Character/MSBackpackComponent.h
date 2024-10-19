@@ -90,6 +90,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 ColumnNumber;
 
+	float TotalTime = 0.0f;
+
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackpackChanged);
 	UPROPERTY(BlueprintAssignable)
