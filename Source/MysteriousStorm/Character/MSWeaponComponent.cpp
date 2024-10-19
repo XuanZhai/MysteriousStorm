@@ -56,6 +56,7 @@ void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> We
 	Weapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
 	Weapon->bIsStatic = false;
 	Weapon->FinishSpawning(GetOwner()->GetTransform());
+	Weapon->GetFakeComponent()->SetVisibility(false);
 	Weapons.Add(Weapon);
 
 
@@ -66,6 +67,7 @@ void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> We
 	StaticWeapon->ItemData = WeaponData;
 	StaticWeapon->bIsStatic = true;
 	StaticWeapon->FinishSpawning(GetOwner()->GetTransform());
+	StaticWeapon->GetFakeComponent()->SetVisibility(false);
 	StaticWeapons.Add(StaticWeapon);
 }
 

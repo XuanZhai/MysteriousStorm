@@ -76,6 +76,7 @@ public:
 
 	void SetOwnerCharacter(ACharacter* NewOwnerCharacter);
 	void ApplyEffect(EMSEffect Effect, bool bIsRemove = false);
+	UStaticMeshComponent* GetFakeComponent() const { return FakeStaticMeshComp; }
 
 	// 返回值确定本次遍历的攻击次数
 	virtual int ProcessEffect();
