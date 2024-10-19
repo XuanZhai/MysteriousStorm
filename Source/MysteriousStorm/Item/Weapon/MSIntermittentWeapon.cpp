@@ -51,9 +51,9 @@ void AMSIntermittentWeapon::BeginPlay()
 
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
 	// TODO: 根据cd更新UI
 	if (OwnerCharacter == nullptr)return;
-	Super::Tick(DeltaSeconds);
 
 	if (bIsTimeStopped)return;
 
