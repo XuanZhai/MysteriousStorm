@@ -155,6 +155,8 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 	{
 		RuntimeOffset = Offset.RotateAngleAxis(OwnerCharacter->GetActorRotation().Yaw, FVector(0, 0, 1));
 		SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);
+		auto NewRotation = RuntimeOffset.Rotation() + FRotator(0.0f, 90.0f, 0.0f);
+		SetActorRotation(NewRotation);
 	}
 }
 

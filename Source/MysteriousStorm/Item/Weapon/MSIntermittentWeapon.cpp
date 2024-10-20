@@ -6,6 +6,8 @@
 #include "EngineUtils.h"
 #include "WeaponUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
+#include "MysteriousStorm/Character/MSWeaponComponent.h"
 #include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
@@ -258,6 +260,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
+	UMSWeaponComponent* WeaponComponent = Cast<AMSCharacter>(OwnerCharacter)->GetWeaponComponent();
+	if (WeaponComponent->TimeAfterOutOfCombat >= 5)
+	{
+		return false;
+	}
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("weapon attack"));
 	bIsAttacking = true;
 	bCanBeActivated = false;
@@ -423,15 +430,15 @@ int AMSIntermittentWeapon::ProcessEffect()
 {
 	// TODO: 根据effect配置计算运行时的buff层数
 	CurrentDamage = Cast<UMSWeaponData>(ItemData)->Damage;
-	if(ItemData->Effects.Contains(EMSEffect::CriticalEffect))
+	if (ItemData->Effects.Contains(EMSEffect::CriticalEffect))
 	{
 		CriticalLevel += ItemData->Effects[EMSEffect::CriticalEffect];
 	}
-	if(ItemData->Effects.Contains(EMSEffect::OverloadEffect))
+	if (ItemData->Effects.Contains(EMSEffect::OverloadEffect))
 	{
 		OverloadLevel += ItemData->Effects[EMSEffect::OverloadEffect];
 	}
-	
+
 	if (CriticalLevel >= 3)
 	{
 		UMSEffectConfig* EffectConfig = GetGameInstance()->GetSubsystem<UMSDataTableSubsystem>()->GetEffectConfig();

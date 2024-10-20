@@ -3,6 +3,7 @@
 
 #include "MSWeaponComponent.h"
 
+#include "EngineUtils.h"
 #include "MSBackpackComponent.h"
 #include "Core/Tests/Containers/TestUtils.h"
 #include "GameFramework/Character.h"
@@ -50,7 +51,8 @@ void UMSWeaponComponent::BeginPlay()
 void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponClass, UMSWeaponData* WeaponData)
 {
 	// AMSWeaponActor* Weapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponClass);
-	AMSWeaponActor* Weapon = Cast<AMSWeaponActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponClass, GetOwner()->GetTransform()));
+	AMSWeaponActor* Weapon = Cast<AMSWeaponActor>(
+		UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponClass, GetOwner()->GetTransform()));
 	Weapon->bIsEquipped = true;
 	Weapon->ItemData = WeaponData;
 	Weapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
@@ -61,7 +63,8 @@ void UMSWeaponComponent::Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> We
 
 
 	// AMSWeaponActor* StaticWeapon = GetWorld()->SpawnActor<AMSWeaponActor>(WeaponClass);
-	AMSWeaponActor* StaticWeapon = Cast<AMSWeaponActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponClass, GetOwner()->GetTransform()));
+	AMSWeaponActor* StaticWeapon = Cast<AMSWeaponActor>(
+		UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponClass, GetOwner()->GetTransform()));
 	StaticWeapon->SetOwnerCharacter(Cast<ACharacter>(GetOwner()));
 	StaticWeapon->bIsEquipped = true;
 	StaticWeapon->ItemData = WeaponData;
@@ -103,7 +106,7 @@ void UMSWeaponComponent::ResetCycle()
 	for (auto Weapon : Weapons)
 	{
 		Weapon->SetTimeStop(false);
-		if(auto IntermittentWeapon = Cast<AMSIntermittentWeapon>(Weapon);IntermittentWeapon)
+		if (auto IntermittentWeapon = Cast<AMSIntermittentWeapon>(Weapon); IntermittentWeapon)
 		{
 			IntermittentWeapon->ResetWeapon();
 		}
@@ -111,7 +114,7 @@ void UMSWeaponComponent::ResetCycle()
 	for (auto Weapon : StaticWeapons)
 	{
 		Weapon->SetTimeStop(false);
-		if(auto IntermittentWeapon = Cast<AMSIntermittentWeapon>(Weapon);IntermittentWeapon)
+		if (auto IntermittentWeapon = Cast<AMSIntermittentWeapon>(Weapon); IntermittentWeapon)
 		{
 			IntermittentWeapon->ResetWeapon();
 		}
@@ -167,6 +170,20 @@ void UMSWeaponComponent::TickComponent(float DeltaTime, enum ELevelTick TickType
                                        FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// 判断是否脱战并更新计时器
+	auto EnemyIter = TActorIterator<AMSEnemyCharacter>(GetWorld());
+	for (; EnemyIter; ++EnemyIter)
+	{
+		auto EnemyPos = (*EnemyIter)->GetActorLocation();
+		auto OwnerPos = GetOwner()->GetActorLocation();
+		if (FVector::Dist(EnemyPos, OwnerPos) < 2000)
+		{
+			TimeAfterOutOfCombat = 0;
+			return;
+		}
+		
+	}
+	TimeAfterOutOfCombat += DeltaTime;
 }
 
 void UMSWeaponComponent::InitialWeaponSystem()

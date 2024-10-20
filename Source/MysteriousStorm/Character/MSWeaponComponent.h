@@ -34,6 +34,7 @@ protected:
 	void Internal_CreateNewWeapon(TSubclassOf<AMSWeaponActor> WeaponClass,UMSWeaponData* WeaponData);
 	void Internal_RemoveWeapon(UMSItemData* Weapon);
 
+
 public:
 	
 	UFUNCTION()
@@ -45,5 +46,5 @@ public:
 	virtual void InitialWeaponSystem();
 
 	const TArray<AMSWeaponActor*>& GetWeapons() const { return Weapons; }
-		
+	float TimeAfterOutOfCombat = 0;
 };
