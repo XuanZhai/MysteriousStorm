@@ -266,12 +266,13 @@ bool AMSIntermittentWeapon::TryAttack()
 		// 生成随机的射击角度
 		// TODO: 需要问问策划是否需要不重叠
 		CachedAttackDirections.Empty();
-		for (int i = 0; i < WeaponConfig.AttackAmount; i++)
-		{
+		// for (int i = 0; i < WeaponConfig.AttackAmount; i++)
+		// {
 			// float RandomAngle = FMath::RandRange(-180, 180);
 			// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
-			CachedAttackDirections.Add(CachedAttackDirection);
-		}
+		// 	CachedAttackDirections.Add(CachedAttackDirection);
+		// }
+		CachedAttackDirections.Add(CachedAttackDirection);
 	}
 	return true;
 }
