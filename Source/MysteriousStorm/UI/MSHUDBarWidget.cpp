@@ -100,6 +100,8 @@ void UMSHUDBarWidget::CreateChild(UMSItemData* ItemData)
 	{
 		ItemWidget->SetImage(ItemData->UIPath);
 		ItemWidget->SetBackground(0);
+		TArray<TEnumAsByte<EMSEffect>> NewEffect;
+		ItemWidget->SetEffect(NewEffect);
 	}
 
 	auto PanelSlot = CanvasPanel->AddChild(ItemWidget);
@@ -121,6 +123,8 @@ void UMSHUDBarWidget::IdentifyChild(float OldValue, float NewValue)
 		for (const auto& Item : Items)
 		{
 			Item.Key->SetBackground(0);
+			TArray<TEnumAsByte<EMSEffect>> NewEffect;
+			Item.Key->SetEffect(NewEffect);
 		}
 
 		return;
@@ -131,6 +135,13 @@ void UMSHUDBarWidget::IdentifyChild(float OldValue, float NewValue)
 		if (Item.Value->TriggerTimeInRound >= OldValue && Item.Value->TriggerTimeInRound <= NewValue)
 		{
 			Item.Key->SetBackground(static_cast<int32>(Item.Value->ItemType));
+
+			TArray<TEnumAsByte<EMSEffect>> NewEffect;
+			for (const auto& Effect : Item.Value->Effects)
+			{
+				NewEffect.Add(Effect.Key);
+			}
+			Item.Key->SetEffect(NewEffect);
 		}
 	}
 }

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MSHUDItemWidget.generated.h"
 
+enum EMSEffect : uint8;
 /**
  * 
  */
@@ -21,4 +22,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void SetBackground(int32 Index);
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetEffect(const TArray<TEnumAsByte<EMSEffect>>& Effects);
 };
