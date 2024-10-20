@@ -75,17 +75,30 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 			StaticMeshComp->SetVisibility(false);
 		}
 		// WeaponIntervalTimer += DeltaSeconds;
-		if (CurrentOffsetInRound >= Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound && bCanBeActivated)
+		if (CurrentOffsetInRound >= Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound)
 		{
-			// WeaponIntervalTimer -= IntervalTime;
-			AnticipationTimer = 0;
-			AttackProcessTimer = 0;
-			AttackTimes = ProcessEffect();
-			if (AttackTimes > 0)
+			if (bCanBeActivated)
 			{
-				TryAttack();
+				// WeaponIntervalTimer -= IntervalTime;
+				AnticipationTimer = 0;
+				AttackProcessTimer = 0;
+
+				AttackTimes = ProcessEffect();
+
+
+				if (AttackTimes > 0)
+				{
+					TryAttack();
+				}
+				bCanBeActivated = false;
 			}
-			bCanBeActivated = false;
+			else
+			{
+				if (AttackTimes > 0)
+				{
+					TryAttack();
+				}
+			}
 		}
 	}
 	else
@@ -124,7 +137,6 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 	// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
-			AttackTimes--;
 			if (AttackTimes > 0)
 			{
 				AttackProcessTimer = 0;
@@ -175,7 +187,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 			FVector Forward = OwnerCharacter->GetActorForwardVector();
 			SetActorLocation(OwnerLocation + Forward * 100);
-			FVector v = (GetActorLocation()-(OwnerCharacter->GetActorLocation()));
+			FVector v = (GetActorLocation() - (OwnerCharacter->GetActorLocation()));
 			v.Normalize();
 			SetActorRotation(v.Rotation());
 		}
@@ -217,7 +229,7 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 			FVector Forward = OwnerCharacter->GetActorForwardVector();
 			SetActorLocation(OwnerLocation + Forward * 100);
-			FVector v = (GetActorLocation()-(OwnerCharacter->GetActorLocation()));
+			FVector v = (GetActorLocation() - (OwnerCharacter->GetActorLocation()));
 			v.Normalize();
 			SetActorRotation(v.Rotation());
 		}
@@ -268,8 +280,8 @@ bool AMSIntermittentWeapon::TryAttack()
 		CachedAttackDirections.Empty();
 		// for (int i = 0; i < WeaponConfig.AttackAmount; i++)
 		// {
-			// float RandomAngle = FMath::RandRange(-180, 180);
-			// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
+		// float RandomAngle = FMath::RandRange(-180, 180);
+		// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
 		// 	CachedAttackDirections.Add(CachedAttackDirection);
 		// }
 		CachedAttackDirections.Add(CachedAttackDirection);
@@ -306,13 +318,16 @@ void AMSIntermittentWeapon::SearchEnemy()
 		// 获取attack direction的rotator
 
 		DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
-		             FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
+		             FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator,
+		             FColor::Red, false, 1.0f, 0, 1);
 		for (; EnemyItr; ++EnemyItr)
 		{
 			FVector Right = FRotator(0, 90, 0).RotateVector(AttackDirection);
 			if (WeaponUtils::OverlapRectangleCircle(AttackStart +
-			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection, Right,
-			                                        FVector2f(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2),
+			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection,
+			                                        Right,
+			                                        FVector2f(WeaponConfig.RectangleLength / 2,
+			                                                  WeaponConfig.RectangleWidth / 2),
 			                                        EnemyItr->GetActorLocation(), 100))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
@@ -408,13 +423,24 @@ int AMSIntermittentWeapon::ProcessEffect()
 {
 	// TODO: 根据effect配置计算运行时的buff层数
 	CurrentDamage = Cast<UMSWeaponData>(ItemData)->Damage;
+	if(ItemData->Effects.Contains(EMSEffect::CriticalEffect))
+	{
+		CriticalLevel += ItemData->Effects[EMSEffect::CriticalEffect];
+	}
+	if(ItemData->Effects.Contains(EMSEffect::OverloadEffect))
+	{
+		OverloadLevel += ItemData->Effects[EMSEffect::OverloadEffect];
+	}
+	
 	if (CriticalLevel >= 3)
 	{
 		UMSEffectConfig* EffectConfig = GetGameInstance()->GetSubsystem<UMSDataTableSubsystem>()->GetEffectConfig();
 		CurrentDamage += EffectConfig->CriticalDeltaDamage;
+		CriticalLevel = 0;
 	}
 	if (OverloadLevel >= 3)
 	{
+		OverloadLevel = 0;
 		return 2;
 	}
 	return 1;
