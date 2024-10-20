@@ -5,9 +5,14 @@
 
 #include "AIController.h"
 
+UMSBTDecoratorDistance::UMSBTDecoratorDistance()
+{
+	MaxDistance = 1000;
+}
+
 bool UMSBTDecoratorDistance::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	auto AIPawn = OwnerComp.GetAIOwner()->GetPawn();
-	return PlayerPawn && AIPawn && FVector::Dist(PlayerPawn->GetActorLocation(), AIPawn->GetActorLocation()) < 1000;
+	return PlayerPawn && AIPawn && FVector::Dist(PlayerPawn->GetActorLocation(), AIPawn->GetActorLocation()) < MaxDistance;
 }
