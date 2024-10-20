@@ -21,4 +21,9 @@ protected:
 	virtual void Update(float DeltaTime) override;
 
 	FVector TargetPosition;
+
+	UPROPERTY(EditAnywhere,Category="Ability Parameter")
+	float Speed = 3;
+
+	bool HasHurtPlayer = false;
 };
