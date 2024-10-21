@@ -297,8 +297,8 @@ void AMSIntermittentWeapon::SearchEnemy()
 	case EWeaponType::MachineGun:
 		// 获取attack direction的rotator
 
-		DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
-		             FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
+		// DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
+		//              FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
 		for (; EnemyItr; ++EnemyItr)
 		{
 			FVector Right = FRotator(0, 90, 0).RotateVector(AttackDirection);
@@ -353,16 +353,16 @@ void AMSIntermittentWeapon::SearchEnemy()
 		}
 		break;
 	case EWeaponType::ShotGun:
-		DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
-		                FVector::RightVector, FVector::ForwardVector);
+		// DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
+		//                 FVector::RightVector, FVector::ForwardVector);
 		for (auto direction : CachedAttackDirections)
 		{
-			DrawDebugLine(GetWorld(), AttackStart,
-			              AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
-			DrawDebugLine(GetWorld(), AttackStart,
-			              AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			// DrawDebugLine(GetWorld(), AttackStart,
+			//               AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			//               WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			// DrawDebugLine(GetWorld(), AttackStart,
+			//               AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			//               WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
 			for (; EnemyItr; ++EnemyItr)
 			{
 				// TODO: 怪物半径需要后续配置
