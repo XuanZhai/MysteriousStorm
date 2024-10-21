@@ -7,6 +7,7 @@
 #include "MSItemActor.generated.h"
 
 class UMSItemData;
+class AMSGameState;
 
 UCLASS()
 class MYSTERIOUSSTORM_API AMSItemActor : public AActor
@@ -22,13 +23,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* FakeStaticMeshComp;
+
 	USceneComponent* NewRootComponent;
 
-	
 public:	
 
 	UPROPERTY()
 	UMSItemData* ItemData;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsOnGround = false;
+
+private:
+	AMSGameState* GS;
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,6 +46,9 @@ protected:
 	virtual void InitItemData();
 
 	void FillItemData();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void CreateFakeMaterial();
 
 public:	
 	// Sets default values for this actor's properties

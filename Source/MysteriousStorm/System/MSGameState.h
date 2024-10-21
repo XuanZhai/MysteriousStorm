@@ -66,6 +66,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnGamePauseUpdated OnGamePauseUpdated;
 
+	bool GetIsGamePaused() const { return bIsGamePause; }
+
 
 	FSpawnItemPlan GetRandomItemSpawnPlan(bool bIsEnemy) const;
 };

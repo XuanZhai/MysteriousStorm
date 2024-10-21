@@ -39,19 +39,23 @@ void UMSEnemyAbilityDash::Update(float DeltaTime)
 	{
 		if (TargetPosition != FVector::ZeroVector)
 		{
-			OwnerEnemy->SetActorLocation(FMath::VInterpTo(OwnerEnemy->GetActorLocation(), TargetPosition, DeltaTime, 5));
+			OwnerEnemy->SetActorLocation(
+				FMath::VInterpConstantTo(OwnerEnemy->GetActorLocation(), TargetPosition, DeltaTime, Speed));
 		}
 		AMSEnemyCharacter* EnemyPlayer = Cast<AMSEnemyCharacter>(OwnerEnemy);
-		if (FVector::Dist(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation(), OwnerEnemy->GetActorLocation()) < EnemyPlayer->
-			GetEnemyConfig()->AbilityDamageRadius[GetIndex()])
+		if (!HasHurtPlayer && FVector::Dist(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation(),
+		                                    OwnerEnemy->GetActorLocation()) < EnemyPlayer->GetEnemyConfig()->
+			AbilityDamageRadius[GetIndex()])
 		{
 			AMSCharacter* Player = Cast<AMSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			Player->GetAttributeComponent()->Hurt(OwnerEnemy, EnemyPlayer->GetEnemyConfig()->AbilityDamage[GetIndex()]);
+			HasHurtPlayer = true;
 		}
 		if (FVector::Dist(TargetPosition, OwnerEnemy->GetActorLocation()) < 10)
 		{
 			bIsActivated = false;
 			IntervalTimer = 0;
+			HasHurtPlayer = false;
 		}
 	}
 }

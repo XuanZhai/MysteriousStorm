@@ -483,14 +483,8 @@ void UMSBackpackGridWidget::CalculateGridData()
 		CurrentTime += ItemTime * (Tile.Item->XUISize * Tile.Item->YUISize);
 		TotalTime += ItemTime * (Tile.Item->XUISize * Tile.Item->YUISize);
 
-		if (Tile.Item->IsWeapon())
-		{
-			if (UMSWeaponData* TargetWeaponData = Cast<UMSWeaponData>(Tile.Item))
-			{
-				TargetWeaponData->TriggerTimeInRound = CurrentTime;
-			}
-		}
-		else if (Tile.Item->IsSpecialItem())
+		Tile.Item->TriggerTimeInRound = CurrentTime;
+		if (Tile.Item->IsSpecialItem())
 		{
 			ApplySpecialItemEffect(Tile.Item,i);
 		}
@@ -508,6 +502,8 @@ void UMSBackpackGridWidget::CalculateGridData()
 			}
 		}
 	}
+
+	BackpackComponent->TotalTime = TotalTime;
 }
 
 void UMSBackpackGridWidget::ApplySpecialItemEffect(UMSItemData* ItemData, int32 Index)

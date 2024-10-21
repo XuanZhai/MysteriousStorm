@@ -32,10 +32,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
 	TSubclassOf<UMSHealthBarWidget> HealthBarWidgetClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
-	float BodyRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyParameter")
+	UPROPERTY(BlueprintReadWrite)
 	float MaxHealth;
 
 	UPROPERTY(BlueprintReadWrite)

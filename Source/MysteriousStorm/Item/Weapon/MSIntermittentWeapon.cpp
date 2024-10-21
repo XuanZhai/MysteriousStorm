@@ -353,16 +353,16 @@ void AMSIntermittentWeapon::SearchEnemy()
 		}
 		break;
 	case EWeaponType::ShotGun:
-		// DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
-		//                 FVector::RightVector, FVector::ForwardVector);
+		DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
+		                FVector::RightVector, FVector::ForwardVector);
 		for (auto direction : CachedAttackDirections)
 		{
-			// DrawDebugLine(GetWorld(), AttackStart,
-			//               AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-			//               WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
-			// DrawDebugLine(GetWorld(), AttackStart,
-			//               AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-			//               WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			DrawDebugLine(GetWorld(), AttackStart,
+			              AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			DrawDebugLine(GetWorld(), AttackStart,
+			              AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
 			for (; EnemyItr; ++EnemyItr)
 			{
 				// TODO: 怪物半径需要后续配置

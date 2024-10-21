@@ -16,7 +16,7 @@
 UNiagaraComponent* AMSWeaponActor::SpawnNiagaraSystem(FVector Location, FRotator Rotation)
 {
 	// return UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), WeaponNiagaraSystem, Location, Rotation);
-	return UNiagaraFunctionLibrary::SpawnSystemAttached(WeaponNiagaraSystem, StaticMeshComp, "", FVector::ZeroVector, Rotation,
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(WeaponNiagaraSystem, RootComponent, "", FVector::ZeroVector, Rotation,
 	EAttachLocation::KeepRelativeOffset, true, true, ENCPoolMethod::AutoRelease, false);
 }
 
@@ -155,5 +155,12 @@ void AMSWeaponActor::Tick(float DeltaSeconds)
 	{
 		RuntimeOffset = Offset.RotateAngleAxis(OwnerCharacter->GetActorRotation().Yaw, FVector(0, 0, 1));
 		SetActorLocation(OwnerCharacter->GetActorLocation() + RuntimeOffset);
+		auto NewRotation = RuntimeOffset.Rotation() + FRotator(0.0f, 90.0f, 0.0f);
+		SetActorRotation(NewRotation);
 	}
+}
+
+void AMSWeaponActor::DestoryNiagaraComponent()
+{
+	NiagaraComponent->DestroyComponent();
 }

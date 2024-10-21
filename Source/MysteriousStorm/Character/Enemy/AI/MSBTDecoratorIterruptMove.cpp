@@ -11,7 +11,7 @@ bool UMSBTDecoratorIterruptMove::CalculateRawConditionValue(UBehaviorTreeCompone
 	AMSEnemyCharacter* Enemy = Cast<AMSEnemyCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	for (auto Ability : Enemy->GetAbilities())
 	{
-		if(Ability->IsActivated()&&Ability->bInterruptMovement)
+		if (Ability->IsActivated() && Ability->bInterruptMovement)
 		{
 			return false;
 		}

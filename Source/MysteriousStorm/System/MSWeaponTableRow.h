@@ -17,6 +17,7 @@ enum class EWeaponType : uint8
 	MachineGun,
 	ShotGun,
 };
+
 /**
  * 
  */
@@ -39,18 +40,19 @@ struct MYSTERIOUSSTORM_API FMSWeaponTableRow : public FTableRowBase
 	float Damage;
 
 	// 手雷投掷点选取范围
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::Grenade"), BlueprintReadWrite)
 	float DropDetectionRange;
 
-	// 手雷伤害范围
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// 圆形武器伤害范围
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::Grenade||WeaponType==EWeaponType::Hammer"),
+		BlueprintReadWrite)
 	float DamageRange;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString WeaponName;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float IntervalTime;
+
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// float IntervalTime;
 
 	// 扇形武器索敌扇形角度
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -60,34 +62,35 @@ struct MYSTERIOUSSTORM_API FMSWeaponTableRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SectorRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::MachineGun"), BlueprintReadWrite)
 	float RectangleWidth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::MachineGun"), BlueprintReadWrite)
 	float RectangleLength;
 
 	// 攻击开始到索敌时刻的前摇时间
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AnticipationTime;
 
 	// 攻击过程时长，对于战锤没有效果
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackTime;
 
 	// 短喷每次攻击的射击次数
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	int32 AttackAmount;
+	// UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	// int32 AttackAmount;
 
 	// 飞镖检测的圆形范围
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::Dart"), BlueprintReadWrite)
 	float DartDetectionRadius;
 
 	// 飞镖的最远飞行距离
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::Dart"), BlueprintReadWrite)
 	float DartMaxDistance;
 
 	// 飞镖和战锤造成伤害的最小间隔
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, meta=(EditCondition = "WeaponType==EWeaponType::Dart||WeaponType==EWeaponType::Hammer"),
+		BlueprintReadWrite)
 	float MinDamageInterval;
 
 	FMSWeaponTableRow();

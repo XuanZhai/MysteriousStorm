@@ -4,6 +4,7 @@
 #include "MSItemActor.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
 #include "MysteriousStorm/System/MSItemTableRow.h"
+#include "MysteriousStorm/System/MSGameState.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "MSItemData.h"
 
@@ -17,7 +18,11 @@ AMSItemActor::AMSItemActor()
 	NewRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	SetRootComponent(NewRootComponent);
-	StaticMeshComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	StaticMeshComp->AttachToComponent(NewRootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	FakeStaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FakeStaticMeshComponent"));
+	FakeStaticMeshComp->AttachToComponent(NewRootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	FakeStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	ItemID = 0;
 }
@@ -58,6 +63,9 @@ void AMSItemActor::BeginPlay()
 	Super::BeginPlay();
 
 	InitItemData();
+
+	CreateFakeMaterial();
+
 }
 
 // Called every frame
@@ -65,5 +73,21 @@ void AMSItemActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (ItemData && ItemData->IsWeapon())
+	{
+		return;
+	}
+
+	//if (!GS)
+	//{
+	//	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+	//	GS = GameMode ? Cast<AMSGameState>(GameMode->GetGameState<AMSGameState>()) : nullptr;
+	//}
+
+	//if (GS && !GS->GetIsGamePaused())
+	//{
+	//	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 100.0f, 0.0f) * DeltaTime;
+	//	SetActorRotation(NewRotation);
+	//}
 }
 

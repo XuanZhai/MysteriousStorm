@@ -57,9 +57,9 @@ void AMSContinuousWeapon::Tick(float DeltaSeconds)
 	StaticMeshComp->SetVisibility(true);
 	// 目前应该只有蒸汽重锤一个武器
 	IntervalTimer += DeltaSeconds;
-	if (IntervalTimer >= WeaponConfig.IntervalTime)
+	if (IntervalTimer >= WeaponConfig.MinDamageInterval)
 	{
-		IntervalTimer -= WeaponConfig.IntervalTime;
+		IntervalTimer -= WeaponConfig.MinDamageInterval;
 		ApplyDamage();
 	}
 	CurrentYaw += RotatingRate * DeltaSeconds;

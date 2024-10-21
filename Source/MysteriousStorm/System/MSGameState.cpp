@@ -11,7 +11,14 @@ void AMSGameState::SetGamePaused(bool NewState)
 
 	if (OnGamePauseUpdated.IsBound())
 	{
-		OnGamePauseUpdated.Broadcast(bIsGamePause);
+		//OnGamePauseUpdated.Broadcast(bIsGamePause);
+	}
+
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		// Set the global time dilation
+		World->GetWorldSettings()->SetTimeDilation(NewState? 0.0001f : 1.0f);
 	}
 }
 
