@@ -6,6 +6,8 @@
 #include "EngineUtils.h"
 #include "WeaponUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "MysteriousStorm/Character/MSCharacter.h"
+#include "MysteriousStorm/Character/MSWeaponComponent.h"
 #include "MysteriousStorm/Character/Enemy/MSEnemyCharacter.h"
 #include "MysteriousStorm/Item/Weapon/MSWeaponData.h"
 #include "MysteriousStorm/System/MSDataTableSubsystem.h"
@@ -51,9 +53,9 @@ void AMSIntermittentWeapon::BeginPlay()
 
 void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
 	// TODO: 根据cd更新UI
 	if (OwnerCharacter == nullptr)return;
-	Super::Tick(DeltaSeconds);
 
 	if (bIsTimeStopped)return;
 
@@ -75,15 +77,29 @@ void AMSIntermittentWeapon::Tick(float DeltaSeconds)
 			StaticMeshComp->SetVisibility(false);
 		}
 		// WeaponIntervalTimer += DeltaSeconds;
-		if (CurrentOffsetInRound >= Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound && bCanBeActivated)
+		if (CurrentOffsetInRound >= Cast<UMSWeaponData>(ItemData)->TriggerTimeInRound)
 		{
-			// WeaponIntervalTimer -= IntervalTime;
-			AnticipationTimer = 0;
-			AttackProcessTimer = 0;
-			AttackTimes = ProcessEffect();
-			if (AttackTimes > 0)
+			if (bCanBeActivated)
 			{
-				TryAttack();
+				// WeaponIntervalTimer -= IntervalTime;
+				AnticipationTimer = 0;
+				AttackProcessTimer = 0;
+
+				AttackTimes = ProcessEffect();
+
+
+				if (AttackTimes > 0)
+				{
+					TryAttack();
+				}
+				bCanBeActivated = false;
+			}
+			else
+			{
+				if (AttackTimes > 0)
+				{
+					TryAttack();
+				}
 			}
 		}
 	}
@@ -123,7 +139,6 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 	// 攻击流程计时
 		if (AttackProcessTimer >= AttackTime)
 		{
-			AttackTimes--;
 			if (AttackTimes > 0)
 			{
 				AttackProcessTimer = 0;
@@ -172,8 +187,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		else
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
-			SetActorRotation(OwnerCharacter->GetActorRotation());
+			FVector Forward = OwnerCharacter->GetActorForwardVector();
+			SetActorLocation(OwnerLocation + Forward * 100);
+			FVector v = (GetActorLocation() - (OwnerCharacter->GetActorLocation()));
+			v.Normalize();
+			SetActorRotation(v.Rotation());
 		}
 		break;
 	case EWeaponType::Dart:
@@ -211,8 +229,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 		else
 		{
 			FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-			SetActorLocation(OwnerLocation + CachedAttackDirection * 100);
-			SetActorRotation(OwnerCharacter->GetActorRotation());
+			FVector Forward = OwnerCharacter->GetActorForwardVector();
+			SetActorLocation(OwnerLocation + Forward * 100);
+			FVector v = (GetActorLocation() - (OwnerCharacter->GetActorLocation()));
+			v.Normalize();
+			SetActorRotation(v.Rotation());
 		}
 		break;
 	default:
@@ -239,6 +260,11 @@ void AMSIntermittentWeapon::TickAttackProcess(float DeltaSeconds)
 
 bool AMSIntermittentWeapon::TryAttack()
 {
+	UMSWeaponComponent* WeaponComponent = Cast<AMSCharacter>(OwnerCharacter)->GetWeaponComponent();
+	if (WeaponComponent->TimeAfterOutOfCombat >= 5)
+	{
+		return false;
+	}
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("weapon attack"));
 	bIsAttacking = true;
 	bCanBeActivated = false;
@@ -259,12 +285,13 @@ bool AMSIntermittentWeapon::TryAttack()
 		// 生成随机的射击角度
 		// TODO: 需要问问策划是否需要不重叠
 		CachedAttackDirections.Empty();
-		for (int i = 0; i < WeaponConfig.AttackAmount; i++)
-		{
-			// float RandomAngle = FMath::RandRange(-180, 180);
-			// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
-			CachedAttackDirections.Add(CachedAttackDirection);
-		}
+		// for (int i = 0; i < WeaponConfig.AttackAmount; i++)
+		// {
+		// float RandomAngle = FMath::RandRange(-180, 180);
+		// FVector AttackDirection = CachedAttackDirection.RotateAngleAxis(RandomAngle, FVector::UpVector);
+		// 	CachedAttackDirections.Add(CachedAttackDirection);
+		// }
+		CachedAttackDirections.Add(CachedAttackDirection);
 	}
 	return true;
 }
@@ -298,20 +325,23 @@ void AMSIntermittentWeapon::SearchEnemy()
 		// 获取attack direction的rotator
 
 		// DrawDebugBox(GetWorld(), AttackStart + AttackDirection * WeaponConfig.RectangleLength / 2,
-		//              FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator, FColor::Red, false, 1.0f, 0, 1);
+		//              FVector(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2, 0), Rotator,
+		//              FColor::Red, false, 1.0f, 0, 1);
 		for (; EnemyItr; ++EnemyItr)
 		{
 			FVector Right = FRotator(0, 90, 0).RotateVector(AttackDirection);
 			if (WeaponUtils::OverlapRectangleCircle(AttackStart +
-			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection, Right,
-			                                        FVector2f(WeaponConfig.RectangleLength / 2, WeaponConfig.RectangleWidth / 2),
+			                                        AttackDirection * WeaponConfig.RectangleLength / 2, AttackDirection,
+			                                        Right,
+			                                        FVector2f(WeaponConfig.RectangleLength / 2,
+			                                                  WeaponConfig.RectangleWidth / 2),
 			                                        EnemyItr->GetActorLocation(), 100))
 			{
 				SearchEnemyCache.Add(*EnemyItr);
 			}
 		}
 
-		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0));
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, 180, 0));
 	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
 		break;
 	case EWeaponType::Sword:
@@ -353,16 +383,16 @@ void AMSIntermittentWeapon::SearchEnemy()
 		}
 		break;
 	case EWeaponType::ShotGun:
-		DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
-		                FVector::RightVector, FVector::ForwardVector);
+		// DrawDebugCircle(GetWorld(), AttackStart, WeaponConfig.SectorRadius, 100, FColor::Red, false, 1.0f, 0, 1,
+		//                 FVector::RightVector, FVector::ForwardVector);
 		for (auto direction : CachedAttackDirections)
 		{
-			DrawDebugLine(GetWorld(), AttackStart,
-			              AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
-			DrawDebugLine(GetWorld(), AttackStart,
-			              AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
-			              WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			// DrawDebugLine(GetWorld(), AttackStart,
+			//               AttackStart + direction.RotateAngleAxis(-WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			//               WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
+			// DrawDebugLine(GetWorld(), AttackStart,
+			//               AttackStart + direction.RotateAngleAxis(WeaponConfig.SectorAngle / 2, FVector::UpVector) *
+			//               WeaponConfig.SectorRadius, FColor::Green, false, 1.0f, 0, 1);
 			for (; EnemyItr; ++EnemyItr)
 			{
 				// TODO: 怪物半径需要后续配置
@@ -375,7 +405,7 @@ void AMSIntermittentWeapon::SearchEnemy()
 				}
 			}
 		}
-		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator::ZeroRotator);
+		NiagaraComponent = SpawnNiagaraSystem(AttackStart, FRotator(0, -90, 0));
 	// Niagara->AttachToComponent(this->StaticMeshComp, FAttachmentTransformRules::KeepRelativeTransform);
 		break;
 
@@ -400,16 +430,42 @@ int AMSIntermittentWeapon::ProcessEffect()
 {
 	// TODO: 根据effect配置计算运行时的buff层数
 	CurrentDamage = Cast<UMSWeaponData>(ItemData)->Damage;
+	if (ItemData->Effects.Contains(EMSEffect::CriticalEffect))
+	{
+		CriticalLevel += ItemData->Effects[EMSEffect::CriticalEffect];
+	}
+	if (ItemData->Effects.Contains(EMSEffect::OverloadEffect))
+	{
+		OverloadLevel += ItemData->Effects[EMSEffect::OverloadEffect];
+	}
+
 	if (CriticalLevel >= 3)
 	{
 		UMSEffectConfig* EffectConfig = GetGameInstance()->GetSubsystem<UMSDataTableSubsystem>()->GetEffectConfig();
 		CurrentDamage += EffectConfig->CriticalDeltaDamage;
+		CriticalLevel = 0;
 	}
 	if (OverloadLevel >= 3)
 	{
+		OverloadLevel = 0;
 		return 2;
 	}
 	return 1;
+}
+
+void AMSIntermittentWeapon::ResetWeapon()
+{
+	bIsAttacking = false;
+	AttackProcessTimer = 0;
+	AnticipationTimer = 0;
+	AttackTimes = 0;
+	LastAttackTimeForDart = 0;
+	bCanBeActivated = true;
+	CurrentOffsetInRound = 0;
+	if (NiagaraComponent)
+	{
+		NiagaraComponent->DestroyComponent();
+	}
 }
 
 void AMSIntermittentWeapon::OnAttackProcessEnd()
